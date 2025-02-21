@@ -14,10 +14,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Clone BattyBirdNET-Analyzer fork
+      - name: Ensure clean clone in a temporary directory
         run: |
-          git clone https://github.com/jacobp24/BattyBirdNET-Analyzer.git
-          cd BattyBirdNET-Analyzer
+          rm -rf /tmp/battybirdnet_clone  # Remove only the temporary clone folder
+          git clone https://github.com/jacobp24/BattyBirdNET-Analyzer.git /tmp/battybirdnet_clone
+          cd /tmp/battybirdnet_clone
           git remote add upstream https://github.com/rdz-oss/BattyBirdNET-Analyzer.git
           git fetch upstream
           git merge upstream/main
@@ -26,15 +27,15 @@ jobs:
       - name: Copy selected files and folders
         run: |
           mkdir -p EcoAcousticAI/BattyBirdNET-Analyzer
-          cp -r BattyBirdNET-Analyzer/checkpoints EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp -r BattyBirdNET-Analyzer/labels EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp -r BattyBirdNET-Analyzer/put-your-files-here EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp BattyBirdNET-Analyzer/audio.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp BattyBirdNET-Analyzer/bat_ident.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp BattyBirdNET-Analyzer/config.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp BattyBirdNET-Analyzer/model.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp BattyBirdNET-Analyzer/species.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp BattyBirdNET-Analyzer/utils.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp -r /tmp/battybirdnet_clone/checkpoints EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp -r /tmp/battybirdnet_clone/labels EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp -r /tmp/battybirdnet_clone/put-your-files-here EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/audio.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/bat_ident.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/config.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/model.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/species.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/utils.py EcoAcousticAI/BattyBirdNET-Analyzer/
 
       - name: Commit and push changes
         run: |
