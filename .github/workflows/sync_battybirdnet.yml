@@ -1,0 +1,45 @@
+name: Sync Selected Files from BattyBirdNET-Analyzer
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Runs every Monday at midnight UTC
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  sync-and-copy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout EcoAcousticAI repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clone BattyBirdNET-Analyzer fork
+        run: |
+          git clone https://github.com/your-username/BattyBirdNET-Analyzer.git
+          cd BattyBirdNET-Analyzer
+          git remote add upstream https://github.com/original-owner/BattyBirdNET-Analyzer.git
+          git fetch upstream
+          git merge upstream/main
+          git push origin main
+
+      - name: Copy selected files and folders
+        run: |
+          mkdir -p EcoAcousticAI/BattyBirdNET-Analyzer
+          cp -r BattyBirdNET-Analyzer/checkpoints EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp -r BattyBirdNET-Analyzer/labels EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp -r BattyBirdNET-Analyzer/put-your-files-here EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp BattyBirdNET-Analyzer/audio.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp BattyBirdNET-Analyzer/bat_ident.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp BattyBirdNET-Analyzer/config.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp BattyBirdNET-Analyzer/model.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp BattyBirdNET-Analyzer/species.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp BattyBirdNET-Analyzer/utils.py EcoAcousticAI/BattyBirdNET-Analyzer/
+
+      - name: Commit and push changes
+        run: |
+          cd EcoAcousticAI
+          git add BattyBirdNET-Analyzer/
+          git commit -m "Automated sync of selected files from BattyBirdNET-Analyzer" || echo "No changes to commit"
+          git push origin main || echo "No changes to push"
+
