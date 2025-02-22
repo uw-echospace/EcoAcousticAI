@@ -22,7 +22,7 @@ jobs:
           git remote add upstream https://github.com/rdz-oss/BattyBirdNET-Analyzer.git
           git fetch upstream
           git merge upstream/main
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/jacobp24/BattyBirdNET-Analyzer.git main
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/jacobp24/BattyBirdNET-Analyzer.git main
 
       - name: Copy selected files and folders
         run: |
