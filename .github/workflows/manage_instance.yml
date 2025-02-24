@@ -25,11 +25,26 @@ jobs:
         run: |
           INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
           STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+          
           if [[ "$STATUS" == "SHELVED_OFFLOADED" ]]; then
             echo "Instance is shelved. Unshelving now..."
             openstack --os-cloud=BIO230143_IU server unshelve $INSTANCE_ID
-            sleep 60  # Wait for unshelving to complete
           fi
+
+          echo "Waiting for the instance to become ACTIVE..."
+          for i in {1..10}; do  # Wait up to 10 minutes
+            STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+            if [[ "$STATUS" == "ACTIVE" ]]; then
+              echo "Instance is now ACTIVE!"
+              exit 0
+            fi
+            echo "Instance is still $STATUS. Waiting 60 seconds..."
+            sleep 60
+          done
+
+          echo "Instance failed to become ACTIVE within 10 minutes."
+          exit 1  # Force GitHub Actions to fail if unshelving takes too long
+
 
       - name: Start Instance
         run: |
