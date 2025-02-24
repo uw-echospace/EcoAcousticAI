@@ -63,11 +63,36 @@ jobs:
           echo "Instance IP: $INSTANCE_IP"
           echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV  # Store for later use
 
-      - name: Run Model (Example Placeholder)
+      - name: Mount Manila Storage on Instance
         run: |
-          echo "Running model on instance..."
-          # Here you would SSH into the instance and execute your model script
-          # Example: ssh -i ~/.ssh/my-key.pem ubuntu@INSTANCE_IP "python3 /path/to/model.py"
+          echo "Mounting Manila storage..."
+          SSH_KEY="~/.ssh/id_rsa"  # Change this if your SSH key has a different name
+          STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
+
+          ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@${{ env.INSTANCE_IP }} << 'EOF'
+            echo "Creating mount directory..."
+            sudo mkdir -p /mnt/manila
+
+            echo "Mounting Manila storage..."
+            sudo mount -t nfs $STORAGE_PATH /mnt/manila
+
+            echo "Manila storage successfully mounted at /mnt/manila"
+          EOF
+
+
+      - name: Run Model and Save Results to Manila
+        run: |
+          echo "Running model and saving results..."
+          SSH_KEY="~/.ssh/id_rsa"  # Change this if your SSH key has a different name
+
+            # 🔹 TEST BLOCK: Create a test file in Manila storage
+            echo "Hello from Jetstream2! This file confirms Manila storage is working." > /mnt/manila/test_manila.txt
+            echo "Test file created at /mnt/manila/test_manila.txt"
+
+            # 🔹 Verify that the test file exists
+            ls -lh /mnt/manila/test_manila.txt
+          EOF
+
 
   shelve-instance:
     runs-on: ubuntu-latest
