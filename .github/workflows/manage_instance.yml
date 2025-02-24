@@ -7,7 +7,7 @@ on:
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  unshelve-and-run:
+  unshelve-and-run-model:
     runs-on: ubuntu-latest
     if: github.event.schedule == '0 16 * * 1' || github.event_name == 'workflow_dispatch'
     steps:
@@ -65,7 +65,7 @@ jobs:
 
   shelve-instance:
     runs-on: ubuntu-latest
-    if: github.event.schedule == '0 2 * * 2' || github.event_name == 'workflow_dispatch'
+    needs: unshelve-and-run-model  # <-- This makes sure it runs ONLY after the first job completes
     steps:
       - name: Install OpenStack CLI
         run: sudo apt update && sudo apt install -y python3-openstackclient
@@ -81,9 +81,17 @@ jobs:
         run: |
           INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
           STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+
+          echo "Checking if instance is ready to be shelved..."
+          while [[ "$STATUS" == "BUILD" || "$STATUS" == "REBOOT" || "$STATUS" == "UNSHELVING" ]]; do
+            echo "Instance is still transitioning. Waiting 60 seconds..."
+            sleep 60
+            STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+          done
+
           if [[ "$STATUS" == "ACTIVE" ]]; then
-            echo "Shelving instance..."
+            echo "Shelving instance now..."
             openstack --os-cloud=BIO230143_IU server shelve $INSTANCE_ID
           else
-            echo "Instance is not active, skipping shelve command."
+            echo "Instance is not in a valid state for shelving. Current status: $STATUS"
           fi
