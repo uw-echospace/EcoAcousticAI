@@ -77,8 +77,13 @@ jobs:
             echo "Mounting Manila storage..."
             sudo mount -t nfs $STORAGE_PATH /mnt/manila
 
-            echo "Manila storage successfully mounted at /mnt/manila"
+            echo "Fixing permissions on /mnt/manila/"
+            sudo chown -R ubuntu:ubuntu /mnt/manila/
+            sudo chmod -R 777 /mnt/manila/
+
+            echo "Manila storage successfully mounted and permissions fixed."
           EOF
+
 
       - name: Run Model and Save Results to Manila
         run: |
