@@ -56,12 +56,13 @@ jobs:
             echo "Starting instance..."
             openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
           fi
-      - name: Get Instance IP Address
+      - name: Get Instance Public IP Address
         run: |
           INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
-          INSTANCE_IP=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c addresses | awk '{print $2}')
-          echo "Instance IP: $INSTANCE_IP"
-          echo "INSTANCE_IP=$INSTANCE_IP" >> $GITHUB_ENV  # Store for later use
+          FLOATING_IP=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c addresses | grep -oP 'floating=\K[0-9\.]+')
+          echo "Floating IP: $FLOATING_IP"
+          echo "INSTANCE_IP=$FLOATING_IP" >> $GITHUB_ENV  # Store for later use
+
 
       - name: Set Up SSH Key
         run: |
