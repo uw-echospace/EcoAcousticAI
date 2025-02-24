@@ -2,12 +2,12 @@ name: Manage Jetstream2 Instance
 
 on:
   schedule:
-    - cron: '0 16 * * 1'  # 8 AM PT (16:00 UTC) every Monday - Start instance
-    - cron: '0 2 * * 2'   # 6 PM PT (02:00 UTC Tuesday) - Stop instance
+    - cron: '0 16 * * 1'  # 8 AM PT (16:00 UTC) every Monday - Unshelve instance
+    - cron: '0 2 * * 2'   # 6 PM PT (02:00 UTC Tuesday) - Shelve instance
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  start-instance:
+  unshelve-and-run:
     runs-on: ubuntu-latest
     if: github.event.schedule == '0 16 * * 1' || github.event_name == 'workflow_dispatch'
     steps:
@@ -21,12 +21,34 @@ jobs:
           chmod 600 ~/.config/openstack/clouds.yaml
           openstack --os-cloud=BIO230143_IU server list  # Debug check
 
-      - name: Start Jetstream2 Instance
+      - name: Unshelve the Instance
         run: |
-          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"  
-          openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
+          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
+          STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+          if [[ "$STATUS" == "SHELVED_OFFLOADED" ]]; then
+            echo "Instance is shelved. Unshelving now..."
+            openstack --os-cloud=BIO230143_IU server unshelve $INSTANCE_ID
+            sleep 60  # Wait for unshelving to complete
+          fi
 
-  stop-instance:
+      - name: Start Instance
+        run: |
+          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
+          STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+          if [[ "$STATUS" == "ACTIVE" ]]; then
+            echo "Instance is already active."
+          else
+            echo "Starting instance..."
+            openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
+          fi
+
+      - name: Run Model (Example Placeholder)
+        run: |
+          echo "Running model on instance..."
+          # Here you would SSH into the instance and execute your model script
+          # Example: ssh -i ~/.ssh/my-key.pem ubuntu@INSTANCE_IP "python3 /path/to/model.py"
+
+  shelve-instance:
     runs-on: ubuntu-latest
     if: github.event.schedule == '0 2 * * 2' || github.event_name == 'workflow_dispatch'
     steps:
@@ -40,7 +62,13 @@ jobs:
           chmod 600 ~/.config/openstack/clouds.yaml
           openstack --os-cloud=BIO230143_IU server list  # Debug check
 
-      - name: Stop Jetstream2 Instance
+      - name: Shelve Instance
         run: |
-          INSTANCE_ID="abcd1234-5678-90ef-ghij-klmnopqrstuv"  # Replace with actual instance ID
-          openstack --os-cloud=BIO230143_IU server stop $INSTANCE_ID
+          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
+          STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+          if [[ "$STATUS" == "ACTIVE" ]]; then
+            echo "Shelving instance..."
+            openstack --os-cloud=BIO230143_IU server shelve $INSTANCE_ID
+          else
+            echo "Instance is not active, skipping shelve command."
+          fi
