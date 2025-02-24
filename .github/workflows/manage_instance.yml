@@ -1,0 +1,46 @@
+name: Manage Jetstream2 Instance
+
+on:
+  schedule:
+    - cron: '0 16 * * 1'  # 8 AM PT (16:00 UTC) every Monday - Start instance
+    - cron: '0 2 * * 2'   # 6 PM PT (02:00 UTC Tuesday) - Stop instance
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  start-instance:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 16 * * 1' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Install OpenStack CLI
+        run: sudo apt update && sudo apt install -y python3-openstackclient
+
+      - name: Authenticate with OpenStack
+        run: |
+          mkdir -p ~/.config/openstack
+          echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
+          chmod 600 ~/.config/openstack/clouds.yaml
+          openstack --os-cloud=BIO230143_IU server list  # Debug check
+
+      - name: Start Jetstream2 Instance
+        run: |
+          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"  
+          openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
+
+  stop-instance:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 2 * * 2' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Install OpenStack CLI
+        run: sudo apt update && sudo apt install -y python3-openstackclient
+
+      - name: Authenticate with OpenStack
+        run: |
+          mkdir -p ~/.config/openstack
+          echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
+          chmod 600 ~/.config/openstack/clouds.yaml
+          openstack --os-cloud=BIO230143_IU server list  # Debug check
+
+      - name: Stop Jetstream2 Instance
+        run: |
+          INSTANCE_ID="abcd1234-5678-90ef-ghij-klmnopqrstuv"  # Replace with actual instance ID
+          openstack --os-cloud=BIO230143_IU server stop $INSTANCE_ID
