@@ -1,14 +1,9 @@
-# Check if devtools is installed, if not, install it
-if (!require(devtools)) {
-  install.packages("devtools")
-}
-
 # Load devtools and install the 'buzzfindr' package from GitHub
-devtools::install_github("joelwjameson/buzzfindr")
+remotes::install_github("joelwjameson/buzzfindr")
 library(buzzfindr)
 
 # Set the path to your recordings (ensure the path is correct and accessible)
-path <- "~/recordings_2023"
+path <- "/app/recordings_2023/"
 
 # Run the detection function from 'buzzfindr'
 detected_buzzes <- buzzfindr(path = path)

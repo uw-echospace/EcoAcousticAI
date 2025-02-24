@@ -7,6 +7,7 @@ RUN apt-get update && apt-get upgrade -y
 # Then proceed to install the necessary system dependencies
 RUN apt-get install -y \
     git \
+    cmake \
     libgit2-dev \
     gfortran \
     build-essential \
@@ -23,7 +24,12 @@ RUN apt-get install -y \
     && apt-get clean
 
 # Install necessary R packages
-RUN R -e "install.packages(c('cli', 'desc', 'ellipsis', 'fs', 'lifecycle', 'memoise', 'miniUI', 'pkgbuild', 'pkgdown', 'pkgload', 'profvis', 'rcmdcheck', 'remotes', 'rlang', 'roxygen2', 'rversions', 'sessioninfo', 'testthat', 'tools', 'urlchecker', 'withr', 'usethis', 'callr', 'covr', 'curl', 'digest', 'DT', 'foghorn', 'gh', 'gmailr', 'httr', 'knitr', 'lintr', 'MASS', 'mockery', 'pingr', 'rhub', 'rmarkdown', 'rstudioapi', 'spelling'), repos = 'https://cran.rstudio.com/')"
+#RUN R -e "install.packages(c('cli', 'desc', 'ellipsis', 'fs', 'lifecycle', 'memoise', 'miniUI', 'pkgbuild', 'pkgdown', 'pkgload', 'profvis', 'rcmdcheck', 'remotes', 'rlang', 'roxygen2', 'rversions', 'sessioninfo', 'testthat', 'tools', 'urlchecker', 'withr', 'usethis', 'callr', 'covr', 'curl', 'digest', 'DT', 'foghorn', 'gh', 'gmailr', 'httr', 'knitr', 'lintr', 'MASS', 'mockery', 'pingr', 'rhub', 'rmarkdown', 'rstudioapi', 'spelling'), repos = 'https://cran.rstudio.com/')"
+RUN R -e "install.packages(c('nloptr', 'bioacoustics', 'lme4', 'pbkrtest', 'car'))"
+
+# Install necessary R packages
+RUN R -e "install.packages(c('seewave', 'tuneR', 'runner', 'svMisc', 'rlist', 'dplyr', 'entropy', 'parallel'), repos = 'https://cran.rstudio.com/')"
+
 
 RUN R -e "install.packages('remotes', repos = 'https://cran.rstudio.com/')"
 
