@@ -25,11 +25,10 @@ RUN apt-get install -y \
 # Install necessary R packages
 RUN R -e "install.packages(c('cli', 'desc', 'ellipsis', 'fs', 'lifecycle', 'memoise', 'miniUI', 'pkgbuild', 'pkgdown', 'pkgload', 'profvis', 'rcmdcheck', 'remotes', 'rlang', 'roxygen2', 'rversions', 'sessioninfo', 'testthat', 'tools', 'urlchecker', 'withr', 'usethis', 'callr', 'covr', 'curl', 'digest', 'DT', 'foghorn', 'gh', 'gmailr', 'httr', 'knitr', 'lintr', 'MASS', 'mockery', 'pingr', 'rhub', 'rmarkdown', 'rstudioapi', 'spelling'), repos = 'https://cran.rstudio.com/')"
 
-# Install 'devtools' from CRAN
-RUN R -e "install.packages('devtools', repos = 'https://cran.rstudio.com/')"
+RUN R -e "install.packages('remotes', repos = 'https://cran.rstudio.com/')"
 
 # Install 'buzzfindr' from GitHub using devtools
-RUN R -e "devtools::install_github('joelwjameson/buzzfindr')"
+RUN R -e "remotes::install_github('joelwjameson/buzzfindr')"
 
 # Set working directory in the container
 WORKDIR /app
