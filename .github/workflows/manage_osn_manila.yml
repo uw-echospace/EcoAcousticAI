@@ -76,7 +76,7 @@ jobs:
             NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
             # Step 2: Mount the OSN bucket using rclone (with daemon option)
-            rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other --daemon 
+            rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other 
             COUNTER=0
             MAX_RETRIES=30  # Retry limit (adjust if needed)
             MOUNT_READY=false
