@@ -80,16 +80,12 @@ jobs:
             # Step 2: Unmount the existing FUSE filesystem (if mounted)
             fusermount -u /tmp/osn_bucket/ || true
 
+            echo "after fusermount"
+
             # Step 3: Mount the FUSE filesystem with rclone using allow_other
             rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other 
 
-            # Check if mount is successful
-            if ! ls /tmp/osn_bucket/; then
-            echo "Error: Mount failed or directory is empty."
-            exit 1
-            fi
-            # Step 2: Mount the OSN bucket using rclone (with daemon option)
-            #rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other 
+            echo "right after step 3"
 
             COUNTER=0
             MAX_RETRIES=30  # Retry limit (adjust if needed)
@@ -101,26 +97,27 @@ jobs:
                 COUNTER=$((COUNTER + 1))
             done
 
-            # Check if mount is ready
-            if [[ ! -d /tmp/osn_bucket/ ]]; then
-                echo "Error: Mount failed or directory is still not ready."
-                exit 1
-            fi
+            echo "mounted"
+
             # Step 3: Add a short delay to ensure the mount has completed (optional)
             sleep 200  # Adjust sleep time as necessary to give rclone time to mount
 
             chmod 777 /tmp/osn_bucket/
-
-            # Check if mount is successful
-            if ! ls /tmp/osn_bucket/; then
-                echo "Error: Mount failed or directory is empty."
-                exit 1
-            fi
             
+            echo "before container run"
+
             # Step 7: Run the Docker container with the mounted OSN bucket file
             docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
             #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image
             
+            mkdir -p tmp1/output_dir
+            chmod 777 /tmp1/output_dir
+
+            docker run --mount type=bind,source=tmp/osn_bucket,target=/app/recordings_2023/ \
+            --mount type=bind,source=tmp1/output_dir,target=/app/output_dir \
+            bat-detect-msds python3 src/batdt2_pipeline.py --input_audio='/app/recordings_2023/20230620_080000_copy.WAV' \
+            --output_directory='/app/output_dir' --run_model --csv
+
             # Clean up (optional, unmount the rclone mount)
             umount /tmp/osn_bucket/
 
