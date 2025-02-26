@@ -70,22 +70,29 @@ jobs:
         if: steps.check_data.outputs.new_data == 'true'
         run: |
             mkdir -p /tmp/osn_bucket/
-            rclone mount osn_sdsc_ubna:bio230143-bucket01 /tmp/osn_bucket/ --daemon
-            
-            # Get the most recent directory or file to process
-            NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA"
-            echo $NEW_DATA_PATH
 
-            # Ensure the file exists and is accessible
-            if [[ ! -f "$NEW_DATA_PATH" ]]; then
-                echo "Error: Data file not found: $NEW_DATA_PATH"
+            # Step 2: Mount the OSN bucket using rclone (with daemon option)
+            rclone mount osn_sdsc_ubna:bio230143-bucket01 /tmp/osn_bucket/ --daemon
+
+            # Step 3: Add a short delay to ensure the mount has completed (optional)
+            sleep 200  # Adjust sleep time as necessary to give rclone time to mount
+            
+            # Step 4: Get the most recent directory or file to process (assuming NEW_DATA is set elsewhere)
+            NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA"
+            
+            # Step 5: Print the NEW_DATA_PATH to check if it's correct
+            echo "Checking path: $NEW_DATA_PATH"
+            
+            # Step 6: Ensure the file exists and is accessible
+            if [[ ! -d "$NEW_DATA_PATH" ]]; then  # Use -d to check for directories
+                echo "Error: Data directory not found: $NEW_DATA_PATH"
                 exit 1
             fi
-
-            # Run the Docker container with the mounted OSN bucket file
+            
+            # Step 7: Run the Docker container with the mounted OSN bucket file
             docker pull buzzfindr-image:latest
-            docker run -v "$NEW_DATA_PATH":/app/recordings_2023/ buzzfindr-image:latest 
-
+            docker run -v "$NEW_DATA_PATH":/app/recordings_2023/ buzzfindr-image:latest
+            
             # Clean up (optional, unmount the rclone mount)
             umount /tmp/osn_bucket/
 
