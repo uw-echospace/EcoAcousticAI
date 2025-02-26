@@ -76,11 +76,13 @@ jobs:
             NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
             # Step 2: Mount the OSN bucket using rclone (with daemon option)
-            rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --daemon
+            rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other --daemon 
 
             # Step 3: Add a short delay to ensure the mount has completed (optional)
             sleep 200  # Adjust sleep time as necessary to give rclone time to mount
 
+            chmod 777 /tmp/osn_bucket/
+            
             # Check if mount is successful
             if ! ls /tmp/osn_bucket/; then
                 echo "Error: Mount failed or directory is empty."
@@ -88,7 +90,7 @@ jobs:
             fi
             
             # Step 7: Run the Docker container with the mounted OSN bucket file
-            sudo docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
+            docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
             #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image
             
             # Clean up (optional, unmount the rclone mount)
