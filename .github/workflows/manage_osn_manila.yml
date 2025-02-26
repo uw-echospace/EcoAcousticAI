@@ -83,8 +83,7 @@ jobs:
 
             # Step 4: Get the most recent directory or file to process (assuming NEW_DATA is set elsewhere)
             #NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA/"
-            CONTENTS = $(ls /tmp/osn_bucket/)
-            echo $CONTENTS
+            
             # Step 5: Print the NEW_DATA_PATH to check if it's correct
             #echo "Checking path: $NEW_DATA_PATH/"
             
