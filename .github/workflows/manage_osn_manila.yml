@@ -77,12 +77,26 @@ jobs:
 
             # Step 2: Mount the OSN bucket using rclone (with daemon option)
             rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other --daemon 
+            COUNTER=0
+            MAX_RETRIES=30  # Retry limit (adjust if needed)
+            MOUNT_READY=false
 
+            while [[ ! -d /tmp/osn_bucket/ && $COUNTER -lt $MAX_RETRIES ]]; do
+                echo "Waiting for mount to be ready..."
+                sleep 10  # Adjust sleep time as necessary to give rclone time to mount
+                COUNTER=$((COUNTER + 1))
+            done
+
+            # Check if mount is ready
+            if [[ ! -d /tmp/osn_bucket/ ]]; then
+                echo "Error: Mount failed or directory is still not ready."
+                exit 1
+            fi
             # Step 3: Add a short delay to ensure the mount has completed (optional)
             sleep 200  # Adjust sleep time as necessary to give rclone time to mount
 
             chmod 777 /tmp/osn_bucket/
-            
+
             # Check if mount is successful
             if ! ls /tmp/osn_bucket/; then
                 echo "Error: Mount failed or directory is empty."
