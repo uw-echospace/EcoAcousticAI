@@ -45,7 +45,7 @@ jobs:
           echo "Most recent directory: $NEW_DATA"
 
           # Default latest directory (if no previous directory file exists)
-          LAST_PROCESSED_DIRECTORY="ubna_data_05"
+          LAST_PROCESSED_DIRECTORY="ubna_data_04"
 
           # If previous directory exists in latest_directory.txt, use it
           if [[ -f latest_directory.txt ]]; then
