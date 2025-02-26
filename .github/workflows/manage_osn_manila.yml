@@ -73,7 +73,7 @@ jobs:
             rclone mount osn_sdsc_ubna:bio230143-bucket01 /tmp/osn_bucket/ --daemon
             
             # Get the most recent directory or file to process
-            NEW_DATA_PATH="tmp/osn_bucket/$NEW_DATA"
+            NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA"
 
             # Ensure the file exists and is accessible
             if [[ ! -f "$NEW_DATA_PATH" ]]; then
