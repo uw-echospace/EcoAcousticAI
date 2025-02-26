@@ -1,0 +1,103 @@
+name: Process OSN Bucket Data with Docker Model
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Every night at midnight UTC
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  process_data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Checkout repository (if any code changes are needed)
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Install rclone and configure it for OSN access
+      - name: Set up rclone for OSN access
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rclone
+          mkdir -p ~/.config/rclone
+          echo "[osn_sdsc_ubna]" > ~/.config/rclone/rclone.conf
+          echo "type = s3" >> ~/.config/rclone/rclone.conf
+          echo "provider = Ceph" >> ~/.config/rclone/rclone.conf
+          echo "access_key_id = " >> ~/.config/rclone/rclone.conf  # Leave blank for public access
+          echo "secret_access_key = " >> ~/.config/rclone/rclone.conf  # Leave blank for public access
+          echo "endpoint = https://sdsc.osn.xsede.org" >> ~/.config/rclone/rclone.conf
+          echo "no_check_bucket = true" >> ~/.config/rclone/rclone.conf
+
+      # Step 3: Download the latest directory info artifact (if exists)
+      - name: Download latest directory info artifact (if exists)
+        uses: actions/download-artifact@v3
+        with:
+          name: latest-directory-artifact
+          path: ./latest_directory.txt
+        continue-on-error: true  # If the artifact doesn't exist, continue without error
+
+      # Step 4: Check for the most recent directory in the OSN bucket
+      - name: Check for most recent directory in OSN bucket
+        id: check_data
+        run: |
+          # List directories in the OSN bucket using rclone
+          NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1)
+          echo "Most recent directory: $NEW_DATA"
+
+          # Default latest directory (if no previous directory file exists)
+          LAST_PROCESSED_DIRECTORY="ubna_data_05"
+
+          # If previous directory exists in latest_directory.txt, use it
+          if [[ -f latest_directory.txt ]]; then
+            LAST_PROCESSED_DIRECTORY=$(cat latest_directory.txt)
+          fi
+
+          # Compare the most recent directory to the last processed directory
+          if [[ "$NEW_DATA" == "$LAST_PROCESSED_DIRECTORY" ]]; then
+            echo "No new data found"
+            echo "::set-output name=new_data::false"
+          else
+            echo "New data detected"
+            echo "::set-output name=new_data::true"
+            echo "::set-output name=new_data_path::osn_sdsc_ubna:bio230143-bucket01/${NEW_DATA}"
+
+            # Update the latest processed directory
+            echo "$NEW_DATA" > latest_directory.txt
+          fi
+
+      # Step 5: Mount the OSN bucket and process data in Docker
+      - name: Mount OSN bucket and process data in Docker
+        if: steps.check_data.outputs.new_data == 'true'
+        run: |
+            mkdir -p ~/osn_bucket
+            rclone mount osn_sdsc_ubna:bio230143-bucket01 ~/osn_bucket --daemon
+            
+            # Get the most recent directory or file to process
+            NEW_DATA_PATH="~/osn_bucket/${{ steps.check_data.outputs.new_data_path }}"
+
+            # Ensure the file exists and is accessible
+            if [[ ! -f "$NEW_DATA_PATH" ]]; then
+                echo "Error: Data file not found: $NEW_DATA_PATH"
+                exit 1
+            fi
+
+            # Run the Docker container with the mounted OSN bucket file
+            docker pull buzzfindr-image:latest
+            docker run -v "$NEW_PATH":/app/recordings_2023/ buzzfindr-image:latest 
+
+            # Clean up (optional, unmount the rclone mount)
+            fusermount -u ~/osn_bucket || true
+
+      # Step 6: Upload the latest directory info as an artifact for next run
+      - name: Upload latest directory info artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: latest-directory-artifact
+          path: latest_directory.txt
+          
+      # Step 7: Move the output to Manila folder on Jetstream2
+      - name: Move output to Manila folder on Jetstream2
+        if: steps.check_data.outputs.new_data == 'true'
+        run: |
+          sshpass -p "${{ secrets.JETSTREAM_PASSWORD }}" scp -r ~/osn_bucket/output/ user@jetstream2:/path/to/manila/folder/
+          echo "Output moved to Jetstream2 manila folder"
