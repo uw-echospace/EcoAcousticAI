@@ -82,10 +82,10 @@ jobs:
             NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
             # Step 4: Get the most recent directory or file to process (assuming NEW_DATA is set elsewhere)
-            NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA"
+            NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA/"
             
             # Step 5: Print the NEW_DATA_PATH to check if it's correct
-            echo "Checking path: $NEW_DATA_PATH"
+            echo "Checking path: $NEW_DATA_PATH/"
             
             # Step 6: Ensure the file exists and is accessible
             if [[ ! -d "$NEW_DATA_PATH" ]]; then  # Use -d to check for directories
