@@ -13,6 +13,8 @@ jobs:
       # Step 1: Checkout repository (if any code changes are needed)
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Build docker images
+        run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
 
       # Step 2: Install rclone and configure it for OSN access
       - name: Set up rclone for OSN access
@@ -76,7 +78,9 @@ jobs:
 
             # Step 3: Add a short delay to ensure the mount has completed (optional)
             sleep 200  # Adjust sleep time as necessary to give rclone time to mount
-            
+
+            NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
+
             # Step 4: Get the most recent directory or file to process (assuming NEW_DATA is set elsewhere)
             NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA"
             
@@ -90,7 +94,6 @@ jobs:
             fi
             
             # Step 7: Run the Docker container with the mounted OSN bucket file
-            docker pull buzzfindr-image:latest
             docker run -v "$NEW_DATA_PATH":/app/recordings_2023/ buzzfindr-image:latest
             
             # Clean up (optional, unmount the rclone mount)
