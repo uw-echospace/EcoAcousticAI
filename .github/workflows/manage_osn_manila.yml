@@ -75,8 +75,22 @@ jobs:
 
             NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
-            # Step 2: Mount the OSN bucket using rclone (with daemon option)
+            sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
+
+            # Step 2: Unmount the existing FUSE filesystem (if mounted)
+            fusermount -u /tmp/osn_bucket/ || true
+
+            # Step 3: Mount the FUSE filesystem with rclone using allow_other
             rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other 
+
+            # Check if mount is successful
+            if ! ls /tmp/osn_bucket/; then
+            echo "Error: Mount failed or directory is empty."
+            exit 1
+            fi
+            # Step 2: Mount the OSN bucket using rclone (with daemon option)
+            #rclone mount "osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/" /tmp/osn_bucket/ --allow-other 
+
             COUNTER=0
             MAX_RETRIES=30  # Retry limit (adjust if needed)
             MOUNT_READY=false
