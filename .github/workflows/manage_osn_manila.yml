@@ -41,7 +41,7 @@ jobs:
         id: check_data
         run: |
           # List directories in the OSN bucket using rclone
-          NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1)
+          NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
           echo "Most recent directory: $NEW_DATA"
 
           # Default latest directory (if no previous directory file exists)
