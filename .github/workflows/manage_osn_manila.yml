@@ -69,11 +69,11 @@ jobs:
       - name: Mount OSN bucket and process data in Docker
         if: steps.check_data.outputs.new_data == 'true'
         run: |
-            mkdir -p /tmp/osn_bucket
-            rclone mount osn_sdsc_ubna:bio230143-bucket01 /tmp/osn_bucket --daemon
+            mkdir -p /tmp/osn_bucket/
+            rclone mount osn_sdsc_ubna:bio230143-bucket01 /tmp/osn_bucket/ --daemon
             
             # Get the most recent directory or file to process
-            NEW_DATA_PATH="tmp/osn_bucket/${{ steps.check_data.outputs.new_data_path }}"
+            NEW_DATA_PATH="tmp/osn_bucket/$NEW_DATA"
 
             # Ensure the file exists and is accessible
             if [[ ! -f "$NEW_DATA_PATH" ]]; then
@@ -86,7 +86,7 @@ jobs:
             docker run -v "$NEW_DATA_PATH":/app/recordings_2023/ buzzfindr-image:latest 
 
             # Clean up (optional, unmount the rclone mount)
-            umount tmp/osn_bucket
+            umount /tmp/osn_bucket/
 
       # Step 6: Upload the latest directory info as an artifact for next run
       - name: Upload latest directory info artifact
