@@ -74,6 +74,7 @@ jobs:
             
             # Get the most recent directory or file to process
             NEW_DATA_PATH="/tmp/osn_bucket/$NEW_DATA"
+            echo $NEW_DATA_PATH
 
             # Ensure the file exists and is accessible
             if [[ ! -f "$NEW_DATA_PATH" ]]; then
