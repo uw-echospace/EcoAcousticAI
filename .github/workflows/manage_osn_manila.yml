@@ -30,7 +30,7 @@ jobs:
 
       # Step 3: Download the latest directory info artifact (if exists)
       - name: Download latest directory info artifact (if exists)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: latest-directory-artifact
           path: ./latest_directory.txt
@@ -90,7 +90,7 @@ jobs:
 
       # Step 6: Upload the latest directory info as an artifact for next run
       - name: Upload latest directory info artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: latest-directory-artifact
           path: latest_directory.txt
