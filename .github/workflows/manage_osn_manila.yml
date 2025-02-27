@@ -16,7 +16,7 @@ jobs:
 
       # Step 3: Build docker image for bat-detect-msds
       - name: Build bat-detect-msds image
-        run: docker build -t bat-detect -f ./bat-detect-msds/Dockerfile .
+        run: docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
       - name: Build buzzfindr image
         run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
