@@ -1,0 +1,3 @@
+[submodule "bat-detect"]
+	path = bat-detect
+	url = https://github.com/ishagokhale/bat-detector-msds_fork.git
