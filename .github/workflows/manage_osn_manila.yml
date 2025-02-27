@@ -88,7 +88,7 @@ jobs:
             echo "after fusermount"
 
             # Step 3: Mount the FUSE filesystem with rclone using allow_other
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02:/recover-20230622/UBNA_007/ /tmp/osn_bucket/ --allow-other \
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ --allow-other \
             --vfs-cache-mode off \
             --buffer-size 100M \
             --vfs-read-ahead 100M \
