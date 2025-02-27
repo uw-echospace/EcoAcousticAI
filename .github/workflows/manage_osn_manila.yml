@@ -78,22 +78,17 @@ jobs:
         run: |
             mkdir -p /tmp/osn_bucket/
 
-            NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
+            #NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
-            sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
+            #sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
 
             # Step 2: Unmount the existing FUSE filesystem (if mounted)
-            fusermount -u /tmp/osn_bucket/ || true
+            #fusermount -u /tmp/osn_bucket/ || true
 
             echo "after fusermount"
 
             # Step 3: Mount the FUSE filesystem with rclone using allow_other
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ --allow-other \
-            --vfs-cache-mode off \
-            --buffer-size 100M \
-            --vfs-read-ahead 100M \
-            --dir-cache-time 12h \
-            --log-level DEBUG
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ --vfs-cache-mode writes --log-level DEBUG 
 
             echo "right after step 3"
 
