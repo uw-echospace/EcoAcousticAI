@@ -18,7 +18,7 @@ jobs:
 
       # Step 3: Build docker image for bat-detect-msds
       - name: Build bat-detect-msds image
-        run: docker build -t bat-detect-msds -f ./bat-detect/Dockerfile .
+        run: docker build -t bat-detect -f ./bat-detect/Dockerfile .
 
       # Step 2: Install rclone and configure it for OSN access
       - name: Set up rclone for OSN access
