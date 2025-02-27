@@ -92,19 +92,20 @@ jobs:
             rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ \
             --vfs-cache-mode off \
             --log-level DEBUG \
-            --allow-other
+            --allow-other \
+            --daemon
 
             echo "right after step 3"
 
-            COUNTER=0
-            MAX_RETRIES=30  # Retry limit (adjust if needed)
-            MOUNT_READY=false
+            #COUNTER=0
+            #MAX_RETRIES=30  # Retry limit (adjust if needed)
+            #MOUNT_READY=false
 
-            while [[ ! -d /tmp/osn_bucket/ && $COUNTER -lt $MAX_RETRIES ]]; do
-                echo "Waiting for mount to be ready..."
-                sleep 10  # Adjust sleep time as necessary to give rclone time to mount
-                COUNTER=$((COUNTER + 1))
-            done
+            #while [[ ! -d /tmp/osn_bucket/ && $COUNTER -lt $MAX_RETRIES ]]; do
+                #echo "Waiting for mount to be ready..."
+                #sleep 10  # Adjust sleep time as necessary to give rclone time to mount
+                #COUNTER=$((COUNTER + 1))
+            #done
 
             echo "mounted"
 
