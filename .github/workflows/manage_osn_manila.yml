@@ -77,6 +77,8 @@ jobs:
         if: steps.check_data.outputs.new_data == 'true'
         run: |
             mkdir -p /tmp/osn_bucket/
+            mkdir -p /tmp1/output_dir/
+            chmod 777 /tmp1/output_dir/
 
             #NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
@@ -119,9 +121,6 @@ jobs:
             # Step 7: Run the Docker container with the mounted OSN bucket file
             #docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
             #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image
-            
-            mkdir -p /tmp1/output_dir
-            chmod 777 /tmp1/output_dir
 
             docker run --mount type=bind,source=/tmp/osn_bucket,target=/app/recordings_2023/ \
             --mount type=bind,source=/tmp1/output_dir,target=/app/output_dir/ \
