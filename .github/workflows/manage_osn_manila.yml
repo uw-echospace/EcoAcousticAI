@@ -80,7 +80,7 @@ jobs:
 
             #NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
-            #sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
+            sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
 
             # Step 2: Unmount the existing FUSE filesystem (if mounted)
             #fusermount -u /tmp/osn_bucket/ || true
