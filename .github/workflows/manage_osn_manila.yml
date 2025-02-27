@@ -77,8 +77,7 @@ jobs:
         if: steps.check_data.outputs.new_data == 'true'
         run: |
             mkdir -p /tmp/osn_bucket/
-            mkdir -p /tmp1/output_dir/
-            chmod 777 /tmp1/output_dir/
+            chmod 777 /tmp/osn_bucket/
 
             #NEW_DATA=$(rclone lsd osn_sdsc_ubna:bio230143-bucket01 | sort | tail -n 1| awk '{print $NF}')
 
@@ -97,27 +96,17 @@ jobs:
             --allow-other \
             --daemon
 
-            echo "right after step 3"
-
-            #COUNTER=0
-            #MAX_RETRIES=30  # Retry limit (adjust if needed)
-            #MOUNT_READY=false
-
-            #while [[ ! -d /tmp/osn_bucket/ && $COUNTER -lt $MAX_RETRIES ]]; do
-                #echo "Waiting for mount to be ready..."
-                #sleep 10  # Adjust sleep time as necessary to give rclone time to mount
-                #COUNTER=$((COUNTER + 1))
-            #done
-
             echo "mounted"
 
-            # Step 3: Add a short delay to ensure the mount has completed (optional)
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
-
-            chmod 777 /tmp/osn_bucket/
             
             echo "before container run"
-
+      - name: create directory
+        run: |
+            mkdir -p /tmp1/output_dir/
+            chmod 777 /tmp1/output_dir/
+      - name: Run Docker container with mounted directories
+        run: |
             # Step 7: Run the Docker container with the mounted OSN bucket file
             #docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
             #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image
