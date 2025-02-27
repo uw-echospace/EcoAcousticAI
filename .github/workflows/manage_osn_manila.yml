@@ -13,16 +13,12 @@ jobs:
       # Step 1: Checkout repository (if any code changes are needed)
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Build docker images
+      - name: Build buzzfindr image
         run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
-          
-      - name: Echo current working directory
-        run: |
-          echo "Current directory: $(pwd)"
 
       # Step 3: Build docker image for bat-detect-msds
       - name: Build bat-detect-msds image
-        run: docker build --no-cache -t bat-detect-msds -f ./bat_detect/Dockerfile .
+        run: docker build -t bat-detect-msds -f ./bat_detect/Dockerfile .
 
       # Step 2: Install rclone and configure it for OSN access
       - name: Set up rclone for OSN access
