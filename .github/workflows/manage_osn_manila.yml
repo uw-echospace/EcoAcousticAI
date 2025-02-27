@@ -15,11 +15,11 @@ jobs:
         uses: actions/checkout@v4
 
       # Step 3: Build docker image for bat-detect-msds
-      - name: Build bat-detect-msds image
-        run: docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
+      #- name: Build bat-detect-msds image
+      #  run: docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
-      - name: Build buzzfindr image
-        run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
+      #- name: Build buzzfindr image
+      #  run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
 
       # Step 2: Install rclone and configure it for OSN access
       - name: Set up rclone for OSN access
@@ -88,7 +88,11 @@ jobs:
             echo "after fusermount"
 
             # Step 3: Mount the FUSE filesystem with rclone using allow_other
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ --vfs-cache-mode writes --log-level DEBUG 
+            #rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ --vfs-cache-mode writes --log-level DEBUG 
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ \
+            --vfs-cache-mode off \
+            --log-level DEBUG \
+            --allow-other
 
             echo "right after step 3"
 
