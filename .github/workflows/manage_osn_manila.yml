@@ -120,11 +120,11 @@ jobs:
             #docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
             #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image
             
-            mkdir -p tmp1/output_dir
+            mkdir -p /tmp1/output_dir
             chmod 777 /tmp1/output_dir
 
             docker run --mount type=bind,source=/tmp/osn_bucket,target=/app/recordings_2023/ \
-            --mount type=bind,source=tmp1/output_dir,target=/app/output_dir/ \
+            --mount type=bind,source=/tmp1/output_dir,target=/app/output_dir/ \
             bat-detect-msds python3 src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
 
