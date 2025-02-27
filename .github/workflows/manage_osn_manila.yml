@@ -15,8 +15,8 @@ jobs:
         uses: actions/checkout@v4
 
       # Step 3: Build docker image for bat-detect-msds
-      #- name: Build bat-detect-msds image
-      #  run: docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
+      - name: Build bat-detect-msds image
+        run: docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
       #- name: Build buzzfindr image
       #  run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
@@ -110,23 +110,23 @@ jobs:
             echo "mounted"
 
             # Step 3: Add a short delay to ensure the mount has completed (optional)
-            sleep 200  # Adjust sleep time as necessary to give rclone time to mount
+            sleep 100  # Adjust sleep time as necessary to give rclone time to mount
 
             chmod 777 /tmp/osn_bucket/
             
             echo "before container run"
 
             # Step 7: Run the Docker container with the mounted OSN bucket file
-            docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
+            #docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
             #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image
             
             mkdir -p tmp1/output_dir
             chmod 777 /tmp1/output_dir
 
-            docker run --mount type=bind,source=tmp/osn_bucket,target=/app/recordings_2023/ \
-            --mount type=bind,source=tmp1/output_dir,target=/app/output_dir \
-            bat-detect-msds python3 src/batdt2_pipeline.py --input_audio='/app/recordings_2023/20230620_080000_copy.WAV' \
-            --output_directory='/app/output_dir' --run_model --csv
+            docker run --mount type=bind,source=/tmp/osn_bucket,target=/app/recordings_2023/ \
+            --mount type=bind,source=tmp1/output_dir,target=/app/output_dir/ \
+            bat-detect-msds python3 src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
+            --output_directory='/app/output_dir/' --run_model --csv
 
             # Clean up (optional, unmount the rclone mount)
             umount /tmp/osn_bucket/
