@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y libimage-exiftool-perl
 WORKDIR /app
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r app/requirements.txt
 
 # Expose necessary ports if applicable (e.g., API, web server)
 # EXPOSE 8000
