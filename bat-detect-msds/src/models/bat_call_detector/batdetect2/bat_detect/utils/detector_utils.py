@@ -40,7 +40,7 @@ def get_audio_files(ip_dir):
 
 def load_model(model_path, load_weights=True):
     print('model path')
-    model_path = "/app/bat-detect-msds/src/models/bat_call_detector/batdetect2/models/Net2DFast_UK_same.pth.tar"
+    model_path = "/app/src/models/bat_call_detector/batdetect2/models/Net2DFast_UK_same.pth.tar"
     print(model_path)
     print("Current working directory:", os.getcwd())
     # load model
