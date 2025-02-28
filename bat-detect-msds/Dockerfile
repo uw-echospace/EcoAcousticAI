@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y libimage-exiftool-perl
 WORKDIR /app
 COPY . .
 
-RUN ls -l /app/
+RUN ls -l /app/bat-detect-msds/src/models/
 
 RUN pip install --no-cache-dir -r /app/bat-detect-msds/requirements.txt
 
