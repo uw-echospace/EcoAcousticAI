@@ -101,6 +101,7 @@ jobs:
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
   run_gpu_job: 
     runs-on: self-hosted
+    needs: process_data
     steps:
       - name: Run Docker container with mounted directories
         run: |
