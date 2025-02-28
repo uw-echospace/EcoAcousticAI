@@ -75,7 +75,7 @@ def get_params(make_dirs=False, exps_dir='../../experiments/'):
     # train params
     params['lr'] = 0.001
     params['batch_size'] = 8
-    params['num_workers'] = 4
+    params['num_workers'] = 10
     params['num_epochs'] = 200
     params['num_eval_epochs'] = 5  # run evaluation every X epochs
     params['device'] = 'cuda'
