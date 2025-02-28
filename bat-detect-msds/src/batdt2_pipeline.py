@@ -280,7 +280,7 @@ def open_and_get_call_info(audio_file, dets):
     output_dir = Path(f'{Path(__file__).parent}/../../duty-cycle-investigation/data/generated_welch/{welch_key}')
     output_file_type = 'top1_inbouts_welch_signals'
     #welch_data = pd.read_csv(output_dir / f'2022_{welch_key}_{output_file_type}.csv', index_col=0, low_memory=False)
-    welch_data = pd.read_csv('2022_all_locations_top1_inbouts_welch_signals.csv', index_col = 0, low_memory = False)
+    welch_data = pd.read_csv('../2022_all_locations_top1_inbouts_welch_signals.csv', index_col = 0, low_memory = False)
     
     k = 2
     kmean_welch = KMeans(n_clusters=k, n_init=10, random_state=1).fit(welch_data.values)
