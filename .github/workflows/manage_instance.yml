@@ -98,6 +98,32 @@ jobs:
             # 🔹 Verify that the test file exists
             ls -lh /mnt/manila/test_manila.txt
           EOF
+
+      - name: Copy Streamlit App to Instance
+        run: |
+          echo "Copying app.py to Jetstream2..."
+          SSH_KEY="~/.ssh/jetstream2_key"
+          INSTANCE_IP="149.165.152.236"
+
+          scp -o StrictHostKeyChecking=no -i $SSH_KEY app.py ubuntu@$INSTANCE_IP:/home/ubuntu/app.py
+
+      - name: Start Streamlit App
+        run: |
+          echo "Starting Streamlit..."
+          SSH_KEY="~/.ssh/jetstream2_key"
+          INSTANCE_IP="149.165.152.236"
+
+          ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@$INSTANCE_IP << EOF
+          echo "Installing Streamlit if not installed..."
+          pip3 install --upgrade streamlit pandas
+
+          echo "Launching Streamlit..."
+          nohup streamlit run /home/ubuntu/app.py --server.port 8501 --server.enableCORS false --server.enableXsrfProtection false > streamlit.log 2>&1 &
+          echo "Streamlit is running in the background."
+          EOF
+
+
+          
          
 
 
