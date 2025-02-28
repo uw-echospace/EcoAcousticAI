@@ -100,10 +100,6 @@ jobs:
 
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
             
-      #- name: create directory
-        #run: |
-            #mkdir -p /tmp1/output_dir/
-            #chmod 777 /tmp1/output_dir/
       - name: Run Docker container with mounted directories
         run: |
             echo "before container run"
@@ -113,7 +109,7 @@ jobs:
             
             docker run --mount type=bind,source=/tmp/osn_bucket/,target=/app/recordings_2023/ \
             --mount type=bind,source=./bat-detect-msds/output_dir/,target=/app/output_dir/ \
-            bat-detect-msds python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
+            bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
 
             # Clean up (optional, unmount the rclone mount)
