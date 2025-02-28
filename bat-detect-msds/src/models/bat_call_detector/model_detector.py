@@ -9,7 +9,8 @@ import sys
 from models.detection_interface import DetectionInterface
 from utils.utils import gen_empty_df
 
-import bat_detect.utils.detector_utils as du
+#import bat_detect.utils.detector_utils as du
+import models.bat_call_detector.batdetect2.bat_detect.utils.detector_utils as du
 import models.bat_call_detector.feed_buzz_helper as fbh
 
 
