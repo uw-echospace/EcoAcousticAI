@@ -18,8 +18,6 @@ RUN apt-get update && apt-get install -y libimage-exiftool-perl
 WORKDIR /app
 COPY . .
 
-COPY ./bat-detect-msds/src/models/bat_call_detector/batdetect2/models/ /app/src/models/bat_call_detector/batdetect2/models/
-
 RUN ls -l /app/src/models/bat_call_detector/batdetect2/models/
 
 RUN pip install --no-cache-dir -r /app/bat-detect-msds/requirements.txt
