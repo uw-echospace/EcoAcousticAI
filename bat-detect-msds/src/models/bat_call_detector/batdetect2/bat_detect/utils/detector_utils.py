@@ -6,7 +6,8 @@ import pandas as pd
 import json
 import sys
 
-from bat_detect.detector import models
+#from bat_detect.detector import models
+import bat_detect.detector.models as models
 import bat_detect.detector.compute_features as feats
 import bat_detect.detector.post_process as pp
 import bat_detect.utils.audio_utils as au
