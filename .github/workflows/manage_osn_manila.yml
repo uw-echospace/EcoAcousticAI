@@ -99,7 +99,9 @@ jobs:
             echo "mounted"
 
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
-            
+  run_gpu_job: 
+    runs-on: self-hosted
+    steps:
       - name: Run Docker container with mounted directories
         run: |
             echo "before container run"
@@ -107,7 +109,7 @@ jobs:
             #docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image:latest
             #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image:latest
             
-            docker run --mount type=bind,source=/tmp/osn_bucket/,target=/app/recordings_2023/ \
+            docker run --gpus all --mount type=bind,source=/tmp/osn_bucket/,target=/app/recordings_2023/ \
             --mount type=bind,source=./bat-detect-msds/output_dir/,target=/app/output_dir/ \
             bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
