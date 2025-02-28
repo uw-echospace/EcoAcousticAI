@@ -104,8 +104,8 @@ jobs:
         run: |
             echo "before container run"
             # Step 7: Run the Docker container with the mounted OSN bucket file
-            #docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image
-            #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image
+            #docker run --mount type=bind,source=/tmp/osn_bucket/,dst=/app/recordings_2023/ buzzfindr-image:latest
+            #docker run -v /tmp/osn_bucket/:/app/recordings_2023/ buzzfindr-image:latest
             
             docker run --mount type=bind,source=/tmp/osn_bucket/,target=/app/recordings_2023/ \
             --mount type=bind,source=./bat-detect-msds/output_dir/,target=/app/output_dir/ \
