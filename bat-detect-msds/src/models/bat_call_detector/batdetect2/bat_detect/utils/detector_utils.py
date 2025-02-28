@@ -40,14 +40,13 @@ def get_audio_files(ip_dir):
 
 def load_model(model_path, load_weights=True):
     print('model path')
-    model_path = "../../models/Net2DFast_UK_same.pth.tar"
+    model_path = "/app/src/models/bat_call_detector/batdetect2/models/Net2DFast_UK_same.pth.tar"
     print(model_path)
     print("Current working directory:", os.getcwd())
+
     # load model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if os.path.isfile(model_path):
-        print('model path')
-        print(model_path)
         net_params = torch.load(model_path, map_location=device)
     else:
         print('Error: model not found.')
