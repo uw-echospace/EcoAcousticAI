@@ -7,7 +7,7 @@ on:
 
 jobs:
   process_data:
-    runs-on: [self-hosted, workflow-large-1-of-2]
+    runs-on: self-hosted
     
     steps:
       # Step 1: Checkout repository (if any code changes are needed)
