@@ -42,6 +42,7 @@ def load_model(model_path, load_weights=True):
     print('model path')
     model_path = "../../models/Net2DFast_UK_same.pth.tar"
     print(model_path)
+    print("Current working directory:", os.getcwd())
     # load model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if os.path.isfile(model_path):
