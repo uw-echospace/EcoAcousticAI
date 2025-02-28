@@ -7,7 +7,7 @@ on:
 
 jobs:
   process_data:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     steps:
       # Step 1: Checkout repository (if any code changes are needed)
@@ -97,24 +97,25 @@ jobs:
             --daemon
 
             echo "mounted"
+            sleep 100  # Adjust sleep time as necessary to give rclone time to mount
       # Upload artifact (the directory content for use in next job)
-      - name: Upload /tmp/osn_bucket as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: osn-bucket-artifact
-          path: /tmp/osn_bucket/
+      #- name: Upload /tmp/osn_bucket as artifact
+        #uses: actions/upload-artifact@v4
+        #with:
+         # name: osn-bucket-artifact
+          #path: /tmp/osn_bucket/
 
-            #sleep 100  # Adjust sleep time as necessary to give rclone time to mount
-  run_gpu_job: 
-    runs-on: self-hosted
-    needs: process_data
-    steps:
+            
+  #run_gpu_job: 
+    #runs-on: self-hosted
+    #needs: process_data
+    #steps:
       # Download the artifact from `process_data` job
-      - name: Download /tmp/osn_bucket artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: osn-bucket-artifact
-          path: /tmp/osn_bucket/
+      #- name: Download /tmp/osn_bucket artifact
+       # uses: actions/download-artifact@v4
+       # with:
+       #   name: osn-bucket-artifact
+       #   path: /tmp/osn_bucket/
 
       - name: Run Docker container with mounted directories
         run: |
