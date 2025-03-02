@@ -114,20 +114,47 @@ jobs:
 
           scp -o StrictHostKeyChecking=no -i $SSH_KEY app.py ubuntu@$INSTANCE_IP:/home/ubuntu/app.py
 
-      - name: Start Streamlit App
+      - name: Start Streamlit in Virtual Environment
         run: |
-          echo "Starting Streamlit..."
           SSH_KEY="~/.ssh/jetstream2_key"
           INSTANCE_IP="149.165.152.236"
 
           ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@$INSTANCE_IP << EOF
-          echo "Installing Streamlit if not installed..."
-          pip3 install --upgrade streamlit pandas
+            echo "Creating virtual environment..."
+            python3 -m venv /home/ubuntu/streamlit_venv
 
-          echo "Launching Streamlit..."
-          nohup streamlit run /home/ubuntu/app.py --server.port 8501 --server.enableCORS false --server.enableXsrfProtection false > streamlit.log 2>&1 &
-          echo "Streamlit is running in the background."
+            echo "Activating virtual environment..."
+            source /home/ubuntu/streamlit_venv/bin/activate
+
+            echo "Installing Streamlit..."
+            /home/ubuntu/streamlit_venv/bin/pip install --upgrade streamlit pandas
+
+            echo "Updating firewall rules..."
+            sudo ufw allow 8501/tcp
+            sudo ufw reload
+            sudo ufw enable
+
+            echo "Launching Streamlit..."
+            nohup /home/ubuntu/streamlit_venv/bin/streamlit run /home/ubuntu/app.py \
+              --server.address=0.0.0.0 \
+              --server.port=8501 \
+              --server.enableCORS false \
+              --server.enableXsrfProtection false > /home/ubuntu/streamlit.log 2>&1 &
           EOF
+
+      - name: Wait for Streamlit to Start
+        run: sleep 15  # Adjust time if needed to ensure the app is running
+
+      - name: Open Streamlit in Browser (If Local Runner)
+        run: |
+          echo "Opening Streamlit app..."
+          if [[ "$GITHUB_RUNNER_OS" == "macOS" || "$GITHUB_RUNNER_OS" == "Linux" ]]; then
+            xdg-open "http://149.165.152.236:8501" || echo "Cannot open browser automatically."
+          elif [[ "$GITHUB_RUNNER_OS" == "Windows" ]]; then
+            start "http://149.165.152.236:8501"
+          else
+            echo "Browser auto-launch not supported on this OS."
+          fi
 
 
           
