@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.schedule == '0 16 * * 1' || github.event_name == 'workflow_dispatch'
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
       - name: Install OpenStack CLI
         run: sudo apt update && sudo apt install -y python3-openstackclient
 
