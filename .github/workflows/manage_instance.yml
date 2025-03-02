@@ -99,6 +99,10 @@ jobs:
             ls -lh /mnt/manila/test_manila.txt
           EOF
 
+      - name: Verify File Exists
+        run: |
+          ls -lh
+
       - name: Copy Streamlit App to Instance
         run: |
           echo "Copying app.py to Jetstream2..."
