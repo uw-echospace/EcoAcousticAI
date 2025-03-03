@@ -59,7 +59,7 @@ jobs:
     
       - name: Set Up SSH Key
         run: |
-          mkdir -p ~/.ssh
+          sudo mkdir -p ~/.ssh
           echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
           chmod 600 ~/.ssh/jetstream2_key
           ssh-keyscan -H "149.165.152.236" >> ~/.ssh/known_hosts
