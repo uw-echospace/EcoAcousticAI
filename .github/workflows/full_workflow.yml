@@ -60,6 +60,13 @@ jobs:
       - name: Set Up SSH Key
         run: |
           ls -ld ~
+          if [ -d "/home/runner/.ssh" ]; then
+            echo ".ssh directory already exists";
+            ls -ld /home/runner/.ssh
+            else
+            echo "Creating .ssh directory";
+            mkdir -p /home/runner/.ssh;
+            fi
           mkdir -p /home/runner/.ssh/
           chmod 700 $HOME/.ssh
           echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
