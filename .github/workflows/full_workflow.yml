@@ -59,7 +59,8 @@ jobs:
     
       - name: Set Up SSH Key
         run: |
-          mkdir -p $HOME/.ssh
+          ls -ld ~
+          mkdir -p /home/runner/.ssh/
           chmod 700 $HOME/.ssh
           echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
           chmod 600 ~/.ssh/jetstream2_key
