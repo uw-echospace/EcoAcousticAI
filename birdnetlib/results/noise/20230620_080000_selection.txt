@@ -1,0 +1,7 @@
+Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Common Name	Scientific Name	Confidence	File
+1	Spectrogram 1	1	309.0	552.0	300	15000	Engine Engine	Engine Engine	0.5928	20230620_080000.wav
+2	Spectrogram 1	1	552.0	597.0	300	15000	Engine Engine	Engine Engine	0.6165	20230620_080000.wav
+3	Spectrogram 1	1	699.0	867.0	300	15000	Engine Engine	Engine Engine	0.5085	20230620_080000.wav
+4	Spectrogram 1	1	867.0	1371.0	300	15000	Engine Engine	Engine Engine	0.4883	20230620_080000.wav
+5	Spectrogram 1	1	1371.0	1428.0	300	15000	Engine Engine	Engine Engine	0.6671	20230620_080000.wav
+6	Spectrogram 1	1	1443.0	1503.0	300	15000	Engine Engine	Engine Engine	0.3922	20230620_080000.wav
