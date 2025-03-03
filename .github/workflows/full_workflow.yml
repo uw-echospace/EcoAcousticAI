@@ -56,30 +56,20 @@ jobs:
             echo "Starting instance..."
             openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
           fi
-    
-      - name: Set Up SSH Key
-        run: |
-          ls -ld ~
-          if [ -d "/home/runner/.ssh" ]; then
-            echo ".ssh directory already exists";
-            ls -ld /home/runner/.ssh
-            else
-            echo "Creating .ssh directory";
-            mkdir -p /home/runner/.ssh;
-            fi
-          mkdir -p /home/runner/.ssh/
-          chmod 700 $HOME/.ssh
-          echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
-          chmod 600 ~/.ssh/jetstream2_key
-          ssh-keyscan -H "149.165.152.236" >> ~/.ssh/known_hosts
+         
+      - name: Setup key
+        uses: ssh-agent/setup@v2  # This is the action that sets up the SSH key
+        with:
+            ssh-private-key: ${{ secrets.JETSTREAM2_SSH_KEY }}
+
 
       - name: Mount Manila Storage on Instance
         run: |
           echo "Mounting Manila storage..."
-          SSH_KEY="~/.ssh/jetstream2_key"
+          #SSH_KEY="~/.ssh/jetstream2_key"
           STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
 
-          ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.152.236 << EOF
+          ssh -o StrictHostKeyChecking=no ubuntu@149.165.152.236 << EOF
             echo "Creating mount directory..."
             sudo mkdir -p /mnt/manila
 
