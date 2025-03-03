@@ -58,7 +58,7 @@ jobs:
           fi
          
       - name: Setup key
-        uses: ssh-agent/setup@v2  # This is the action that sets up the SSH key
+        uses: webfactory/ssh-agent@v0.5.3  # This is the action that sets up the SSH key
         with:
             ssh-private-key: ${{ secrets.JETSTREAM2_SSH_KEY }}
 
