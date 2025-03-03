@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11.5-slim
+FROM python:3.10-slim
 
 # Install dependencies required by webview and for building packages
 RUN apt-get update && apt-get install -y \

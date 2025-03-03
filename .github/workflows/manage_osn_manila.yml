@@ -98,24 +98,6 @@ jobs:
 
             echo "mounted"
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
-      # Upload artifact (the directory content for use in next job)
-      #- name: Upload /tmp/osn_bucket as artifact
-        #uses: actions/upload-artifact@v4
-        #with:
-         # name: osn-bucket-artifact
-          #path: /tmp/osn_bucket/
-
-            
-  #run_gpu_job: 
-    #runs-on: self-hosted
-    #needs: process_data
-    #steps:
-      # Download the artifact from `process_data` job
-      #- name: Download /tmp/osn_bucket artifact
-       # uses: actions/download-artifact@v4
-       # with:
-       #   name: osn-bucket-artifact
-       #   path: /tmp/osn_bucket/
 
       - name: Run Docker container with mounted directories
         run: |
@@ -131,6 +113,13 @@ jobs:
 
             # Clean up (optional, unmount the rclone mount)
             umount /tmp/osn_bucket/
+
+      # Step 5: Archive the output directory as an artifact
+      - name: Upload output directory as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: output-dir-artifact
+          path: ./bat-detect-msds/output_dir/
 
       # Step 6: Upload the latest directory info as an artifact for next run
       - name: Upload latest directory info artifact
