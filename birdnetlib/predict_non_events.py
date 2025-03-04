@@ -6,10 +6,10 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder = Path("/Users/lawrie/Documents/EcoAcousticAI/NABAT/nabat-ml/examples")
+audio_folder = Path.cwd() / "sample_audio"
 
 # Set separate output directory for results
-output_folder = Path("/Users/lawrie/Documents/EcoAcousticAI/NABAT/nabat-ml/results")
+output_folder = Path.cwd() / "results" / "noise"
 output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
@@ -19,7 +19,7 @@ CONFIDENCE_THRESHOLD = 0.25
 MAX_CONSECUTIVE = 10
 
 # Load Custom Species List (Modify this path)
-custom_species_list_path = Path("/Users/lawrie/Documents/nonevent_list.txt")
+custom_species_list_path = Path.cwd() / "nonevent_list.txt"
 
 # Initialize BirdNET-Analyzer model with the custom species list
 model = Analyzer(custom_species_list_path=str(custom_species_list_path))
@@ -62,8 +62,8 @@ for audio_file in sorted(audio_folder.glob("*.wav")):
     count = 0
 
     for detection in sorted_detections:
-        species = f"{detection['scientific_name']} {detection['common_name']}"
-        scientific_name = f"{detection['scientific_name']} {detection['common_name']}"
+        species = f"{detection['common_name']}"
+        scientific_name = f"{detection['scientific_name']}"
         start_time = detection["start_time"]
         end_time = detection["end_time"]
         confidence = detection["confidence"]
