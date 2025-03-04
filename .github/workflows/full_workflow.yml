@@ -82,12 +82,15 @@ jobs:
 
             echo "Manila storage successfully mounted and permissions fixed."
           EOF
-
+        
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Run Model and Save Results to Manila
         run: |
           pwd
           cd /home/runner/work/EcoAcousticAI/
+          pwd
           ls -l 
           echo "Running model and saving results..."
           SSH_KEY="~/.ssh/jetstream2_key"
