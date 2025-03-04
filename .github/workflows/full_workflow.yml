@@ -23,7 +23,7 @@ jobs:
 
       - name: Unshelve the Instance
         run: |
-          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
+          INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
           STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
           
           if [[ "$STATUS" == "SHELVED_OFFLOADED" ]]; then
@@ -48,7 +48,7 @@ jobs:
 
       - name: Start Instance
         run: |
-          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
+          INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
           STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
           if [[ "$STATUS" == "ACTIVE" ]]; then
             echo "Instance is already active."
@@ -69,7 +69,7 @@ jobs:
           #SSH_KEY="~/.ssh/jetstream2_key"
           STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
 
-          ssh -o StrictHostKeyChecking=no ubuntu@149.165.152.236 << EOF
+          ssh -o StrictHostKeyChecking=no ubuntu@149.165.170.20 << EOF
             echo "Creating mount directory..."
             sudo mkdir -p /mnt/manila
 
@@ -185,7 +185,7 @@ jobs:
             # Clean up (optional, unmount the rclone mount)
             #umount /tmp/osn_bucket/
 
-          #ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.152.236 << EOF
+          #ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.170.20 << EOF
             # 🔹 TEST BLOCK: Create a test file in Manila storage
             #echo "Hello from Jetstream2! This file confirms Manila storage is working." > /mnt/manila/test_manila.txt
             #echo "Test file created at /mnt/manila/test_manila.txt"
@@ -195,18 +195,20 @@ jobs:
           #EOF
 
       - name: Copy Streamlit App to Instance
+        if: false
         run: |
           echo "Copying app.py to Jetstream2..."
           SSH_KEY="~/.ssh/jetstream2_key"
-          INSTANCE_IP="149.165.152.236"
+          INSTANCE_IP="149.165.170.20"
 
           scp -o StrictHostKeyChecking=no -i $SSH_KEY app.py ubuntu@$INSTANCE_IP:/home/ubuntu/app.py
 
       - name: Start Streamlit App
+        if: false
         run: |
           echo "Starting Streamlit..."
           SSH_KEY="~/.ssh/jetstream2_key"
-          INSTANCE_IP="149.165.152.236"
+          INSTANCE_IP="149.165.170.20"
 
           ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@$INSTANCE_IP << EOF
           echo "Installing Streamlit if not installed..."
@@ -238,7 +240,7 @@ jobs:
 
       - name: Shelve Instance
         run: |
-          INSTANCE_ID="2bf63535-1f6b-4c8b-885e-2e5f2786fa31"
+          INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
           STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
 
           echo "Checking if instance is ready to be shelved..."
