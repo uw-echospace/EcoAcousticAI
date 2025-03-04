@@ -181,9 +181,8 @@ jobs:
 
       - name: Copy file to Jetstream VM
         run: |
-            scp -r -o StrictHostKeyChecking=no -i $SSH_KEY /Users/igokhale/recordings_2023/ ubuntu@149.165.152.236:/home/ubuntu/recordings/
 
-            docker run --gpus all --mount type=bind,source=/home/ubuntu/recordings/,target=/app/recordings_2023/ \
+            docker run --gpus all --mount type=bind,source=./recordings_2023/,target=/app/recordings_2023/ \
             --mount type=bind,source=/mnt/manila,target=/app/output_dir/ \
             bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
