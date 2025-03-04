@@ -5,10 +5,10 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder = Path("/Users/lawrie/Documents/EcoAcousticAI/NABAT/nabat-ml/examples")
+audio_folder = Path.cwd() / "sample_audio"
 
 # Set separate output directory for results
-output_folder = Path("/Users/lawrie/Documents/EcoAcousticAI/NABAT/nabat-ml/results")
+output_folder = Path.cwd() / "results" / "frogs"
 output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
@@ -18,8 +18,8 @@ CONFIDENCE_THRESHOLD = 0.4
 MAX_CONSECUTIVE = 10
 
 # Path to Custom Classifier & Species List
-custom_classifier_path = Path("/Users/lawrie/Downloads/frognet_model/CustomClassifier.tflite")
-classifier_labels_path = Path("/Users/lawrie/Downloads/frognet_model/CustomClassifier_Labels.txt")
+custom_classifier_path = Path.cwd() / "frognet_model" / "CustomClassifier.tflite"
+classifier_labels_path = Path.cwd() / "frognet_model" / "CustomClassifier_Labels.txt"
 
 
 # Initialize BirdNET-Analyzer model with correct classifier & species list
