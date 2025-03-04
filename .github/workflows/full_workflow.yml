@@ -86,6 +86,7 @@ jobs:
 
       - name: Run Model and Save Results to Manila
         run: |
+          pwd
           echo "Running model and saving results..."
           SSH_KEY="~/.ssh/jetstream2_key"
         
