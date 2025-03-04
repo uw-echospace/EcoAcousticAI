@@ -5,10 +5,10 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder = Path("/Users/lawrie/Documents/EcoAcousticAI/NABAT/nabat-ml/examples")
+audio_folder = Path.cwd() / "sample_audio"
 
 # Set separate output directory for results
-output_folder = Path("/Users/lawrie/Documents/EcoAcousticAI/NABAT/nabat-ml/results")
+output_folder = Path.cwd() / "results" / "bird"
 output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
