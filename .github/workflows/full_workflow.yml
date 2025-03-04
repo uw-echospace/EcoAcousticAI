@@ -88,6 +88,7 @@ jobs:
         run: |
           pwd
           cd /home/runner/work/EcoAcousticAI/
+          ls -l 
           echo "Running model and saving results..."
           SSH_KEY="~/.ssh/jetstream2_key"
         
