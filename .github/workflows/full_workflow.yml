@@ -67,30 +67,7 @@ jobs:
               mkdir -p ~/.ssh
               echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
               chmod 600 ~/.ssh/jetstream2_key
-              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
-
-      - name: Mount Manila Storage on Instance
-        run: |
-              echo "Mounting Manila storage..."
-              SSH_KEY="~/.ssh/jetstream2_key"
-              STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
-    
-              ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.170.20 << EOF
-                echo "Creating mount directory..."
-                sudo mkdir -p mnt/ecoacoustic-storage/
-    
-                echo "Mounting Manila storage..."
-                sudo mount -t nfs $STORAGE_PATH mnt/ecoacoustic-storage/
-    
-                echo "Fixing permissions on mnt/ecoacoustic-storage"
-                sudo chown -R ubuntu:ubuntu mnt/ecoacoustic-storage/
-                sudo chmod -R 777 mnt/ecoacoustic-storage/
-
-                sudo mount | grep mnt/ecoacoustic-storage/
-                echo "Manila storage successfully mounted and permissions fixed."
-              EOF
-    
-              
+              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts              
 
         
       - name: Checkout code
@@ -187,13 +164,31 @@ jobs:
 
       - name: Copy file to Jetstream VM
         run: |
-            ls -l mnt/ecoacoustic-storage/
-            sudo mount | grep mnt/ecoacoustic-storage/
+              echo "Mounting Manila storage..."
+              SSH_KEY="~/.ssh/jetstream2_key"
+              STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
+    
+              ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.170.20 << EOF
+                echo "Creating mount directory..."
+                sudo mkdir -p mnt/ecoacoustic-storage/
+    
+                echo "Mounting Manila storage..."
+                sudo mount -t nfs $STORAGE_PATH mnt/ecoacoustic-storage/
+    
+                echo "Fixing permissions on mnt/ecoacoustic-storage"
+                sudo chown -R ubuntu:ubuntu mnt/ecoacoustic-storage/
+                sudo chmod -R 777 mnt/ecoacoustic-storage/
 
-            docker run --gpus all --mount type=bind,source=./recordings_2023/,target=/app/recordings_2023/ \
-            --mount type=bind,source=mnt/ecoacoustic-storage/,target=/app/output_dir/ \
-            bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
-            --output_directory='/app/output_dir/' --run_model --csv
+                sudo mount | grep mnt/ecoacoustic-storage/
+                echo "Manila storage successfully mounted and permissions fixed."
+              
+                ls -l mnt/ecoacoustic-storage/
+                sudo mount | grep mnt/ecoacoustic-storage/
+
+                docker run --gpus all --mount type=bind,source=./recordings_2023/,target=/app/recordings_2023/ \
+                --mount type=bind,source=mnt/ecoacoustic-storage/,target=/app/output_dir/ \
+                bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
+                --output_directory='/app/output_dir/' --run_model --csv
 
             # Clean up (optional, unmount the rclone mount)
             #umount /tmp/osn_bucket/
