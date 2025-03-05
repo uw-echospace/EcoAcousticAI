@@ -73,6 +73,9 @@ jobs:
             echo "Creating mount directory..."
             sudo mkdir -p /mnt/manila/
 
+            sudo apt update
+            sudo apt install nfs-common
+
             echo "Mounting Manila storage..."
             sudo mount -t nfs $STORAGE_PATH /mnt/manila/
 
