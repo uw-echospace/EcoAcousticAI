@@ -83,7 +83,7 @@ jobs:
             sudo chown -R ubuntu:ubuntu /mnt/manila/
             sudo chmod -R 777 /mnt/manila/
 
-            ls -l /mnt/manila
+            ls -l /mnt/manila/
             sudo mount | grep /mnt/manila/
 
             echo "Manila storage successfully mounted and permissions fixed."
@@ -184,7 +184,8 @@ jobs:
 
       - name: Copy file to Jetstream VM
         run: |
-            ls -l /mnt/manila
+            ls -l /mnt/manila/
+            sudo mount | grep /mnt/manila/
 
             docker run --gpus all --mount type=bind,source=./recordings_2023/,target=/app/recordings_2023/ \
             --mount type=bind,source=/mnt/manila,target=/app/output_dir/ \
