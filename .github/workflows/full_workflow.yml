@@ -67,7 +67,10 @@ jobs:
               mkdir -p ~/.ssh
               echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
               chmod 600 ~/.ssh/jetstream2_key
-              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts              
+              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts       
+              
+      - name: Mount Manila Storage
+        run:  |
               echo "Mounting Manila storage..."
               SSH_KEY="~/.ssh/jetstream2_key"
               STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
