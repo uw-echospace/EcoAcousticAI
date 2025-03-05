@@ -75,7 +75,7 @@ jobs:
               SSH_KEY=$HOME/.ssh/jetstream2_key
               STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
     
-              ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.170.20 << EOF
+              ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
                 echo "Creating mount directory..."
                 sudo mkdir -p /mnt/ecoacoustic-storage/
     
@@ -83,7 +83,7 @@ jobs:
                 sudo mount -t nfs $STORAGE_PATH /mnt/ecoacoustic-storage/
     
                 echo "Fixing permissions on mnt/ecoacoustic-storage"
-                sudo chown -R ubuntu:ubuntu / mnt/ecoacoustic-storage/
+                sudo chown -R ubuntu:ubuntu /mnt/ecoacoustic-storage/
                 sudo chmod -R 777 /mnt/ecoacoustic-storage/
 
                 sudo mount | grep mnt/ecoacoustic-storage/
@@ -91,7 +91,8 @@ jobs:
               
                 ls -l /mnt/ecoacoustic-storage/
                 sudo mount | grep /mnt/ecoacoustic-storage/
-        
+              EOF
+            
       - name: Checkout code
         uses: actions/checkout@v4
 
