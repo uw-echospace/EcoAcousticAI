@@ -63,27 +63,28 @@ jobs:
             ssh-private-key: ${{ secrets.JETSTREAM2_SSH_KEY }}
 
 
-      - name: Mount Manila Share
+      - name: Mount Manila Storage on Instance
         run: |
-              # Install required packages
-              sudo apt-get update
-              sudo apt-get install -y ceph-fuse
-          
-              # Define variables
-              export CEPHFS_SERVER_IPS="149.165.158.38,149.165.158.22,149.165.158.54,149.165.158.70,149.165.158.86"
-              export ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
-              export MOUNT_PATH="/mnt/ecoacoustic-storage"
-              export MOUNT_POINT="/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
-          
-              # Create the mount directory if it doesn't exist
-              sudo mkdir -p $MOUNT_PATH
-          
-              # Mount the share using ceph-fuse (or mount.ceph)
-              sudo ceph-fuse $MOUNT_PATH --no-mon-config -m "$CEPHFS_SERVER_IPS" -o name=ecoacousticaccess,secret=$ACCESS_KEY
+              echo "Mounting Manila storage..."
+              SSH_KEY="~/.ssh/jetstream2_key"
+              STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
+    
+              ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.170.20 << EOF
+                echo "Creating mount directory..."
+                sudo mkdir -p mnt/ecoacoustic-storage/
+    
+                echo "Mounting Manila storage..."
+                sudo mount -t nfs $STORAGE_PATH mnt/ecoacoustic-storage/
+    
+                echo "Fixing permissions on mnt/ecoacoustic-storage"
+                sudo chown -R ubuntu:ubuntu mnt/ecoacoustic-storage/
+                sudo chmod -R 777 mnt/ecoacoustic-storage/
+
+                sudo mount | grep mnt/ecoacoustic-storage/
+                echo "Manila storage successfully mounted and permissions fixed."
+              EOF
+    
               
-              # Verify the mount
-              df -h
-              sudo mount | grep /mnt/manila/
 
         
       - name: Checkout code
