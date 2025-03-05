@@ -73,7 +73,7 @@ jobs:
         run:  |
           SSH_KEY=$HOME/.ssh/jetstream2_key
           ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
-          sudo mkdir -p /mnt/ecoacoustic-storage/
+          
           ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
           FILE_PATH="/etc/ceph/ceph.client.ecoacousticaccess.keyring"
   
@@ -88,10 +88,10 @@ jobs:
           ls -l $FILE_PATH
           #cat /etc/ceph/ceph.client.ecoacousticaccess.keyring
 
-      - name: Edit /etc/fstab for Ceph Mount
-        run: |
             # Define variables for the mount path and access details
             ACCESS_TO="ecoacousticaccess"  # Replace with your access key name
+            sudo mkdir -p /mnt/ecoacoustic-storage/
+            ls -ld /mnt/ecoacoustic-storage/
             MOUNT_PATH="/mnt/ecoacoustic-storage/"
             CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
 
