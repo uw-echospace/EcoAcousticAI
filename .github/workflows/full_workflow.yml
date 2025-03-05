@@ -57,11 +57,17 @@ jobs:
             openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
           fi
          
-      - name: Setup key
-        uses: webfactory/ssh-agent@v0.5.3  # This is the action that sets up the SSH key
-        with:
-            ssh-private-key: ${{ secrets.JETSTREAM2_SSH_KEY }}
+      #- name: Setup key
+      #  uses: webfactory/ssh-agent@v0.5.3  # This is the action that sets up the SSH key
+       # with:
+       #     ssh-private-key: ${{ secrets.JETSTREAM2_SSH_KEY }}
 
+      - name: Set Up SSH Key
+        run: |
+              mkdir -p ~/.ssh
+              echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
+              chmod 600 ~/.ssh/jetstream2_key
+              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
 
       - name: Mount Manila Storage on Instance
         run: |
