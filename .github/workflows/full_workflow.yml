@@ -71,6 +71,7 @@ jobs:
 
       - name: Mount Manila Storage
         run:  |
+          SSH_KEY=$HOME/.ssh/jetstream2_key
           ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
           sudo mkdir -p /mnt/ecoacoustic-storage/
           ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
@@ -101,7 +102,7 @@ jobs:
             cat /etc/fstab
             sudo mount -a
             df -h | grep vol
-            
+
       - name: Mount Manila Storage
         run:  |
               echo "Mounting Manila storage..."
