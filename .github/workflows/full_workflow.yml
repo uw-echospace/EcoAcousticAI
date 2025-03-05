@@ -86,7 +86,7 @@ jobs:
   
           # Verify the permissions (optional)
           ls -l $FILE_PATH
-          cat /etc/ceph/ceph.client.ecoacousticaccess.keyring
+          #cat /etc/ceph/ceph.client.ecoacousticaccess.keyring
 
       - name: Edit /etc/fstab for Ceph Mount
         run: |
