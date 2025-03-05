@@ -67,14 +67,48 @@ jobs:
               mkdir -p ~/.ssh
               echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
               chmod 600 ~/.ssh/jetstream2_key
-              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts       
-              
+              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts      
+
+      - name: Mount Manila Storage
+        run:  |
+          ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+          sudo mkdir -p /mnt/ecoacoustic-storage/
+          ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
+          FILE_PATH="/etc/ceph/ceph.client.ecoacousticaccess.keyring"
+  
+          # Create the keyring file with the access key
+          echo "[client.ecoacousticaccess]" | sudo tee $FILE_PATH > /dev/null
+          echo "    key = $ACCESS_KEY" | sudo tee -a $FILE_PATH > /dev/null
+  
+          # Set the file permissions to be read and write for the owner only
+          sudo chmod 600 $FILE_PATH
+  
+          # Verify the permissions (optional)
+          ls -l $FILE_PATH
+          cat /etc/ceph/ceph.client.ecoacousticaccess.keyring
+
+      - name: Edit /etc/fstab for Ceph Mount
+        run: |
+            # Define variables for the mount path and access details
+            ACCESS_TO="ecoacousticaccess"  # Replace with your access key name
+            MOUNT_PATH="/mnt/ecoacoustic-storage/"
+            CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
+
+            # Add entry to /etc/fstab to mount the storage on boot
+            echo "$CEPH_PATH $MOUNT_PATH ceph name=$ACCESS_TO,x-systemd.device-timeout=30,x-systemd.mount-timeout=30,noatime,_netdev,rw 0 2" | sudo tee -a /etc/fstab > /dev/null
+
+            # Verify the entry is added (optional)
+            cat /etc/fstab
+            sudo mount -a
+            df -h | grep vol
+            
       - name: Mount Manila Storage
         run:  |
               echo "Mounting Manila storage..."
               SSH_KEY=$HOME/.ssh/jetstream2_key
               STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
-    
+              ping 149.165.158.38
+
               ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
                 echo "Creating mount directory..."
                 sudo mkdir -p /mnt/ecoacoustic-storage/
