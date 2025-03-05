@@ -65,24 +65,25 @@ jobs:
 
       - name: Mount Manila Share
         run: |
-            # Install required packages
-            sudo apt-get update
-            sudo apt-get install -y ceph-fuse
-    
-            # Define variables
-            export CEPHFS_SERVER_IPS="149.165.158.38,149.165.158.22,149.165.158.54,149.165.158.70,149.165.158.86"
-            export ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
-            export MOUNT_PATH="/mnt/manila/"
-            
-            # Create the mount directory
-            sudo mkdir -p $MOUNT_PATH
-    
-            # Mount the Manila share
-            sudo mount -t ceph -o name=ecoacousticaccess,secret=$ACCESS_KEY,$CEPHFS_SERVER_IPS:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c $MOUNT_PATH
-            
-            # Verify the mount
-            df -h
-            sudo mount | grep /mnt/manila/
+              # Install required packages
+              sudo apt-get update
+              sudo apt-get install -y ceph-fuse
+          
+              # Define variables
+              export CEPHFS_SERVER_IPS="149.165.158.38,149.165.158.22,149.165.158.54,149.165.158.70,149.165.158.86"
+              export ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
+              export MOUNT_PATH="/mnt/ecoacoustic-storage"
+              export MOUNT_POINT="/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
+          
+              # Create the mount directory if it doesn't exist
+              sudo mkdir -p $MOUNT_PATH
+          
+              # Mount the share using ceph-fuse (or mount.ceph)
+              sudo ceph-fuse $MOUNT_PATH -m "$CEPHFS_SERVER_IPS" -o name=ecoacousticaccess,secret=$ACCESS_KEY
+              
+              # Verify the mount
+              df -h
+              sudo mount | grep /mnt/manila/
 
         
       - name: Checkout code
