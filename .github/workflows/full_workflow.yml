@@ -185,13 +185,19 @@ jobs:
             echo "mounted"
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
 
-      - name: Copy file to Jetstream VM
+      - name: Ensure Manila Storage is Mounted
         run: |
+          sudo mount -t nfs 149.165.158.38:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c /mnt/ecoacoustic-storage || echo "Storage already mounted"
+          ls -lah /mnt/ecoacoustic-storage
 
-                docker run --gpus all --mount type=bind,source=./recordings_2023/,target=/app/recordings_2023/ \
-                --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/output_dir/ \
-                bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
-                --output_directory='/app/output_dir/' --run_model --csv
+      - name: Run Bat Detection Pipeline in Docker
+        run: |
+          docker run --rm \
+            --mount type=bind,source=${{ github.workspace }}/recordings_2023/,target=/app/recordings_2023/ \
+            --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/output_dir/ \
+            bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py \
+            --input_audio='/app/recordings_2023/' \
+            --output_directory='/app/output_dir/' --run_model --csv
 
             # Clean up (optional, unmount the rclone mount)
             #umount /tmp/osn_bucket/
