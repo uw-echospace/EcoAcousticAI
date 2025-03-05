@@ -78,6 +78,8 @@ jobs:
               ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
                 echo "Creating mount directory..."
                 sudo mkdir -p /mnt/ecoacoustic-storage/
+                sudo mount -t nfs -o cephx,fs=cephfs $STORAGE_PATH /mnt/ecoacoustic-storage/
+
     
                 echo "Mounting Manila storage..."
                 sudo mount -t nfs $STORAGE_PATH /mnt/ecoacoustic-storage/
