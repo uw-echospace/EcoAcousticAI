@@ -71,27 +71,27 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no ubuntu@149.165.170.20 << EOF
             echo "Creating mount directory..."
-            sudo mkdir -p /mnt/manila
+            sudo mkdir -p /mnt/manila/
 
             echo "Mounting Manila storage..."
-            sudo mount -t nfs $STORAGE_PATH /mnt/manila
+            sudo mount -t nfs $STORAGE_PATH /mnt/manila/
 
             echo "Fixing permissions on /mnt/manila/"
             sudo chown -R ubuntu:ubuntu /mnt/manila/
             sudo chmod -R 777 /mnt/manila/
 
+            ls -l /mnt/manila
+            sudo mount | grep /mnt/manila/
+
             echo "Manila storage successfully mounted and permissions fixed."
           EOF
+
         
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Run Model and Save Results to Manila
         run: |
-          pwd
-          cd /home/runner/work/EcoAcousticAI/
-          pwd
-          ls -l 
           echo "Running model and saving results..."
           SSH_KEY="~/.ssh/jetstream2_key"
         
@@ -181,6 +181,7 @@ jobs:
 
       - name: Copy file to Jetstream VM
         run: |
+            ls -l /mnt/manila
 
             docker run --gpus all --mount type=bind,source=./recordings_2023/,target=/app/recordings_2023/ \
             --mount type=bind,source=/mnt/manila,target=/app/output_dir/ \
@@ -223,10 +224,6 @@ jobs:
           nohup streamlit run /home/ubuntu/app.py --server.port 8501 --server.enableCORS false --server.enableXsrfProtection false > streamlit.log 2>&1 &
           echo "Streamlit is running in the background."
           EOF
-
-
-          
-         
 
 
   shelve-instance:
