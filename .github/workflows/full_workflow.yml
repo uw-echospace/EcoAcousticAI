@@ -181,11 +181,11 @@ jobs:
 
       - name: Copy file to Jetstream VM
         run: |
-            ls -l /mnt/manila/
-            sudo mount | grep /mnt/manila/
+            ls -l mnt/ecoacoustic-storage/
+            sudo mount | grep mnt/ecoacoustic-storage/
 
             docker run --gpus all --mount type=bind,source=./recordings_2023/,target=/app/recordings_2023/ \
-            --mount type=bind,source=/mnt/manila,target=/app/output_dir/ \
+            --mount type=bind,source=mnt/ecoacoustic-storage/,target=/app/output_dir/ \
             bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
 
