@@ -63,31 +63,26 @@ jobs:
             ssh-private-key: ${{ secrets.JETSTREAM2_SSH_KEY }}
 
 
-      - name: Mount Manila Storage on Instance
+      - name: Mount Manila Share
         run: |
-          echo "Mounting Manila storage..."
-          #SSH_KEY="~/.ssh/jetstream2_key"
-          STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
-
-          ssh -o StrictHostKeyChecking=no ubuntu@149.165.170.20 << EOF
-            echo "Creating mount directory..."
-            sudo mkdir -p /mnt/manila/
-
-            sudo apt update
-            sudo apt install nfs-common
-
-            echo "Mounting Manila storage..."
-            sudo mount -t nfs $STORAGE_PATH /mnt/manila/
-
-            echo "Fixing permissions on /mnt/manila/"
-            sudo chown -R ubuntu:ubuntu /mnt/manila/
-            sudo chmod -R 777 /mnt/manila/
-
-            ls -l /mnt/manila/
+            # Install required packages
+            sudo apt-get update
+            sudo apt-get install -y ceph-fuse
+    
+            # Define variables
+            export CEPHFS_SERVER_IPS="149.165.158.38,149.165.158.22,149.165.158.54,149.165.158.70,149.165.158.86"
+            export ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
+            export MOUNT_PATH="/mnt/manila/"
+            
+            # Create the mount directory
+            sudo mkdir -p $MOUNT_PATH
+    
+            # Mount the Manila share
+            sudo mount -t ceph -o name=ecoacousticaccess,secret=$ACCESS_KEY,$CEPHFS_SERVER_IPS:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c $MOUNT_PATH
+            
+            # Verify the mount
+            df -h
             sudo mount | grep /mnt/manila/
-
-            echo "Manila storage successfully mounted and permissions fixed."
-          EOF
 
         
       - name: Checkout code
