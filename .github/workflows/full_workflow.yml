@@ -79,7 +79,7 @@ jobs:
               sudo mkdir -p $MOUNT_PATH
           
               # Mount the share using ceph-fuse (or mount.ceph)
-              sudo ceph-fuse $MOUNT_PATH -m "$CEPHFS_SERVER_IPS" -o name=ecoacousticaccess,secret=$ACCESS_KEY
+              sudo ceph-fuse $MOUNT_PATH --no-mon-config -m "$CEPHFS_SERVER_IPS" -o name=ecoacousticaccess,secret=$ACCESS_KEY
               
               # Verify the mount
               df -h
