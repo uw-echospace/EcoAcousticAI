@@ -87,7 +87,6 @@ jobs:
             # Define variables for the mount path and access details
             ACCESS_TO="ecoacousticaccess"  # Replace with your access key name
             sudo mkdir -p /mnt/ecoacoustic-storage/
-            ls -ld /mnt/ecoacoustic-storage/
             pwd
             MOUNT_PATH="/mnt/ecoacoustic-storage/"
             CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
@@ -100,22 +99,19 @@ jobs:
             sudo mount -a
             df -h | grep vol
             
-      - name: Checkout code
-        uses: actions/checkout@v4
-        
-          # Step 3: Build docker image for bat-detect-msds
-      - name: Build bat-detect-msds image
-        run: |
+            ls -ld /mnt/ecoacoustic-storage/
+            
             pwd
-            SSH_KEY=$HOME/.ssh/jetstream2_key
+            cd ./EcoAcousticAI/
+            git pull 
+    
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
-      #- name: Build buzzfindr image
-      #  run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
+            #- name: Build buzzfindr image
+            #  run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
 
-      # Step 2: Install rclone and configure it for OSN access
-      - name: Set up rclone for OSN access
-        run: |
+            # Step 2: Install rclone and configure it for OSN access
+      
           sudo apt-get update
           sudo apt-get install -y rclone
           mkdir -p ~/.config/rclone
@@ -168,7 +164,8 @@ jobs:
       - name: Mount OSN bucket and process data in Docker
         if: steps.check_data.outputs.new_data == 'true'
         run: |
-            pwd
+            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+            cd /home/ubuntu/
             mkdir -p /tmp/osn_bucket/
             chmod 777 /tmp/osn_bucket/
 
@@ -191,14 +188,11 @@ jobs:
             echo "mounted"
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
 
-
-      - name: Run Bat Detection Pipeline in Docker
-        run: |
-          pwd
-          docker run --rm \
-            --mount type=bind,source=${{ github.workspace }}/recordings_2023/,target=/app/recordings_2023/ \
+            pwd
+            docker run --rm \
+            --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ \
             --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/output_dir/ \
-            bat-detect-msds:latest python3 ./bat-detect-msds/src/batdt2_pipeline.py \
+            bat-detect-msds:latest python3 ./EcoAcousticAI/bat-detect-msds/src/batdt2_pipeline.py \
             --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
 
