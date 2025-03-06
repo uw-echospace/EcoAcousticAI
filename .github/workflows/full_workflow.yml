@@ -57,10 +57,6 @@ jobs:
             openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
           fi
          
-      #- name: Setup key
-      #  uses: webfactory/ssh-agent@v0.5.3  # This is the action that sets up the SSH key
-       # with:
-       #     ssh-private-key: ${{ secrets.JETSTREAM2_SSH_KEY }}
 
       - name: Set Up SSH Key
         run: |
@@ -92,6 +88,7 @@ jobs:
             ACCESS_TO="ecoacousticaccess"  # Replace with your access key name
             sudo mkdir -p /mnt/ecoacoustic-storage/
             ls -ld /mnt/ecoacoustic-storage/
+            pwd
             MOUNT_PATH="/mnt/ecoacoustic-storage/"
             CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
 
@@ -102,45 +99,16 @@ jobs:
             cat /etc/fstab
             sudo mount -a
             df -h | grep vol
-
-      - name: Mount Manila Storage
-        run:  |
-              echo "Mounting Manila storage..."
-              SSH_KEY=$HOME/.ssh/jetstream2_key
-              STORAGE_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c"
-              ping 149.165.158.38
-
-              ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
-                echo "Creating mount directory..."
-                sudo mkdir -p /mnt/ecoacoustic-storage/
-                sudo mount -t nfs -o cephx,fs=cephfs $STORAGE_PATH /mnt/ecoacoustic-storage/
-
-    
-                echo "Mounting Manila storage..."
-                sudo mount -t nfs $STORAGE_PATH /mnt/ecoacoustic-storage/
-    
-                echo "Fixing permissions on mnt/ecoacoustic-storage"
-                sudo chown -R ubuntu:ubuntu /mnt/ecoacoustic-storage/
-                sudo chmod -R 777 /mnt/ecoacoustic-storage/
-
-                sudo mount | grep mnt/ecoacoustic-storage/
-                echo "Manila storage successfully mounted and permissions fixed."
-              
-                ls -l /mnt/ecoacoustic-storage/
-                sudo mount | grep /mnt/ecoacoustic-storage/
-              EOF
             
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Run Model and Save Results to Manila
-        run: |
-          echo "Running model and saving results..."
-          SSH_KEY=$HOME/.ssh/jetstream2_key
         
           # Step 3: Build docker image for bat-detect-msds
       - name: Build bat-detect-msds image
-        run: docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
+        run: |
+            pwd
+            SSH_KEY=$HOME/.ssh/jetstream2_key
+            docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
       #- name: Build buzzfindr image
       #  run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
@@ -200,6 +168,7 @@ jobs:
       - name: Mount OSN bucket and process data in Docker
         if: steps.check_data.outputs.new_data == 'true'
         run: |
+            pwd
             mkdir -p /tmp/osn_bucket/
             chmod 777 /tmp/osn_bucket/
 
@@ -222,13 +191,10 @@ jobs:
             echo "mounted"
             sleep 100  # Adjust sleep time as necessary to give rclone time to mount
 
-      - name: Ensure Manila Storage is Mounted
-        run: |
-          sudo mount -t nfs 149.165.158.38:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c /mnt/ecoacoustic-storage || echo "Storage already mounted"
-          ls -lah /mnt/ecoacoustic-storage
 
       - name: Run Bat Detection Pipeline in Docker
         run: |
+          pwd
           docker run --rm \
             --mount type=bind,source=${{ github.workspace }}/recordings_2023/,target=/app/recordings_2023/ \
             --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/output_dir/ \
