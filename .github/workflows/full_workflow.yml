@@ -187,13 +187,14 @@ jobs:
             --daemon
 
             echo "mounted"
-            sleep 100  # Adjust sleep time as necessary to give rclone time to mount
+            sleep 30  # Adjust sleep time as necessary to give rclone time to mount
 
             pwd
+            
             docker run --rm \
             --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ \
-            --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/output_dir/ \
-            bat-detect-msds:latest python3 ./EcoAcousticAI/bat-detect-msds/src/batdt2_pipeline.py \
+            --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_dir/ \
+            bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
             --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
 
