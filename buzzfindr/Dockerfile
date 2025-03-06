@@ -42,8 +42,12 @@ WORKDIR /app
 # Copy your script and any necessary files into the container
 COPY . .
 
+RUN ls -l /app/
+
+RUN ls -l /app/buzzfindr
+
 # Set the R script entry point
-CMD ["Rscript", "buzzfindr_script.R"]
+CMD ["Rscript", "/app/buzzfindr/buzzfindr_script.R"]
 
 # Expose port 8787 if you're using RStudio Server or any other service that requires it
 EXPOSE 8787
