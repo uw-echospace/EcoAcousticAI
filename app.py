@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 
 # Path to the Manila storage folder
-MANILA_STORAGE_PATH = "/mnt/manila"
+MANILA_STORAGE_PATH = "/mnt/ecoacoustic-storage"
 
 st.title("📂 Manila Storage File Browser")
 
