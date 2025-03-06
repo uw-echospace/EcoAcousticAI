@@ -100,7 +100,7 @@ jobs:
             df -h | grep vol
             
             ls -ld /mnt/ecoacoustic-storage/
-            
+
             pwd
             cd ./EcoAcousticAI/
             git pull 
@@ -164,6 +164,7 @@ jobs:
       - name: Mount OSN bucket and process data in Docker
         if: steps.check_data.outputs.new_data == 'true'
         run: |
+            SSH_KEY=$HOME/.ssh/jetstream2_key
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
             cd /home/ubuntu/
             mkdir -p /tmp/osn_bucket/
