@@ -12,8 +12,7 @@ detected_buzzes <- buzzfindr(path = path)
 print(head(detected_buzzes))
 
 # Write the detected buzzes dataframe to a CSV file
-write.csv(detected_buzzes, "detected_buzzes.csv", row.names = FALSE)
+write.csv(detected_buzzes, "/app/output_dir/detected_buzzes.csv", row.names = FALSE)
 
 # Optionally, print a message confirming the file has been saved
 cat("Results saved to detected_buzzes.csv\n")
-

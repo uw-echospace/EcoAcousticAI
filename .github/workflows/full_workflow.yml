@@ -107,8 +107,7 @@ jobs:
     
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
-            #- name: Build buzzfindr image
-            #  run: docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
+            docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
 
             # Step 2: Install rclone and configure it for OSN access
       
@@ -191,6 +190,8 @@ jobs:
 
             pwd
             
+            docker run --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ buzzfindr-image:latest
+
             docker run --rm \
             --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ \
             --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_dir/ \
@@ -198,7 +199,8 @@ jobs:
             --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
 
-            df -h | grep vol
+
+            ls /mnt/ecoacoustic-storage
 
             # Clean up (optional, unmount the rclone mount)
             #umount /tmp/osn_bucket/
