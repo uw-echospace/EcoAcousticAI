@@ -107,8 +107,11 @@ jobs:
     
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
-            docker build -t buzzfindr-image -f ./buzzfindr/Dockerfile .
+            cd buzzfindr/
+            docker build -t buzzfindr-image .
 
+            cd ..
+            
             # Step 2: Install rclone and configure it for OSN access
       
           sudo apt-get update
