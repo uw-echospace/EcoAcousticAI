@@ -198,17 +198,10 @@ jobs:
             --input_audio='/app/recordings_2023/' \
             --output_directory='/app/output_dir/' --run_model --csv
 
+            df -h | grep vol
+
             # Clean up (optional, unmount the rclone mount)
             #umount /tmp/osn_bucket/
-
-          #ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@149.165.170.20 << EOF
-            # 🔹 TEST BLOCK: Create a test file in Manila storage
-            #echo "Hello from Jetstream2! This file confirms Manila storage is working." > /mnt/manila/test_manila.txt
-            #echo "Test file created at /mnt/manila/test_manila.txt"
-
-            # 🔹 Verify that the test file exists
-            #ls -lh /mnt/manila/test_manila.txt
-          #EOF
 
       - name: Copy Streamlit App to Instance
         if: false
