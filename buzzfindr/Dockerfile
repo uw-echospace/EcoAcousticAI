@@ -44,6 +44,7 @@ COPY . .
 
 RUN ls -l /app/
 
+RUN mkdir -p /app/output_dir/
 
 # Set the R script entry point
 CMD ["Rscript", "buzzfindr_script.R"]
