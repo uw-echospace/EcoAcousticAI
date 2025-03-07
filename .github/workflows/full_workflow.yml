@@ -192,7 +192,9 @@ jobs:
             sleep 30  # Adjust sleep time as necessary to give rclone time to mount
 
             pwd
-            
+            docker stop $(docker ps -aq)
+            docker rm $(docker ps -aq)
+
             docker run --rm \
             --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_buzz/ \
             --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_buzz/ buzzfindr-image:latest
