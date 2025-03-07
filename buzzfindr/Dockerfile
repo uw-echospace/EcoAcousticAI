@@ -24,7 +24,6 @@ RUN apt-get install -y \
     && apt-get clean
 
 # Install necessary R packages
-#RUN R -e "install.packages(c('cli', 'desc', 'ellipsis', 'fs', 'lifecycle', 'memoise', 'miniUI', 'pkgbuild', 'pkgdown', 'pkgload', 'profvis', 'rcmdcheck', 'remotes', 'rlang', 'roxygen2', 'rversions', 'sessioninfo', 'testthat', 'tools', 'urlchecker', 'withr', 'usethis', 'callr', 'covr', 'curl', 'digest', 'DT', 'foghorn', 'gh', 'gmailr', 'httr', 'knitr', 'lintr', 'MASS', 'mockery', 'pingr', 'rhub', 'rmarkdown', 'rstudioapi', 'spelling'), repos = 'https://cran.rstudio.com/')"
 RUN R -e "install.packages(c('nloptr', 'bioacoustics', 'lme4', 'pbkrtest', 'car'))"
 
 # Install necessary R packages
@@ -44,7 +43,7 @@ COPY . .
 
 RUN ls -l /app/
 
-RUN mkdir -p /app/output_dir/
+RUN mkdir -p /app/output_buzz/
 
 # Set the R script entry point
 CMD ["Rscript", "buzzfindr_script.R"]

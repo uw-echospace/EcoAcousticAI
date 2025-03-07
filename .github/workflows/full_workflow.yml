@@ -111,7 +111,7 @@ jobs:
             docker build -t buzzfindr-image .
 
             cd ..
-            
+
             # Step 2: Install rclone and configure it for OSN access
       
           sudo apt-get update
@@ -193,8 +193,8 @@ jobs:
 
             pwd
             
-            docker run --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_dir/ \
-            --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ buzzfindr-image:latest
+            docker run --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_buzz/ \
+            --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_buzz/ \ buzzfindr-image:latest
 
             docker run --rm \
             --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ \
