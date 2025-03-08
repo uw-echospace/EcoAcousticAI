@@ -3,13 +3,11 @@ remotes::install_github("joelwjameson/buzzfindr")
 library(buzzfindr)
 
 # Set the path to your recordings (ensure the path is correct and accessible)
-#path <- "/app/recordings_buzz/"
-path = "/app/recordings_buzz/"
+path = "/app/recordings_buzz"
 out_file = "csv"
 
 # Now call the function
 detected_buzzes <- buzzfindr(path = path, out.file = out_file)
-# After debugging, untrace the function
 
 # View the results (print first few rows to check)
 print(head(detected_buzzes))
