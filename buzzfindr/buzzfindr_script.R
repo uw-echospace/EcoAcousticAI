@@ -40,7 +40,9 @@ if (length(subdirs) > 0) {
         # Copy each .csv file to the target directory
         for (file in csv_files) {
             file_path <- file.path(last_subdir, file)  # Full path to the .csv file
-            target_path <- file.path(target_dir, file)  # Target path in the output directory
+
+            new_file_name <- paste0(tools::file_path_sans_ext(file), "_", timestamp, ".csv")
+            target_path <- file.path(target_dir, new_file_name)  # Target path in the output directory
             
             file.copy(file_path, target_path)
             cat("Copied:", file, "to", target_dir, "\n")
