@@ -103,7 +103,7 @@ jobs:
 
             pwd
             cd ./EcoAcousticAI/
-            git pull origin/main
+            git pull origin main
     
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
@@ -198,6 +198,8 @@ jobs:
             docker run --rm \
             --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_buzz/ \
             --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_buzz/ buzzfindr-image:latest
+
+            sudo rm -rf ./EcoAcousticAI/recordings_2023/Buzz_Results_*
 
             docker run --rm \
             --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ \

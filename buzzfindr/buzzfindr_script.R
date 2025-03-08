@@ -19,7 +19,7 @@ cat("Results saved to detected_buzzes.csv\n")
 source_dir <- "/app/recordings_buzz/"
 target_dir <- "/app/output_buzz/"
 
-# List directories in /app/output_buzz
+# List directories in /app/recordings_buzz
 subdirs <- list.dirs("/app/recordings_buzz/", full.names = TRUE, recursive = FALSE)
 
 # Check if there are any subdirectories
@@ -41,8 +41,13 @@ if (length(subdirs) > 0) {
         for (file in csv_files) {
             file_path <- file.path(last_subdir, file)  # Full path to the .csv file
             target_path <- file.path(target_dir, file)  # Target path in the output directory
+            
             file.copy(file_path, target_path)
             cat("Copied:", file, "to", target_dir, "\n")
+
+            # Remove the file from the source directory after copying
+            file.remove(file_path)
+            cat("Removed:", file, "from", last_subdir, "\n")
         }
     } else {
         cat("No .csv files found in the last subdirectory.\n")
