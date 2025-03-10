@@ -98,9 +98,9 @@ jobs:
 
             echo "mounted"
             sleep 30  # Adjust sleep time as necessary to give rclone time to mount
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/EcoAcousticAI/.git
-            sudo chmod -R 777 /home/ubuntu/EcoAcousticAI/.git
-            ls -ld /home/ubuntu/EcoAcousticAI/.git
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/EcoAcousticAI/
+            sudo chmod -R 777 /home/ubuntu/EcoAcousticAI/
+            ls -ld /home/ubuntu/EcoAcousticAI/
 
             git config --global --add safe.directory /home/ubuntu/EcoAcousticAI
             cd ./EcoAcousticAI/
