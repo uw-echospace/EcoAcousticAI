@@ -99,9 +99,10 @@ jobs:
             echo "mounted"
             sleep 30  # Adjust sleep time as necessary to give rclone time to mount
 
-            cd EcoAcousticAI
+            git config --global --add safe.directory /home/ubuntu/EcoAcousticAI
+            cd ./EcoAcousticAI/
 
-            git pull origin main 
+            git pull -v origin main
 
             python3 new_data.py
 
@@ -140,9 +141,7 @@ jobs:
             
             ls -ld /mnt/ecoacoustic-storage/
 
-            pwd
             cd ./EcoAcousticAI/
-            git -v origin main
     
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
