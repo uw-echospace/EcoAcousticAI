@@ -5,6 +5,43 @@ library(buzzfindr)
 # Set the path to your recordings (ensure the path is correct and accessible)
 path = "/app/recordings_buzz"
 out_file = "png"
+# Load required packages
+library(buzzfindr)
+
+# Set the directory path
+directory_path <- "/app/recordings_buzz"
+
+# Get a list of all files in the directory
+  files <- list.files(directory_path, full.names = TRUE)
+  
+  # Loop through each file
+  for (file_path in files) {
+    # Get the file name from the full path
+    file_name <- basename(file_path)
+    
+    # Check if the file is a .WAV file
+    if (grepl("\\.WAV$", file_name)) {
+      # Generate the new file name with .wav extension
+      new_file_path <- sub("\\.WAV$", ".wav", file_path)
+      
+      # Rename the file (convert .WAV to .wav)
+      file.rename(file_path, new_file_path)
+      cat(paste("Converted:", file_name, "to", new_file_path, "\n"))
+      
+      # Run buzzfindr on the converted file
+      #out_file <- paste0(sub(".wav", "", new_file_path), "_buzz_results.csv")
+      detected_buzzes <- buzzfindr(path = new_file_path, out.file = out_file)
+      
+      # You can further process the 'detected_buzzes' result if needed
+      cat(paste("Buzzfindr results saved to:", out_file, "\n"))
+      
+    } else {
+      cat(paste("Skipped:", file_name, "because it's not a .WAV file\n"))
+    }
+  }
+
+# Call the function to process files in the directory
+convert_and_run(directory_path)
 
 # Now call the function
 detected_buzzes <- buzzfindr(path = path, out.file = out_file)
