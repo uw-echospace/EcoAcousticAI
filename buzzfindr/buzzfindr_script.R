@@ -4,7 +4,7 @@ library(buzzfindr)
 
 # Set the path to your recordings (ensure the path is correct and accessible)
 path = "/app/recordings_buzz"
-out_file = "csv"
+out_file = "png"
 
 # Now call the function
 detected_buzzes <- buzzfindr(path = path, out.file = out_file)
@@ -31,7 +31,7 @@ if (length(subdirs) > 0) {
     setwd(last_subdir)
     
     # List all .csv files in the last subdirectory
-    csv_files <- list.files(pattern = "\\.csv$")
+    csv_files <- list.files(pattern = "\\.png$")
     
     if (length(csv_files) > 0) {
         cat("Found the following .csv files:\n")
@@ -41,7 +41,7 @@ if (length(subdirs) > 0) {
         for (file in csv_files) {
             file_path <- file.path(last_subdir, file)  # Full path to the .csv file
 
-            new_file_name <- paste0(tools::file_path_sans_ext(file), "_", timestamp, ".csv")
+            new_file_name <- paste0(tools::file_path_sans_ext(file), "_", timestamp, ".png")
             target_path <- file.path(target_dir, new_file_name)  # Target path in the output directory
             
             file.copy(file_path, target_path)
