@@ -71,6 +71,7 @@ jobs:
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
             sudo apt-get update
             sudo apt-get install -y rclone
+            sudo apt install git
             mkdir -p ~/.config/rclone
             echo "[osn_sdsc_ubna]" > ~/.config/rclone/rclone.conf
             echo "type = s3" >> ~/.config/rclone/rclone.conf
@@ -99,6 +100,8 @@ jobs:
             sleep 30  # Adjust sleep time as necessary to give rclone time to mount
 
             cd EcoAcousticAI
+
+            git pull origin main 
 
             python3 new_data.py
 
