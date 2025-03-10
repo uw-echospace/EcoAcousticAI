@@ -142,7 +142,7 @@ jobs:
 
             pwd
             cd ./EcoAcousticAI/
-            git pull origin main
+            git -v origin main
     
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
