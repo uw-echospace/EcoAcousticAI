@@ -4,7 +4,7 @@ import json
 
 # Define the directory containing the filelist files and rclone mount directory
 metadata_dir = './osn_bucket_metadata/'
-#rclone_mount_dir = '../tmp/osn_bucket/'  # The directory where your rclone mount is located
+#rclone_mount_dir = '/tmp/osn_bucket/'  # The directory where your rclone mount is located
 rclone_mount_dir = '/recordings_2023/'
 
 # Directories and corresponding filelist files
@@ -32,8 +32,9 @@ def get_files_from_rclone(directory):
    
     for root, _, files in os.walk(dir_path):
         for file in files:
-            current_files.add(os.path.relpath(os.path.join(root, file), dir_path))
-            
+            #current_files.add(os.path.relpath(os.path.join(root, file), dir_path))
+            full_path = os.path.join(root, file)
+            current_files.add(full_path)
     return current_files
 
 # Function to check for new files in each directory
@@ -47,12 +48,15 @@ def check_for_new_files():
         
         # Get the current files in the corresponding directory from the rclone mount
         current_files = get_files_from_rclone(dir_name)
-        
+        print(current_files)
         # Find new files (i.e., files in current_files but not in existing_files)
         new_files_in_current = list(current_files - existing_files)
 
         if new_files_in_current:
             new_files.extend(new_files_in_current)
+            for file in new_files_in_current:
+                with open(filelist_name, "a") as f:
+                    f.write(f"{file}\n")
         
 
     return new_files
@@ -65,6 +69,7 @@ if __name__ == "__main__":
     # If new files are found, return success (exit code 0) and print the new files as JSON
     if new_files:
         print("New files detected:")
+
         new_directories = list(set(os.path.dirname(file) for file in new_files))
         full_directories = [os.path.join(rclone_mount_dir, directory) for directory in new_directories]
 
@@ -72,7 +77,7 @@ if __name__ == "__main__":
         print(full_directories)
 
         with open("new_directories.txt", "w") as f:
-            for directory in full_directories:
+            for directory in new_directories:
                 f.write(f".{directory}\n")
         sys.exit(0)
 
