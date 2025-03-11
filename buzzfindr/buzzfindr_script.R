@@ -9,6 +9,7 @@ out_file = "csv"
 all_files <- list.files(path = path, full.names = TRUE)
 
 print(all_files)
+detected_buzzes <- buzzfindr(path = path, out.file = out_file)
 # Iterate through the files in the directory
 for (file in all_files) {
     # Check if the file ends with .wav or .WAV
