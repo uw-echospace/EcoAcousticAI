@@ -48,7 +48,7 @@ st.markdown("""
         <a class="nav-item" href="/?page=home" target="_self">HOME</a>
         <a class="nav-item" href="/?page=models" target="_self">MODELS</a>
         <a class="nav-item" href="/?page=dashboard" target="_self">DASHBOARD</a>
-        <a class="nav-item" href="/?page=contact" target="_self">CONTACT</a>
+        <a class="nav-item" href="/?page=contact" target="_self">ABOUT US</a>
     </div>
 """, unsafe_allow_html=True)
 
@@ -131,14 +131,23 @@ elif page == "dashboard":
         st.error("🚫 Manila storage path does not exist. Make sure it is mounted correctly.")
 
 elif page == "contact":
-    st.title("📞 Contact")
-    st.write("Meet the Team:")
+    st.title("About Us")
+    st.write("## Meet the Team:")
     st.markdown("""
-    - **Isha** - Data Scientist
-    - **Jacob** - Data Scientist
-    - **Lawrie** - Data Scientist
+    **Isha Gokhale**
+    - Graduate Research Assistant at the University of Washington's Genomics Department, specializing in signal processing analysis for peptide sequencing.
+    - Former Data Science Intern at Qualtrics and Conversica, with experience in large database querying and predictive modeling.
+    
+    **Lawrie Brunswick**
+    - Master's of Science in Data Science with over nine years of experience in programming and analytics.
+    - Held roles such as Data Science Trainee at the University of Washington, Senior Data Analyst at AIR, and Senior Reporting Analyst at Optum Inc.
+    - Expert in ML model training with Cellpose and Stereo-seq analysis, with strong Python, R, and SQL skills.
+
+    **Jacob Peterson**
+    - Data science student with experience in machine learning, predictive analytics, and building scalable data pipelines.
+    - Works at the Port of Seattle applying predictive modeling to optimize operational planning and improve business intelligence insights.
     """)
-    st.write("For inquiries, reach out to us at **ecoacousticai@contact.com**.")
+    st.write("For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
 
 else:
     st.write("Page not found. Please use the navigation links above.")
