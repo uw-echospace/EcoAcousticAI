@@ -43,6 +43,7 @@ COPY . .
 
 RUN ls -l /app/
 
+RUN mkdir -p /app/recordings_buzz/
 RUN mkdir -p /app/output_buzz/
 
 # Set the R script entry point

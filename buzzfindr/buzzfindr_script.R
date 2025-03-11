@@ -3,7 +3,7 @@ remotes::install_github("joelwjameson/buzzfindr")
 library(buzzfindr)
 
 # Set the path to your recordings (ensure the path is correct and accessible)
-path = "/app/recordings_buzz"
+path = "/app/recordings_buzz/"
 out_file = "csv"
 
 all_files <- list.files(path = path, full.names = TRUE)
