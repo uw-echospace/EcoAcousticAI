@@ -1,13 +1,18 @@
 #!/bin/bash
 
-# Check if new_directories.txt exists
-if [[ ! -f new_directories.txt ]]; then
-  echo "Error: new_directories.txt not found!"
-  exit 1
-fi
+directories=()
 
-# Read each line (directory) from new_directories.txt
+# Read each line from new_directories.txt and add it to the array
 while IFS= read -r directory; do
+  # Skip any empty lines
+  if [ -z "$directory" ]; then
+    continue
+  fi
+  directories+=("$directory")  # Add directory to the array
+done < new_directories.txt
+
+# Loop through each directory in the array
+for directory in "${directories[@]}"; do
   echo "Running Docker on directory: $directory"
 
   # Check if directory is not empty
@@ -34,4 +39,3 @@ while IFS= read -r directory; do
     --output_directory='/app/output_dir/' --run_model --csv
 
 done < new_directories.txt
-
