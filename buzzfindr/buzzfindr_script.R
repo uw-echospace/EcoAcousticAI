@@ -26,15 +26,11 @@ for (file in all_files) {
         detected_buzzes <- buzzfindr(path = path, out.file = out_file)
         print(head(detected_buzzes))
 
-        # Optionally, print a message confirming the file has been saved
-        cat("Results saved to detected_buzzes.csv\n")
     } else {
         cat("Skipping file (not .wav or .WAV):", file, "\n")
     }
 }
 
-# Optionally, print a message confirming the file has been saved
-cat("Results saved to detected_buzzes.csv\n")
 
 # Set source and target directories
 source_dir <- "/app/recordings_buzz/"
@@ -62,6 +58,7 @@ if (length(subdirs) > 0) {
         for (file in csv_files) {
             file_path <- file.path(last_subdir, file)  # Full path to the .csv file
 
+            timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
             new_file_name <- paste0(tools::file_path_sans_ext(file), "_", timestamp, ".csv")
             target_path <- file.path(target_dir, new_file_name)  # Target path in the output directory
             

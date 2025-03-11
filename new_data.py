@@ -55,10 +55,17 @@ def check_for_new_files():
         if new_files_in_current:
             new_files.extend(new_files_in_current)
             for file in new_files_in_current:
-                with open(filelist_name, "a") as f:
-                    f.write(f"{file}\n")
-        
+                path = './recordings_2023/ubna_data_01/recover-20210604_unit1/part6_duplicate.wav'
+                # The unwanted prefix you want to remove
+                prefix = './recordings_2023/'+ dir_name + '/'
 
+                # Remove the prefix from the path
+                cleaned_path = path.replace(prefix, '')
+
+                print('clean path', cleaned_path)
+                with open(file_path, "a") as f:
+                    f.write(f"{cleaned_path}\n")
+    
     return new_files
 
 # Run the check

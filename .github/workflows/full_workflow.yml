@@ -113,7 +113,7 @@ jobs:
         run:  |
           SSH_KEY=$HOME/.ssh/jetstream2_key
           ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
-          
+
           ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
           FILE_PATH="/etc/ceph/ceph.client.ecoacousticaccess.keyring"
   
@@ -128,21 +128,21 @@ jobs:
           ls -l $FILE_PATH
 
             # Define variables for the mount path and access details
-            ACCESS_TO="ecoacousticaccess"  
-            sudo mkdir -p /mnt/ecoacoustic-storage/
-            pwd
-            MOUNT_PATH="/mnt/ecoacoustic-storage/"
-            CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
+            #ACCESS_TO="ecoacousticaccess"  
+            #sudo mkdir -p /mnt/ecoacoustic-storage/
+            #pwd
+            #MOUNT_PATH="/mnt/ecoacoustic-storage/"
+            #CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
 
             # Add entry to /etc/fstab to mount the storage on boot
-            echo "$CEPH_PATH $MOUNT_PATH ceph name=$ACCESS_TO,x-systemd.device-timeout=30,x-systemd.mount-timeout=30,noatime,_netdev,rw 0 2" | sudo tee -a /etc/fstab > /dev/null
+            #echo "$CEPH_PATH $MOUNT_PATH ceph name=$ACCESS_TO,x-systemd.device-timeout=30,x-systemd.mount-timeout=30,noatime,_netdev,rw 0 2" | sudo tee -a /etc/fstab > /dev/null
 
             # Verify the entry is added (optional)
             cat /etc/fstab
             sudo mount -a
             df -h | grep vol
             
-            ls -ld /mnt/ecoacoustic-storage/
+            ls -l ecoacoustic-storage/
 
             cd ./EcoAcousticAI/
     
@@ -150,8 +150,6 @@ jobs:
 
             cd buzzfindr/
             docker build -t buzzfindr-image .
-
-            cd ..
 
       # Step 5: Mount the OSN bucket and process data in Docker
       - name: Process data in Docker
@@ -168,42 +166,27 @@ jobs:
             while IFS= read -r directory; do
             echo "Running Docker on directory: $directory"
             
-            # Run Docker for each directory
-            docker run --rm \
-                --mount type=bind,source=$directory,,target=/app/recordings_buzz/ \
-                --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_buzz/ buzzfindr-image:latest
-
-                sudo rm -rf ./EcoAcousticAI/recordings_2023/Buzz_Results_*
-
+                # Run Docker for each directory
                 docker run --rm \
-                --mount type=bind,source=$directory,target=/app/recordings_2023/ \
-                --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_dir/ \
-                bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-                --input_audio='/app/recordings_2023/' \
-                --output_directory='/app/output_dir/' --run_model --csv
+                    --mount type=bind,source=$directory,target=/app/recordings_buzz/ \
+                    --mount type=bind,source=/ecoacoustic-storage/,target=/app/output_buzz/ buzzfindr-image:latest
+
+                    sudo rm -rf $directory/Buzz_Results_*
+
+                    docker run --rm \
+                    --mount type=bind,source=$directory,target=/app/recordings_2023/ \
+                    --mount type=bind,source=/ecoacoustic-storage/,target=/app/output_dir/ \
+                    bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
+                    --input_audio='/app/recordings_2023/' \
+                    --output_directory='/app/output_dir/' --run_model --csv
 
 
             done < new_directories.txt
 
-            docker run --rm \
-            --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_buzz/ \
-            --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_buzz/ buzzfindr-image:latest
-
-            sudo rm -rf ./EcoAcousticAI/recordings_2023/Buzz_Results_*
-
-            docker run --rm \
-            --mount type=bind,source=./EcoAcousticAI/recordings_2023/,target=/app/recordings_2023/ \
-            --mount type=bind,source=./mnt/ecoacoustic-storage/,target=/app/output_dir/ \
-            bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-            --input_audio='/app/recordings_2023/' \
-            --output_directory='/app/output_dir/' --run_model --csv
-
-
-            ls /mnt/ecoacoustic-storage
-
             # Clean up (optional, unmount the rclone mount)
             rm -f new_directories.txt
-            #umount /tmp/osn_bucket/
+            #sudo umount /tmp/osn_bucket/
+
           
 
       - name: Copy Streamlit App to Instance
