@@ -6,7 +6,7 @@ import pandas as pd
 st.markdown("""
     <style>
         .header-banner {
-            background-color: #A8D5BA;  /* Light green for better aesthetics */
+            background-color: #4CAF50;  /* Light green */
             color: #FFFFFF;
             text-align: center;
             padding: 20px 0;
@@ -59,7 +59,20 @@ page = st.query_params.get("page", "home")
 if page == "home":
     st.title("🏡 Home")
     st.write("Welcome to the EcoAcoustic AI project portal!")
-    st.write("Learn about our environmental sound detection technologies and conservation efforts.")
+    st.markdown("""
+    ## Introduction
+    The Union Bay Natural Area (UBNA) is an ecologically significant urban habitat in Seattle, characterized by its proximity to major highways and Lake Washington, which introduces unique soundscape complexities. This diverse environment hosts various wildlife, including birds and bats, while also being influenced by human-made noise such as traffic and recreational activities.  
+
+    ## Project Overview
+    The EcoAcoustic AI project focuses on developing a cloud-hosted automated pipeline for monitoring wildlife sounds in UBNA. Building on previous research centered around bat call detection, this project expands detection capabilities across multiple animal groups and human-generated sounds. The goal is to create a modular, scalable tool for research and community science engagement, promoting ecological awareness within the Greater Seattle area.  
+
+    ## Data Pipeline
+    Our project processes passive acoustic monitoring (PAM) data collected from UBNA using AudioMoth devices. These devices capture high-resolution audio (192 kHz or 250 kHz), providing detailed insights into the Union Bay soundscape. Since 2021, over 45 TB of audio data has been collected and stored in NSF Open Storage Network buckets.  
+
+    To analyze this data, we utilize Jetstream2, a cloud computing resource. The pipeline processes raw data files into intermediate data files by breaking 30-minute audio recordings into 30-second segments for model input. The data remains in .wav format, compatible with models such as **BatDetect2**, **BirdNET-Analyzer**, **BuzzFindr**, and **Batty-BirdNET**, which generate .csv outputs for further analysis and visualization.  
+
+    The project’s primary challenge is ensuring proper authentication and permissions between Jetstream2 and OSN for seamless data access and implementing automated pipeline triggers for new data uploads. Ultimately, the processed data will be accessible via a client-facing web portal, enhancing data-driven research and community engagement.
+    """)
 
 elif page == "models":
     st.title("🤖 Models")
