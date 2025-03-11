@@ -131,21 +131,17 @@ elif page == "dashboard":
         st.error("🚫 Manila storage path does not exist. Make sure it is mounted correctly.")
 
 elif page == "contact":
-    st.title("About Us")
-    st.write("## Meet the Team:")
+    st.title("Meet the Team:")
     st.markdown("""
     **Isha Gokhale**
-    - Graduate Research Assistant at the University of Washington's Genomics Department, specializing in signal processing analysis for peptide sequencing.
-    - Former Data Science Intern at Qualtrics and Conversica, with experience in large database querying and predictive modeling.
+    Isha Gokhale has experience as a Graduate Research Assistant at the University of Washington's Genomics Department, where she contributed to enhancing a peptide sequencing model by detecting chimeric spectra through signal processing analysis. She also worked as a Data Science Intern at Qualtrics, utilizing Athena and Redshift to query large databases and analyze user behaviors related to value achievement. Additionally, Isha interned at Conversica, where she trained and analyzed transformer and LSTM models to detect client churn. She is skilled in data analysis, machine learning, and the development of predictive models. Isha is passionate about applying her technical expertise to solve real-world problems and optimize business outcomes through data-driven insights. Her professional interests include building end-to-end data pipelines, ETL processes, and applying machine learning techniques to large-scale datasets.
     
     **Lawrie Brunswick**
-    - Master's of Science in Data Science with over nine years of experience in programming and analytics.
-    - Held roles such as Data Science Trainee at the University of Washington, Senior Data Analyst at AIR, and Senior Reporting Analyst at Optum Inc.
-    - Expert in ML model training with Cellpose and Stereo-seq analysis, with strong Python, R, and SQL skills.
+    Lawrie Brunswick has a Master’s of Science in Data Science with over nine years of experience in programming and analytics. Lawrie has held roles such as: Data Science Trainee in the genomics Department at the University of Washington, Senior Data Analyst at the American Institutes for Research, and Senior Reporting Analyst at Optum Inc. She has built CI/CD pipelines, conducted detailed statistical analyses, and created visual reports for executive decision-making. Her skills include ML model training using Cellpose for nuclear segmentation and stereo-seq analysis for spatial transcriptomics, utilizing tools like TensorFlow and PyTorch. Lawrie is proficient in Python, R, SQL, SAS, and C++, with experience in big data environments like Hadoop, Teradata, and cluster computing via Sun Grid Engine. She has applied a range of statistical techniques, including regression, ANOVA, and factor analysis. Her strong data manipulation and automation skills have been vital to her success. Through her extensive experience in healthcare and biological research, Lawrie is eager to explore new industries and to expand skills in machine learning, deep learning, and AI.
 
     **Jacob Peterson**
-    - Data science student with experience in machine learning, predictive analytics, and building scalable data pipelines.
-    - Works at the Port of Seattle applying predictive modeling to optimize operational planning and improve business intelligence insights.
+    Jacob Peterson is a skilled data science student with experience in statistical analysis, machine learning, and data analytics. He works at the Port of Seattle, where he applies predictive modeling, providing critical insights for operational planning. This role involved building and refining data pipelines and dashboards in collaboration with the business intelligence team to optimize data-driven decision-making processes. Proficient in Python, SQL, and predictive analytics, Jacob excels at developing scalable data systems and impactful visualizations. He is particularly interested in healthcare, AI, and cloud computing, with a focus on leveraging LLMs, machine learning algorithms, and data pipelines to drive innovation in tech and business intelligence.
+
     """)
     st.write("For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
 
