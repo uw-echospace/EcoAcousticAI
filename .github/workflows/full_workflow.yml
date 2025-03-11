@@ -104,7 +104,7 @@ jobs:
 
             git config --global --add safe.directory /home/ubuntu/EcoAcousticAI
             cd ./EcoAcousticAI/
-
+            git stash 
             git pull -v origin main
 
             python3 new_data.py
