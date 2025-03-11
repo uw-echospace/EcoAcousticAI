@@ -160,11 +160,19 @@ jobs:
             pwd
             docker stop $(docker ps -aq)
             docker rm $(docker ps -aq)
+            dos2unix new_directories.txt
+            sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
+            sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
+
             cat new_directories.txt
             # Read new directories from the text file
             while IFS= read -r directory; do
             echo "Running Docker on directory: $directory"
-            
+            # Check if directory is not empty
+                if [ -z "$directory" ]; then
+                    echo "Skipping empty directory."
+                    continue
+                fi
                 # Run Docker for each directory
                 docker run --rm \
                     --mount type=bind,source=$directory,target=/app/recordings_buzz/ \
