@@ -15,7 +15,7 @@ for (file in all_files) {
     # Check if the file ends with .wav or .WAV
     if (grepl("\\.wav$", file, ignore.case = TRUE)) {
         # Convert .wav to .WAV by renaming the file (change extension to uppercase)
-        new_file_name <- sub("\\.wav$", ".WAV", file, ignore.case = TRUE)
+        new_file_name <- sub("\\.WAV$", ".wav", file, ignore.case = TRUE)
         
         # Rename the file (if necessary)
         if (file != new_file_name) {
