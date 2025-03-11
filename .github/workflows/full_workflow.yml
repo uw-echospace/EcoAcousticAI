@@ -108,6 +108,7 @@ jobs:
             git pull -v origin main
 
             python3 new_data.py
+            cat new_directories.txt
 
       - name: Mount Manila Storage
         run:  |
@@ -141,8 +142,6 @@ jobs:
             cat /etc/fstab
             sudo mount -a
             df -h | grep vol
-            
-            ls -l ecoacoustic-storage/
 
             cd ./EcoAcousticAI/
     
@@ -161,7 +160,7 @@ jobs:
             pwd
             docker stop $(docker ps -aq)
             docker rm $(docker ps -aq)
-
+            cat new_directories.txt
             # Read new directories from the text file
             while IFS= read -r directory; do
             echo "Running Docker on directory: $directory"
