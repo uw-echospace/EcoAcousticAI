@@ -164,10 +164,14 @@ jobs:
             sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
             sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
 
+            echo "Contents of new_directories.txt:"
             cat new_directories.txt
-            # Read new directories from the text file
+            echo "----------------------"
+            chmod +x run_docker.sh
+            ./run_docker.sh
+            '''
             while IFS= read -r directory; do
-            echo "Running Docker on directory: $directory"
+            echo "Running Docker on directory:" $directory
             # Check if directory is not empty
                 if [ -z "$directory" ]; then
                     echo "Skipping empty directory."
@@ -189,7 +193,7 @@ jobs:
 
 
             done < new_directories.txt
-
+            '''
             # Clean up (optional, unmount the rclone mount)
             rm -f new_directories.txt
             #sudo umount /tmp/osn_bucket/
