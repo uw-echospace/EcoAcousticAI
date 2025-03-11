@@ -71,14 +71,14 @@ if __name__ == "__main__":
         print("New files detected:")
 
         new_directories = list(set(os.path.dirname(file) for file in new_files))
+        abs_path = '/home/ubuntu/'
         full_directories = [os.path.join(rclone_mount_dir, directory) for directory in new_directories]
 
         print(new_files)
-        print(full_directories)
 
         with open("new_directories.txt", "w") as f:
             for directory in new_directories:
-                f.write(f".{directory}\n")
+                f.write(f"{directory}\n")
         sys.exit(0)
 
     else:
