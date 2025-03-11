@@ -6,11 +6,31 @@ library(buzzfindr)
 path = "/app/recordings_buzz"
 out_file = "csv"
 
-# Now call the function
-detected_buzzes <- buzzfindr(path = path, out.file = out_file)
+all_files <- list.files(path = path, full.names = TRUE)
 
-# View the results (print first few rows to check)
-print(head(detected_buzzes))
+# Iterate through the files in the directory
+for (file in all_files) {
+    # Check if the file ends with .wav or .WAV
+    if (grepl("\\.wav$", file, ignore.case = TRUE)) {
+        # Convert .wav to .WAV by renaming the file (change extension to uppercase)
+        new_file_name <- sub("\\.wav$", ".WAV", file, ignore.case = TRUE)
+        
+        # Rename the file (if necessary)
+        if (file != new_file_name) {
+            file.rename(file, new_file_name)
+            cat("Renamed:", file, "to", new_file_name, "\n")
+        }
+
+        # Now run the detected_buzzes function with the updated file
+        detected_buzzes <- buzzfindr(path = path, out.file = out_file)
+        print(head(detected_buzzes))
+
+        # Optionally, print a message confirming the file has been saved
+        cat("Results saved to detected_buzzes.csv\n")
+    } else {
+        cat("Skipping file (not .wav or .WAV):", file, "\n")
+    }
+}
 
 # Optionally, print a message confirming the file has been saved
 cat("Results saved to detected_buzzes.csv\n")
