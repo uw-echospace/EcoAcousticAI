@@ -7,7 +7,7 @@ path = "/app/recordings_buzz"
 out_file = "csv"
 
 all_files <- list.files(path = path, full.names = TRUE)
-print(all_files)
+cat(all_files)
 # Iterate through the files in the directory
 for (file in all_files) {
     # Check if the file ends with .wav or .WAV
