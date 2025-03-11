@@ -83,7 +83,7 @@ elif page == "models":
     
     - **[Batty-BirdNET-Analyzer](https://github.com/rdz-oss/BattyBirdNET-Analyzer)**: A BirdNET-based classifier retrained on ultrasonic bat recordings (e.g. 256 kHz sampling) to identify bat species. It classifies bat call segments (as detected by BatDetect2) using BirdNET’s deep neural network architecture adapted for echolocation calls, enabling automated bat call classification.
     
-    - **[BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer): An open-source tool that recognizes and classifies bird vocalizations using deep neural networks. It processes audible frequency audio to identify bird species present by their calls, allowing simultaneous avian biodiversity monitoring within the pipeline.
+    - **[BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer)**: An open-source tool that recognizes and classifies bird vocalizations using deep neural networks. It processes audible frequency audio to identify bird species present by their calls, allowing simultaneous avian biodiversity monitoring within the pipeline.
     
     - **Custom Frog Model**: A BirdNET-derived acoustic model trained specifically on Washington frog calls to enhance amphibian call identification in the Union Bay Seattle area. Using the BirdNET framework (originally for ~984 bird species) extended to include frog species, this model detects and classifies frog vocalizations, adding anuran amphibians to the multi-species analysis.
     
