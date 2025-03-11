@@ -75,13 +75,21 @@ if page == "home":
     """)
 
 elif page == "models":
-    st.title("🤖 Models")
-    st.write("Our models include:")
+    st.title("🤖 EcoAcoustic Pipeline Model Integration ")
     st.markdown("""
-    - **Buzzfindr**: Insect sound detection
-    - **BatDetect2**: Advanced bat call identification
-    - **Batty-BirdNET**: Bird and bat detection model
-    - **BirdNET-Analyzer**: Bird call analysis with fine-grain accuracy
+    The EcoAcoustic pipeline integrates multiple specialized models to detect and identify multiple species (bats, birds, frogs) from audio recordings. Our models include:
+    
+    - **BatDetect2**: A deep learning-based bat call detection pipeline that automatically detects and classifies bat echolocation calls in high-frequency recordings. By pinpointing true bat call events, it improves the accuracy of downstream bat species identification in noisy field recordings.
+    
+    - **Batty-BirdNET-Analyzer**: A BirdNET-based classifier retrained on ultrasonic bat recordings (e.g. 256 kHz sampling) to identify bat species. It classifies bat call segments (as detected by BatDetect2) using BirdNET’s deep neural network architecture adapted for echolocation calls, enabling automated bat call classification.
+    
+    - **BirdNET-Analyzer**: An open-source tool that recognizes and classifies bird vocalizations using deep neural networks. It processes audible frequency audio to identify bird species present by their calls, allowing simultaneous avian biodiversity monitoring within the pipeline.
+    
+    - **Custom Frog Model**: A BirdNET-derived acoustic model trained specifically on Washington frog calls to enhance amphibian call identification in the Union Bay Seattle area. Using the BirdNET framework (originally for ~984 bird species) extended to include frog species, this model detects and classifies frog vocalizations, adding anuran amphibians to the multi-species analysis.
+    
+    - **Buzzfindr**: An automated detector for bat feeding buzzes – the rapid sequence of pulses bats emit during the final stage of insect prey capture. Buzzfindr flags these feeding buzz events in the recordings, providing behavioral insights into bat foraging activity and aiding habitat use analysis.
+    
+    Together, these models operate in concert as an integrated pipeline, each focusing on specific taxa or acoustic behaviors. This allows the system to concurrently monitor bats, birds, and frogs from the same acoustic data, contributing to comprehensive, multi-species biodiversity assessments through passive acoustic analysis.
     """)
 
 elif page == "dashboard":
