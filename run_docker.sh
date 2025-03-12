@@ -13,9 +13,14 @@ done < new_directories.txt
 
 echo "${directories[@]}"
 
+length=${#directories[@]}
+
 # Loop through each directory in the array
-for directory in "${directories[@]}"; do
-  echo "Running Docker on directory: $directory"
+#for directory in "${directories[@]}"; do
+for ((i=0; i<$length; i++)); do
+  # Access each element by its index
+  echo "Index $i: ${directories[$i]}"
+  #echo "Running Docker on directory: $directory"
 
   # Check if directory is not empty
   if [ -z "$directory" ]; then
@@ -40,4 +45,4 @@ for directory in "${directories[@]}"; do
     --input_audio='/app/recordings_2023/' \
     --output_directory='/app/output_dir/' --run_model --csv
 
-done < new_directories.txt
+done #< new_directories.txt
