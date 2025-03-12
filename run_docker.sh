@@ -4,10 +4,9 @@
 while IFS= read -r directory; do
   echo "Running Docker on directory:" $directory
 
-  # Check if directory is not empty
-  if [ -z "$directory" ]; then
-    echo "Skipping empty directory."
-    continue
+  if [ -z "$(ls -A "$directory")" ]; then
+      echo "Skipping empty directory."
+      continue
   fi
 
   # Run Docker for each directory
