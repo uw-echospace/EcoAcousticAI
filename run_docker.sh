@@ -11,6 +11,8 @@ while IFS= read -r directory; do
   directories+=("$directory")  # Add directory to the array
 done < new_directories.txt
 
+echo "${directories[@]}"
+
 # Loop through each directory in the array
 for directory in "${directories[@]}"; do
   echo "Running Docker on directory: $directory"
