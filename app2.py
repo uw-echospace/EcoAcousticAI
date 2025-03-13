@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import pandas as pd
+from PIL import Image 
 
 # Custom CSS for improved header design
 st.markdown("""
@@ -92,6 +93,7 @@ elif page == "models":
     Together, these models operate in concert as an integrated pipeline, each focusing on specific taxa or acoustic behaviors. This allows the system to concurrently monitor bats, birds, and frogs from the same acoustic data, contributing to comprehensive, multi-species biodiversity assessments through passive acoustic analysis.
     """)
 
+
 elif page == "dashboard":
     st.title("📊 Dashboard")
 
@@ -102,19 +104,29 @@ elif page == "dashboard":
 
     # Check if the Manila storage path exists
     if os.path.exists(MANILA_STORAGE_PATH):
-        st.write("✅ Manila storage is detected.")
+        st.write("Manila storage is detected.")
 
         all_items = os.listdir(MANILA_STORAGE_PATH)
+        
+        # Separate directories and files
+        directories = [d for d in all_items if os.path.isdir(os.path.join(MANILA_STORAGE_PATH, d))]
         files = [f for f in all_items if os.path.isfile(os.path.join(MANILA_STORAGE_PATH, f))]
 
+        # Display Directories
+        if directories:
+            st.write("📁 **Available Directories:**")
+            for directory in directories:
+                st.markdown(f"- `{directory}`")
+
+        # Display Files
         if files:
             selected_file = st.selectbox("📑 Select a file:", files, index=0)
             file_path = os.path.join(MANILA_STORAGE_PATH, selected_file)
 
-            with open(file_path, "rb") as f:
-                st.download_button(label="⬇️ Download File", data=f, file_name=selected_file)
+            if selected_file.endswith(".png"):
+                st.image(file_path, caption=selected_file, use_column_width=True)
 
-            if selected_file.endswith(".csv"):
+            elif selected_file.endswith(".csv"):
                 df = pd.read_csv(file_path)
                 st.write("### 📊 CSV Preview")
                 st.dataframe(df)
@@ -132,6 +144,11 @@ elif page == "dashboard":
 
             else:
                 st.warning("⚠️ Selected file is not a supported format for preview. Download it to view.")
+            
+            # Add Download Button
+            with open(file_path, "rb") as f:
+                st.download_button(label="⬇️ Download File", data=f, file_name=selected_file)
+
         else:
             st.warning("⚠️ No files found in Manila storage.")
 
