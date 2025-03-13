@@ -96,7 +96,7 @@ elif page == "dashboard":
     st.title("📊 Dashboard")
 
     # Path to the Manila storage folder
-    MANILA_STORAGE_PATH = "/mnt/ecoacoustic-storage"
+    MANILA_STORAGE_PATH = "/ecoacoustic-storage"
 
     st.title("📂 Manila Storage File Browser")
 
