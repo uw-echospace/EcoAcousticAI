@@ -144,7 +144,8 @@ jobs:
             df -h | grep vol
 
             cd ./EcoAcousticAI/
-    
+
+            docker image prune -f
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
             cd buzzfindr/
@@ -167,36 +168,28 @@ jobs:
             echo "Contents of new_directories.txt:"
             cat new_directories.txt
             echo "----------------------"
-            chmod +x run_docker.sh
-            ./run_docker.sh
-            '''
-            while IFS= read -r directory; do
-            echo "Running Docker on directory:" $directory
-            # Check if directory is not empty
-                if [ -z "$directory" ]; then
-                    echo "Skipping empty directory."
-                    continue
-                fi
-                # Run Docker for each directory
-                docker run --rm \
-                    --mount type=bind,source=$directory,target=/app/recordings_buzz/ \
-                    --mount type=bind,source=/ecoacoustic-storage/,target=/app/output_buzz/ buzzfindr-image:latest
+            #chmod +x run_docker.sh
+            #./run_docker.sh
 
-                    sudo rm -rf $directory/Buzz_Results_*
+            docker run --rm \
+            --mount type=bind,source=/tmp/osn_bucket/,target=/app/recordings_buzz/ \
+            --mount type=bind,source=/mnt/ecoacoustic-storage,target=/app/output_buzz/ \
+            buzzfindr-image:latest
 
-                    docker run --rm \
-                    --mount type=bind,source=$directory,target=/app/recordings_2023/ \
-                    --mount type=bind,source=/ecoacoustic-storage/,target=/app/output_dir/ \
-                    bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-                    --input_audio='/app/recordings_2023/' \
-                    --output_directory='/app/output_dir/' --run_model --csv
+            # Remove Buzz_Results_ directories after processing
+            sudo rm -rf $directory/Buzz_Results_*
 
-
-            done < new_directories.txt
-            '''
+            # Run the second Docker command for bat-detect-msds processing
+            docker run --rm \
+            --mount type=bind,source=/tmp/osn_bucket/,target=/app/recordings_2023/ \
+            --mount type=bind,source=/mnt/ecoacoustic-storage,target=/app/output_dir/ \
+            bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
+            --input_audio='/app/recordings_2023/' \
+            --output_directory='/app/output_dir/' --run_model --csv
+            
             # Clean up (optional, unmount the rclone mount)
             rm -f new_directories.txt
-            #sudo umount /tmp/osn_bucket/
+            sudo umount /tmp/osn_bucket/
 
 
   shelve-instance:

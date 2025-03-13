@@ -28,13 +28,17 @@ def get_files_from_rclone(directory):
     current_files = set()
     
     directory_path = os.path.join(rclone_mount_dir, directory)
-    dir_path = '.' + directory_path
-   
+    dir_path = '.' + directory_path +'/'
+    print('dir path')
+    print(dir_path)
     for root, _, files in os.walk(dir_path):
         for file in files:
             #current_files.add(os.path.relpath(os.path.join(root, file), dir_path))
             full_path = os.path.join(root, file)
-            current_files.add(full_path)
+            #current_files.add(full_path)
+            cleaned_path = full_path.replace(dir_path, '')
+            print('cleaned path', cleaned_path)
+            current_files.add(cleaned_path)
     return current_files
 
 # Function to check for new files in each directory
@@ -45,10 +49,11 @@ def check_for_new_files():
     for dir_name, filelist_name in zip(directories, filelist_files):
         file_path = os.path.join(metadata_dir, filelist_name)
         existing_files = read_filelist(file_path)
-        
+        print(type(existing_files))
+        print(list(existing_files)[-1])
         # Get the current files in the corresponding directory from the rclone mount
         current_files = get_files_from_rclone(dir_name)
-        print(current_files)
+        print("current files", current_files)
         # Find new files (i.e., files in current_files but not in existing_files)
         new_files_in_current = list(current_files - existing_files)
 
@@ -62,7 +67,6 @@ def check_for_new_files():
                 # Remove the prefix from the path
                 cleaned_path = path.replace(prefix, '')
 
-                print('clean path', cleaned_path)
                 with open(file_path, "a") as f:
                     f.write(f"{cleaned_path}\n")
     
