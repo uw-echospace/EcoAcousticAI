@@ -16,6 +16,7 @@ def organize_files():
 
     # List all files in the Manila storage root
     files = [f for f in os.listdir(MANILA_STORAGE_PATH) if os.path.isfile(os.path.join(MANILA_STORAGE_PATH, f))]
+    print(files)
 
     for file in files:
         match = FILE_PATTERN.match(file)
@@ -25,6 +26,7 @@ def organize_files():
             # Create the target directory if it doesn't exist
             target_directory = os.path.join(MANILA_STORAGE_PATH, file_date)
             os.makedirs(target_directory, exist_ok=True)
+            print(target_directory)
 
             # Move the file
             source_path = os.path.join(MANILA_STORAGE_PATH, file)
