@@ -1,0 +1,2 @@
+Hidden units,Dropout,Batchsize,Learning rate,Crop mode,Crop overlap,Audio speed,Upsamling mode,Upsamling ratio,use mixup,use label smoothing,FrogNET Model version
+128,0.33,8,0.002,center,0.0,1.0,mean,0.0,False,False,V2.4
