@@ -1,10 +1,2 @@
 Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Common Name	Scientific Name	Confidence	File
-1	Spectrogram 1	1	0.0	15.0	300	15000	American Bullfrog	American Bullfrog	0.6554	20221017_183000.wav
-2	Spectrogram 1	1	15.0	27.0	300	15000	Wood Frog	Wood Frog	0.5068	20221017_183000.wav
-3	Spectrogram 1	1	33.0	36.0	300	15000	Northern Leopard	Northern Leopard	0.4095	20221017_183000.wav
-4	Spectrogram 1	1	57.0	132.0	300	15000	American Bullfrog	American Bullfrog	0.5111	20221017_183000.wav
-5	Spectrogram 1	1	138.0	180.0	300	15000	American Bullfrog	American Bullfrog	0.6192	20221017_183000.wav
-6	Spectrogram 1	1	180.0	225.0	300	15000	American Bullfrog	American Bullfrog	0.6686	20221017_183000.wav
-7	Spectrogram 1	1	228.0	231.0	300	15000	Northern Leopard	Northern Leopard	0.6491	20221017_183000.wav
-8	Spectrogram 1	1	234.0	264.0	300	15000	American Bullfrog	American Bullfrog	0.6791	20221017_183000.wav
-9	Spectrogram 1	1	288.0	291.0	300	15000	American Bullfrog	American Bullfrog	0.4232	20221017_183000.wav
+1	Spectrogram 1	1	138.0	141.0	300	15000	Green Frog	Lithobates clamitans	0.7909	20221017_183000.wav

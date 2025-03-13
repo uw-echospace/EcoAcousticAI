@@ -1,0 +1,5 @@
+Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Common Name	Scientific Name	Confidence	File
+1	Spectrogram 1	1	0.0	39.0	300	15000	Cascades Frog	Rana cascadae	0.9730	ranacascadae_californiaherps7.wav
+2	Spectrogram 1	1	39.0	60.0	300	15000	Cascades Frog	Rana cascadae	0.8839	ranacascadae_californiaherps7.wav
+3	Spectrogram 1	1	57.0	60.0	300	15000	Northern Red-Legged Frog	Rana aurora	0.9545	ranacascadae_californiaherps7.wav
+4	Spectrogram 1	1	60.0	66.0	300	15000	Cascades Frog	Rana cascadae	0.9836	ranacascadae_californiaherps7.wav

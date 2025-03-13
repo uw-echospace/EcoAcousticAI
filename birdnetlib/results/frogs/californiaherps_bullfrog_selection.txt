@@ -1,0 +1,2 @@
+Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Common Name	Scientific Name	Confidence	File
+1	Spectrogram 1	1	0.0	24.0	300	15000	American Bullfrog (invasive)	Lithobates catesbeianus	1.0000	californiaherps_bullfrog.wav
