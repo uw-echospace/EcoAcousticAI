@@ -158,7 +158,7 @@ elif page == "dashboard":
             if png_files:
                 selected_png = st.selectbox("🖼️ Select a PNG File:", png_files)
                 png_path = os.path.join(dir_path, selected_png)
-                st.image(png_path, caption=selected_png, use_column_width=True)
+                st.image(png_path, caption=selected_png, use_container_width=True)
             else:
                 st.info("🖼️ No PNG images found in this directory.")
         else:
