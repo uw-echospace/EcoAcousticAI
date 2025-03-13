@@ -22,7 +22,7 @@ jobs:
 
       - name: SSH into Jetstream2 and Run Script
         env:
-          SSH_KEY: ${{ secrets.JETSTREAM_SSH_KEY }}
+          SSH_KEY: ${{ secrets.JETSTREAM2_SSH_KEY }}
         run: |
           echo "$SSH_KEY" > key.pem
           chmod 600 key.pem
