@@ -28,4 +28,4 @@ jobs:
           chmod 600 key.pem
           ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@149.165.174.37 \
             "source /home/ubuntu/streamlit-venv/bin/activate && \
-             python3 /home/ubuntu/EcoAcousticAI/move_manila_files.py"
+             python3 /home/ubuntu/EcoAcousticAI/.github/workflows/move_manila_files.py"
