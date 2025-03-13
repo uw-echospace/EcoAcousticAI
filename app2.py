@@ -98,62 +98,74 @@ elif page == "dashboard":
     st.title("📊 Dashboard")
 
     # Path to the Manila storage folder
-    MANILA_STORAGE_PATH = "/ecoacoustic-storage"
+    MANILA_STORAGE_PATH = "/mnt/ecoacoustic-storage"
 
-    st.title("📂 Manila Storage File Browser")
+    st.title("📂 Manila Storage Browser")
 
     # Check if the Manila storage path exists
     if os.path.exists(MANILA_STORAGE_PATH):
-        st.write("Manila storage is detected.")
+        st.write("✅ Manila storage is detected.")
 
         all_items = os.listdir(MANILA_STORAGE_PATH)
-        
-        # Separate directories and files
+
+        # Separate directories
         directories = [d for d in all_items if os.path.isdir(os.path.join(MANILA_STORAGE_PATH, d))]
-        files = [f for f in all_items if os.path.isfile(os.path.join(MANILA_STORAGE_PATH, f))]
 
-        # Display Directories
+        # Display Directories Dropdown
         if directories:
-            st.write("📁 **Available Directories:**")
-            for directory in directories:
-                st.markdown(f"- `{directory}`")
+            selected_directory = st.selectbox("📂 Select a Directory:", directories)
 
-        # Display Files
-        if files:
-            selected_file = st.selectbox("📑 Select a file:", files, index=0)
-            file_path = os.path.join(MANILA_STORAGE_PATH, selected_file)
+            # Show contents of the selected directory
+            dir_path = os.path.join(MANILA_STORAGE_PATH, selected_directory)
+            dir_contents = os.listdir(dir_path)
 
-            if selected_file.endswith(".png"):
-                st.image(file_path, caption=selected_file, use_column_width=True)
+            # Separate files and PNGs within the selected directory
+            data_files = [f for f in dir_contents if f.endswith((".csv", ".xls", ".xlsx", ".txt"))]
+            png_files = [f for f in dir_contents if f.endswith(".png")]
 
-            elif selected_file.endswith(".csv"):
-                df = pd.read_csv(file_path)
-                st.write("### 📊 CSV Preview")
-                st.dataframe(df)
+            # Display Data Files Dropdown
+            if data_files:
+                selected_file = st.selectbox("📑 Select a Data File:", data_files)
+                file_path = os.path.join(dir_path, selected_file)
 
-            elif selected_file.endswith(('.xls', '.xlsx')):
-                df = pd.read_excel(file_path)
-                st.write("### 📊 Excel Preview")
-                st.dataframe(df)
+                # Display Data File Content
+                with open(file_path, "rb") as f:
+                    st.download_button(label="⬇️ Download File", data=f, file_name=selected_file)
 
-            elif selected_file.endswith(".txt"):
-                st.write("### 📜 Text File Preview")
-                with open(file_path, "r", encoding="utf-8") as f:
-                    text_content = f.read()
-                    st.text_area("📄 File Contents", text_content, height=300)
+                # CSV Preview
+                if selected_file.endswith(".csv"):
+                    df = pd.read_csv(file_path)
+                    st.write("### 📊 CSV Preview")
+                    st.dataframe(df)
+
+                # Excel Preview
+                elif selected_file.endswith(('.xls', '.xlsx')):
+                    df = pd.read_excel(file_path)
+                    st.write("### 📊 Excel Preview")
+                    st.dataframe(df)
+
+                # Text File Preview
+                elif selected_file.endswith(".txt"):
+                    st.write("### 📜 Text File Preview")
+                    with open(file_path, "r", encoding="utf-8") as f:
+                        text_content = f.read()
+                        st.text_area("📄 File Contents", text_content, height=300)
 
             else:
-                st.warning("⚠️ Selected file is not a supported format for preview. Download it to view.")
-            
-            # Add Download Button
-            with open(file_path, "rb") as f:
-                st.download_button(label="⬇️ Download File", data=f, file_name=selected_file)
+                st.info("📂 No data files found in this directory.")
 
+            # Display PNG Files Dropdown
+            if png_files:
+                selected_png = st.selectbox("🖼️ Select a PNG File:", png_files)
+                png_path = os.path.join(dir_path, selected_png)
+                st.image(png_path, caption=selected_png, use_column_width=True)
+            else:
+                st.info("🖼️ No PNG images found in this directory.")
         else:
-            st.warning("⚠️ No files found in Manila storage.")
-
+            st.warning("⚠️ No directories found in Manila storage.")
     else:
         st.error("🚫 Manila storage path does not exist. Make sure it is mounted correctly.")
+
 
 elif page == "contact":
     st.title("Meet the Team:")
