@@ -7,7 +7,7 @@ from datetime import datetime
 MANILA_STORAGE_PATH = "/ecoacoustic-storage"
 
 # Regex pattern for CSV files with date in filename
-FILE_PATTERN = re.compile(r"batdetect2_pipeline_(\d{8})_\d{4}\.csv")
+FILE_PATTERN = re.compile(r"batdetect2_pipeline_(\d{8})_\d{6}\.csv")
 
 def organize_files():
     if not os.path.exists(MANILA_STORAGE_PATH):
