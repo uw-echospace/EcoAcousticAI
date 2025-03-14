@@ -168,51 +168,42 @@ jobs:
             echo "Contents of new_directories.txt:"
             cat new_directories.txt
             echo "----------------------"
-            #chmod +x run_docker.sh
-            #./run_docker.sh
+            chmod +x run_buzzfindr.sh
+            chmod +x run_docker.sh
 
-            # Run the second Docker command for bat-detect-msds processing
-            docker run --rm \
-            --mount type=bind,source=/tmp/osn_bucket/,target=/app/recordings_2023/ \
-            --mount type=bind,source=/mnt/ecoacoustic-storage,target=/app/output_dir/ \
-            bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-            --input_audio='/app/recordings_2023/' \
-            --output_directory='/app/output_dir/' --run_model --csv
-            
-            # Clean up (optional, unmount the rclone mount)
-            rm -f new_directories.txt
-            sudo umount /tmp/osn_bucket/
+            ./run_buzzfindr.sh
+            ./run_docker.sh
 
 
-  shelve-instance:
-    runs-on: ubuntu-latest
-    needs: unshelve-and-run-model  # <-- This makes sure it runs ONLY after the first job completes
-    steps:
-      - name: Install OpenStack CLI
-        run: sudo apt update && sudo apt install -y python3-openstackclient
+#   shelve-instance:
+#     runs-on: ubuntu-latest
+#     needs: unshelve-and-run-model  # <-- This makes sure it runs ONLY after the first job completes
+#     steps:
+#       - name: Install OpenStack CLI
+#         run: sudo apt update && sudo apt install -y python3-openstackclient
 
-      - name: Authenticate with OpenStack
-        run: |
-          mkdir -p ~/.config/openstack
-          echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
-          chmod 600 ~/.config/openstack/clouds.yaml
-          openstack --os-cloud=BIO230143_IU server list  # Debug check
+#       - name: Authenticate with OpenStack
+#         run: |
+#           mkdir -p ~/.config/openstack
+#           echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
+#           chmod 600 ~/.config/openstack/clouds.yaml
+#           openstack --os-cloud=BIO230143_IU server list  # Debug check
 
-      - name: Shelve Instance
-        run: |
-          INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
-          STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+#       - name: Shelve Instance
+#         run: |
+#           INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
+#           STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
 
-          echo "Checking if instance is ready to be shelved..."
-          while [[ "$STATUS" == "BUILD" || "$STATUS" == "REBOOT" || "$STATUS" == "UNSHELVING" ]]; do
-            echo "Instance is still transitioning. Waiting 60 seconds..."
-            sleep 60
-            STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
-          done
+#           echo "Checking if instance is ready to be shelved..."
+#           while [[ "$STATUS" == "BUILD" || "$STATUS" == "REBOOT" || "$STATUS" == "UNSHELVING" ]]; do
+#             echo "Instance is still transitioning. Waiting 60 seconds..."
+#             sleep 60
+#             STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+#           done
 
-          if [[ "$STATUS" == "ACTIVE" ]]; then
-            echo "Shelving instance now..."
-            openstack --os-cloud=BIO230143_IU server shelve $INSTANCE_ID
-          else
-            echo "Instance is not in a valid state for shelving. Current status: $STATUS"
-          fi
+#           if [[ "$STATUS" == "ACTIVE" ]]; then
+#             echo "Shelving instance now..."
+#             openstack --os-cloud=BIO230143_IU server shelve $INSTANCE_ID
+#           else
+#             echo "Instance is not in a valid state for shelving. Current status: $STATUS"
+#           fi
