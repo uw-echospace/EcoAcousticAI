@@ -9,7 +9,7 @@ from datetime import datetime
 audio_folder = Path.cwd() / "sample_audio"
 
 # Set separate output directory for results
-output_folder = Path.cwd() / "results" / "noise"
+output_folder = Path.cwd() / "results" / "birdnet_wa_all"
 output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
@@ -19,7 +19,7 @@ CONFIDENCE_THRESHOLD = 0.25
 MAX_CONSECUTIVE = 10
 
 # Load Custom Species List (Modify this path)
-custom_species_list_path = Path.cwd() / "nonevent_list.txt"
+custom_species_list_path = Path.cwd() / "custom_species_list" / "washington_species.txt"
 
 # Initialize BirdNET-Analyzer model with the custom species list
 model = Analyzer(custom_species_list_path=str(custom_species_list_path))

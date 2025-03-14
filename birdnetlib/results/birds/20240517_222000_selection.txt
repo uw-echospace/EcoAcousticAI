@@ -1,9 +1,0 @@
-Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Common Name	Scientific Name	Confidence	File
-1	Spectrogram 1	1	33.0	75.0	100	12000	Song Sparrow	Melospiza melodia	0.3774	20240517_222000.wav
-2	Spectrogram 1	1	78.0	81.0	100	12000	Cedar Waxwing	Bombycilla cedrorum	0.4122	20240517_222000.wav
-3	Spectrogram 1	1	87.0	225.0	100	12000	Bushtit	Psaltriparus minimus	0.4666	20240517_222000.wav
-4	Spectrogram 1	1	225.0	228.0	100	12000	Song Sparrow	Melospiza melodia	0.5190	20240517_222000.wav
-5	Spectrogram 1	1	228.0	237.0	100	12000	Bushtit	Psaltriparus minimus	0.2729	20240517_222000.wav
-6	Spectrogram 1	1	243.0	249.0	100	12000	Cedar Waxwing	Bombycilla cedrorum	0.3339	20240517_222000.wav
-7	Spectrogram 1	1	258.0	261.0	100	12000	Bewick's Wren	Thryomanes bewickii	0.3643	20240517_222000.wav
-8	Spectrogram 1	1	264.0	300.0	100	12000	Cedar Waxwing	Bombycilla cedrorum	0.5922	20240517_222000.wav
