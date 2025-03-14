@@ -12,14 +12,14 @@ output_folder = Path.cwd() / "results" / "frogs"
 output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
-CONFIDENCE_THRESHOLD = 0.4
+CONFIDENCE_THRESHOLD = 0.7
 
 # Maximum consecutive detections to merge for the same species
 MAX_CONSECUTIVE = 10
 
 # Path to Custom Classifier & Species List
-custom_classifier_path = Path.cwd() / "frognet_model" / "CustomClassifier.tflite"
-classifier_labels_path = Path.cwd() / "frognet_model" / "CustomClassifier_Labels.txt"
+custom_classifier_path = Path.cwd() / "frognet_model" / "WA_FrogNET.tflite"
+classifier_labels_path = Path.cwd() / "frognet_model" / "WA_FrogNET_Labels.txt"
 
 
 # Initialize BirdNET-Analyzer model with correct classifier & species list
@@ -67,19 +67,21 @@ for audio_file in sorted(audio_folder.glob("*.wav")):
     count = 0
 
     for detection in sorted_detections:
-        species = f"{detection['scientific_name']} {detection['common_name']}"
-        scientific_name = f"{detection['scientific_name']} {detection['common_name']}"
+        species = f"{detection['common_name']}"
+        scientific_name = f"{detection['scientific_name']}"
         start_time = detection["start_time"]
         end_time = detection["end_time"]
         confidence = detection["confidence"]
+
+                # **Skip detections labeled as "NO WA FROG"**
+                # This was used in training to improve the model but isn't relavent to results
+        if species == "NO WA FROG":
+            continue
 
         # Keep only the most confident species per (start_time, end_time) window
         key = (start_time, end_time)
         if key not in best_detections or confidence > best_detections[key][2]:
             best_detections[key] = (species, scientific_name, confidence)
-
-
-
 
         # Only process species that match the custom species list
         # if species in custom_species_list:

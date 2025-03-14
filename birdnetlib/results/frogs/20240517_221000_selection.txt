@@ -1,39 +1,6 @@
 Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Common Name	Scientific Name	Confidence	File
-1	Spectrogram 1	1	0.0	6.0	300	15000	American Bullfrog	American Bullfrog	0.4852	20240517_221000.wav
-2	Spectrogram 1	1	6.0	9.0	300	15000	Wood Frog	Wood Frog	0.6445	20240517_221000.wav
-3	Spectrogram 1	1	9.0	18.0	300	15000	American Bullfrog	American Bullfrog	0.6699	20240517_221000.wav
-4	Spectrogram 1	1	18.0	21.0	300	15000	Wood Frog	Wood Frog	0.5422	20240517_221000.wav
-5	Spectrogram 1	1	18.0	21.0	300	15000	American Bullfrog	American Bullfrog	0.4353	20240517_221000.wav
-6	Spectrogram 1	1	21.0	24.0	300	15000	Wood Frog	Wood Frog	0.4522	20240517_221000.wav
-7	Spectrogram 1	1	24.0	39.0	300	15000	American Bullfrog	American Bullfrog	0.7925	20240517_221000.wav
-8	Spectrogram 1	1	39.0	42.0	300	15000	Wood Frog	Wood Frog	0.5240	20240517_221000.wav
-9	Spectrogram 1	1	39.0	51.0	300	15000	American Bullfrog	American Bullfrog	0.5544	20240517_221000.wav
-10	Spectrogram 1	1	51.0	54.0	300	15000	Wood Frog	Wood Frog	0.4257	20240517_221000.wav
-11	Spectrogram 1	1	54.0	57.0	300	15000	American Bullfrog	American Bullfrog	0.7149	20240517_221000.wav
-12	Spectrogram 1	1	57.0	60.0	300	15000	Wood Frog	Wood Frog	0.7682	20240517_221000.wav
-13	Spectrogram 1	1	60.0	66.0	300	15000	American Bullfrog	American Bullfrog	0.4139	20240517_221000.wav
-14	Spectrogram 1	1	63.0	66.0	300	15000	Wood Frog	Wood Frog	0.4024	20240517_221000.wav
-15	Spectrogram 1	1	66.0	99.0	300	15000	American Bullfrog	American Bullfrog	0.5460	20240517_221000.wav
-16	Spectrogram 1	1	99.0	108.0	300	15000	American Bullfrog	American Bullfrog	0.4898	20240517_221000.wav
-17	Spectrogram 1	1	105.0	108.0	300	15000	Wood Frog	Wood Frog	0.4048	20240517_221000.wav
-18	Spectrogram 1	1	108.0	120.0	300	15000	American Bullfrog	American Bullfrog	0.6388	20240517_221000.wav
-19	Spectrogram 1	1	117.0	120.0	300	15000	Wood Frog	Wood Frog	0.4037	20240517_221000.wav
-20	Spectrogram 1	1	123.0	129.0	300	15000	American Bullfrog	American Bullfrog	0.4827	20240517_221000.wav
-21	Spectrogram 1	1	126.0	132.0	300	15000	Wood Frog	Wood Frog	0.4367	20240517_221000.wav
-22	Spectrogram 1	1	132.0	159.0	300	15000	American Bullfrog	American Bullfrog	0.5751	20240517_221000.wav
-23	Spectrogram 1	1	162.0	165.0	300	15000	Wood Frog	Wood Frog	0.4247	20240517_221000.wav
-24	Spectrogram 1	1	168.0	180.0	300	15000	American Bullfrog	American Bullfrog	0.4753	20240517_221000.wav
-25	Spectrogram 1	1	183.0	186.0	300	15000	Wood Frog	Wood Frog	0.4702	20240517_221000.wav
-26	Spectrogram 1	1	186.0	189.0	300	15000	American Bullfrog	American Bullfrog	0.4782	20240517_221000.wav
-27	Spectrogram 1	1	186.0	189.0	300	15000	Wood Frog	Wood Frog	0.4347	20240517_221000.wav
-28	Spectrogram 1	1	189.0	225.0	300	15000	American Bullfrog	American Bullfrog	0.5365	20240517_221000.wav
-29	Spectrogram 1	1	225.0	228.0	300	15000	Wood Frog	Wood Frog	0.5350	20240517_221000.wav
-30	Spectrogram 1	1	231.0	237.0	300	15000	American Bullfrog	American Bullfrog	0.4690	20240517_221000.wav
-31	Spectrogram 1	1	237.0	240.0	300	15000	Wood Frog	Wood Frog	0.4347	20240517_221000.wav
-32	Spectrogram 1	1	240.0	249.0	300	15000	American Bullfrog	American Bullfrog	0.5957	20240517_221000.wav
-33	Spectrogram 1	1	249.0	255.0	300	15000	Wood Frog	Wood Frog	0.5662	20240517_221000.wav
-34	Spectrogram 1	1	255.0	264.0	300	15000	American Bullfrog	American Bullfrog	0.5258	20240517_221000.wav
-35	Spectrogram 1	1	264.0	267.0	300	15000	Wood Frog	Wood Frog	0.4628	20240517_221000.wav
-36	Spectrogram 1	1	267.0	270.0	300	15000	American Bullfrog	American Bullfrog	0.4115	20240517_221000.wav
-37	Spectrogram 1	1	270.0	273.0	300	15000	Wood Frog	Wood Frog	0.4318	20240517_221000.wav
-38	Spectrogram 1	1	273.0	300.0	300	15000	American Bullfrog	American Bullfrog	0.6029	20240517_221000.wav
+1	Spectrogram 1	1	45.0	57.0	300	15000	American Bullfrog (invasive)	Lithobates catesbeianus	0.8063	20240517_221000.wav
+2	Spectrogram 1	1	57.0	60.0	300	15000	Wood Frog	Lithobates sylvaticus	0.7620	20240517_221000.wav
+3	Spectrogram 1	1	72.0	171.0	300	15000	American Bullfrog (invasive)	Lithobates catesbeianus	0.8047	20240517_221000.wav
+4	Spectrogram 1	1	252.0	255.0	300	15000	Wood Frog	Lithobates sylvaticus	0.7924	20240517_221000.wav
+5	Spectrogram 1	1	279.0	282.0	300	15000	American Bullfrog (invasive)	Lithobates catesbeianus	0.9544	20240517_221000.wav

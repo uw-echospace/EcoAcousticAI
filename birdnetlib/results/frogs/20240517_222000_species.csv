@@ -1,25 +1,12 @@
 File Name,Start Time,End Time,Common Name,Scientific Name,Confidence
-20240517_222000.wav,0.0,9.0,Pacific Tree,Pacific Tree,0.6419576108455658
-20240517_222000.wav,12.0,15.0,American Bullfrog,American Bullfrog,0.5367884039878845
-20240517_222000.wav,15.0,18.0,Pacific Tree,Pacific Tree,0.4670141041278839
-20240517_222000.wav,15.0,21.0,American Bullfrog,American Bullfrog,0.507647231221199
-20240517_222000.wav,24.0,27.0,Pacific Tree,Pacific Tree,0.5538127422332764
-20240517_222000.wav,27.0,39.0,American Bullfrog,American Bullfrog,0.48866323630015057
-20240517_222000.wav,39.0,42.0,Wood Frog,Wood Frog,0.8818775415420532
-20240517_222000.wav,42.0,63.0,American Bullfrog,American Bullfrog,0.5843556523323059
-20240517_222000.wav,60.0,63.0,Pacific Tree,Pacific Tree,0.4138435125350952
-20240517_222000.wav,63.0,84.0,American Bullfrog,American Bullfrog,0.7062047123908997
-20240517_222000.wav,87.0,99.0,Pacific Tree,Pacific Tree,0.6870825290679932
-20240517_222000.wav,99.0,102.0,American Bullfrog,American Bullfrog,0.4143049418926239
-20240517_222000.wav,102.0,105.0,Northern Leopard,Northern Leopard,0.4553816020488739
-20240517_222000.wav,105.0,120.0,Pacific Tree,Pacific Tree,0.662668377161026
-20240517_222000.wav,117.0,120.0,American Bullfrog,American Bullfrog,0.46762797236442566
-20240517_222000.wav,120.0,123.0,Pacific Tree,Pacific Tree,0.7219099402427673
-20240517_222000.wav,129.0,132.0,Wood Frog,Wood Frog,0.5563918352127075
-20240517_222000.wav,132.0,138.0,Pacific Tree,Pacific Tree,0.6118795573711395
-20240517_222000.wav,138.0,156.0,American Bullfrog,American Bullfrog,0.6237207353115082
-20240517_222000.wav,162.0,165.0,Northern Leopard,Northern Leopard,0.9963525533676147
-20240517_222000.wav,165.0,195.0,American Bullfrog,American Bullfrog,0.7514183606420245
-20240517_222000.wav,216.0,225.0,Pacific Tree,Pacific Tree,0.6024344464143118
-20240517_222000.wav,240.0,276.0,American Bullfrog,American Bullfrog,0.6165543109178543
-20240517_222000.wav,276.0,300.0,American Bullfrog,American Bullfrog,0.7278391718864441
+20240517_222000.wav,18.0,36.0,Green Frog,Lithobates clamitans,0.8852506875991821
+20240517_222000.wav,66.0,69.0,American Bullfrog (invasive),Lithobates catesbeianus,0.8664389252662659
+20240517_222000.wav,90.0,123.0,Pacific Tree Frog,Pseudacris regilla,0.8614147504170736
+20240517_222000.wav,123.0,126.0,Green Frog,Lithobates clamitans,0.7042427062988281
+20240517_222000.wav,150.0,153.0,American Bullfrog (invasive),Lithobates catesbeianus,0.9941856861114502
+20240517_222000.wav,162.0,165.0,Northern Leopard Frog,Lithobates pipiens,0.8463333249092102
+20240517_222000.wav,177.0,192.0,American Bullfrog (invasive),Lithobates catesbeianus,0.8666133284568787
+20240517_222000.wav,222.0,225.0,Pacific Tree Frog,Pseudacris regilla,0.9905315041542053
+20240517_222000.wav,246.0,249.0,American Bullfrog (invasive),Lithobates catesbeianus,0.7966025471687317
+20240517_222000.wav,255.0,258.0,Pacific Tree Frog,Pseudacris regilla,0.977749764919281
+20240517_222000.wav,261.0,297.0,American Bullfrog (invasive),Lithobates catesbeianus,0.9146944284439087

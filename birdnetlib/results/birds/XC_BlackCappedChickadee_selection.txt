@@ -1,2 +1,0 @@
-Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Common Name	Scientific Name	Confidence	File
-1	Spectrogram 1	1	0.0	6.0	100	12000	Black-capped Chickadee	Poecile atricapillus	0.6819	XC_BlackCappedChickadee.wav
