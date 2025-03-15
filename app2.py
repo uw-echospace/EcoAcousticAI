@@ -58,31 +58,37 @@ def combine_dataframes(manila_path):
 def combined_activity_chart(activity_df, combined_df):
     """Plots an activity heatmap with species as the x-axis and time of day as the y-axis."""
 
-    # Group data by species (class) and time
-    species_activity = (
-        combined_df
-        .groupby(['class', combined_df['start_time'].dt.strftime('%H:%M')])['class']
-        .count()
-        .unstack(fill_value=0)
-    )
+    # Aggregate species and confidence score
+    combined_df['weighted_species_count'] = combined_df.groupby(['start_time', 'class'])['class_prob'].sum()
 
-    # Create Heatmap
+    # Pivot for class (species) on the x-axis
+    activity_pivot = combined_df.pivot_table(
+        index='start_time', 
+        columns='class', 
+        values='weighted_species_count', 
+        aggfunc='sum'
+    ).fillna(0)
+
+    # Time continuity fill
+    activity_pivot = activity_pivot.asfreq('1T').fillna(0)
+
+    # Plotting
     fig = go.Figure(data=go.Heatmap(
-        z=species_activity.values,   
-        x=species_activity.index,    # Species (class) on X-axis
-        y=species_activity.columns,  # Time of Day on Y-axis
+        z=activity_pivot.T.values,  # Transposed for correct orientation
+        x=activity_pivot.index.strftime('%H:%M'),
+        y=activity_pivot.columns,
         colorscale='Viridis'
     ))
 
     fig.update_layout(
-        title='UBNA Combined Activity Dashboard',
-        xaxis_title='Species',
-        yaxis_title='Time of Day (PST)',
-        coloraxis_colorbar=dict(title="Detections"),
+        title='UBNA Combined Activity Dashboard (with Confidence Scores)',
+        xaxis_title='Time of Day (PST)',
+        yaxis_title='Species (Class)',
+        coloraxis_colorbar=dict(title="Confidence-Weighted Species Count"),
         height=600,
-        width=1000
+        width=1200  # Wider layout for improved visualization
     )
-    
+
     st.plotly_chart(fig, use_container_width=True)
 
 # Custom CSS for improved header design
