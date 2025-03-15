@@ -133,28 +133,29 @@ def combined_activity_chart(activity_df):
         return
 
     # Define all 30-minute intervals for a 24-hour period
-    full_time_index = pd.date_range(start="00:00", end="23:59:59", freq="30T").time  # Replace "24:00" with "23:59:59"
+    full_time_index = pd.date_range(start="00:00", end="23:59", freq="30min").time  # Corrected to 23:59
 
-    # Ensure all intervals are included, filling missing times with placeholder data
-    activity_df = activity_df.set_index(activity_df.index.time)  # Ensure index is time only
-    activity_df = activity_df.reindex(full_time_index, fill_value={"species_count": activity_df['species_count'].min(), "class": "No Data"})
-    
-    # Handle cases where there is no data at all for a given interval
+    # Ensure all intervals are included
+    activity_df = activity_df.set_index(activity_df.index.time)  # Use time as the index
+    activity_df = activity_df.reindex(full_time_index)
+
+    # Fill missing values for specific columns
     activity_df['species_count'] = activity_df['species_count'].fillna(activity_df['species_count'].min())
-    activity_df.loc[activity_df['class'] == "No Data", 'species_count'] = -1  # Mark missing intervals for red color
+    activity_df['class'] = activity_df['class'].fillna("No Data")
+    activity_df.loc[activity_df['class'] == "No Data", 'species_count'] = -1  # Mark "No Data" intervals with -1
 
     # Create heatmap
     fig = go.Figure(data=go.Heatmap(
-        z=activity_df['species_count'],  # Ensure this is numeric
+        z=activity_df['species_count'],  # Heatmap values
         x=activity_df.index.strftime('%H:%M'),
-        y=activity_df['class'],  # Ensure 'class' is the y-axis (species names)
+        y=activity_df['class'],  # Class names on y-axis
         colorscale=[
-            [0.0, 'red'],            # Red for missing time intervals
-            [0.01, 'rgb(68, 1, 84)'], # Lowest color (start of Viridis)
-            [1.0, 'rgb(253, 231, 37)'] # Highest color (end of Viridis)
+            [0.0, 'red'],  # Red for missing intervals
+            [0.01, 'rgb(68, 1, 84)'],  # Low values (start of Viridis)
+            [1.0, 'rgb(253, 231, 37)']  # High values (end of Viridis)
         ],
-        zmin=-1,  # Lowest value corresponds to "No Data" color (red)
-        zmax=activity_df['species_count'].max()  # Use the max species count for the scale
+        zmin=-1,  # Minimum value corresponds to "No Data"
+        zmax=activity_df['species_count'].max()  # Max species count for color scaling
     ))
 
     # Adjust layout
@@ -164,13 +165,13 @@ def combined_activity_chart(activity_df):
         yaxis_title='Species Detected',
         xaxis=dict(
             tickmode='array',
-            tickvals=np.arange(0, 1440, 30),  # 30-minute intervals (in minutes)
+            tickvals=np.arange(0, 1440, 30),  # 30-minute intervals in minutes
             ticktext=[f"{h:02d}:{m:02d}" for h in range(24) for m in (0, 30)]  # Generate 24-hour labels
         ),
         height=600,
         width=900,
         coloraxis_colorbar=dict(
-            orientation="h",  # Set legend to horizontal
+            orientation="h",  # Set the colorbar to horizontal
             title="Species Count",
         )
     )
