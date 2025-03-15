@@ -174,8 +174,8 @@ def combined_activity_chart(activity_df):
         yaxis_title='Time of Day (24-hour format)',
         yaxis=dict(autorange='reversed'), # Flip Y-axis so 00:00 is on top
         coloraxis_colorbar=dict(title="Detections"),
-        height=1100,
-        width=800
+        height=1200,
+        width=700
     )
 
     st.plotly_chart(fig, use_container_width=True)
