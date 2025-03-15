@@ -19,6 +19,7 @@ def extract_datetime_from_filename(filename):
         st.error("Filename format incorrect. Expected format: batdetect2_pipeline_YYYYMMDD_HHMMSS.csv")
         return None
 
+# Combine dataframes and compute activity
 def combine_dataframes(manila_path):
     combined_data = []
 
@@ -29,66 +30,57 @@ def combine_dataframes(manila_path):
                 file_datetime = extract_datetime_from_filename(file)
 
                 if file_datetime:
-                    try:
-                        df = pd.read_csv(file_path)
-                        if 'start_time' in df.columns and 'end_time' in df.columns:
-                            df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                            df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                            combined_data.append(df)
-                        else:
-                            st.warning(f"⚠ File '{file}' is missing 'start_time' or 'end_time' columns.")
-                    except pd.errors.EmptyDataError:
-                        st.warning(f"Skipping empty file: {file}")
-                    except Exception as e:
-                        st.error(f"Error reading '{file}': {e}")
+                    df = pd.read_csv(file_path)
+                    if 'start_time' in df.columns and 'end_time' in df.columns:
+                        df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                        df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                        combined_data.append(df)
+                    else:
+                        st.warning(f"⚠ File '{file}' is missing 'start_time' or 'end_time' columns.")
 
     if combined_data:
         combined_df = pd.concat(combined_data, ignore_index=True)
+
+        # Convert to DatetimeIndex for resampling
+        combined_df['start_time'] = pd.to_datetime(combined_df['start_time'])
+
         combined_df['species_count'] = combined_df.groupby('start_time')['class'].transform('nunique')
 
-        # Aggregating data for a smoother visualization
-        activity_df = combined_df[['start_time', 'species_count']].drop_duplicates().set_index('start_time').resample('10T').sum().fillna(0)
+        # Aggregating data for smoother visualization
+        activity_df = (
+            combined_df[['start_time', 'class', 'class_prob']]
+            .drop_duplicates()
+            .set_index('start_time')
+            .resample('10T')  # Resample to 10-minute intervals
+            .agg({
+                'class': lambda x: x.mode().iloc[0],  # Most common class in each interval
+                'class_prob': 'mean'                  # Average probability for better accuracy
+            })
+            .fillna(0)
+        )
 
         return combined_df, activity_df
     else:
         return pd.DataFrame(), pd.DataFrame()  # Return empty DataFrame if no data found
 
-        
-# Plot activity chart with species on X-axis
-def combined_activity_chart(activity_df, combined_df):
-    """Plots an activity heatmap with species as the x-axis and time of day as the y-axis."""
-
-    # Aggregate species and confidence score
-    combined_df['weighted_species_count'] = combined_df.groupby(['start_time', 'class'])['class_prob'].sum()
-
-    # Pivot for class (species) on the x-axis
-    activity_pivot = combined_df.pivot_table(
-        index='start_time', 
-        columns='class', 
-        values='weighted_species_count', 
-        aggfunc='sum'
-    ).fillna(0)
-
-    # Time continuity fill
-    activity_pivot = activity_pivot.asfreq('1T').fillna(0)
-
-    # Plotting
+# Plot activity chart
+def combined_activity_chart(activity_df):
     fig = go.Figure(data=go.Heatmap(
-        z=activity_pivot.T.values,  # Transposed for correct orientation
-        x=activity_pivot.index.strftime('%H:%M'),
-        y=activity_pivot.columns,
+        z=activity_df['class_prob'],
+        x=activity_df['class'],     # Class on x-axis
+        y=activity_df.index.strftime('%H:%M'),  # Time of day
         colorscale='Viridis'
     ))
 
     fig.update_layout(
-        title='UBNA Combined Activity Dashboard (with Confidence Scores)',
-        xaxis_title='Time of Day (PST)',
-        yaxis_title='Species (Class)',
-        coloraxis_colorbar=dict(title="Confidence-Weighted Species Count"),
+        title='UBNA Combined Activity Dashboard',
+        xaxis_title='Species (Class)',
+        yaxis_title='Time of Day (PST)',
+        coloraxis_colorbar=dict(title="Avg Probability"),
         height=600,
-        width=1200  # Wider layout for improved visualization
+        width=900
     )
-
+    
     st.plotly_chart(fig, use_container_width=True)
 
 # Custom CSS for improved header design
@@ -243,13 +235,15 @@ elif page == "dashboard":
                     with open(file_path, "r", encoding="utf-8") as f:
                         text_content = f.read()
                         st.text_area("📄 File Contents", text_content, height=300)
-                            # Display the combined data table for detailed view
+
+                
+                # Display the combined data table for detailed view
                 st.write("### Aggregated Activity Table")
                 st.dataframe(activity_df)
     
                 # Plot the combined activity chart
                 st.write("### EcoAcoustic Activity Heatmap")
-                combined_activity_chart(activity_df, combined_df)
+                combined_activity_chart(activity_df)
             
             else:
                 st.info("📂 No data files found in this directory.")
