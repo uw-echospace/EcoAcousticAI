@@ -164,7 +164,7 @@ def combined_activity_chart(activity_df):
         y=heatmap_data.index,
         xgap=1,
         colorscale=[
-            [0.0, "red"],         # Zero values in red
+            [0.0, "rgb(103, 0, 31)"],   # Deep reddish-purple
             [0.01, "rgb(68, 1, 84)"],   # Start of Viridis scale (dark purple)
             [0.25, "rgb(58, 82, 139)"], # Viridis blue
             [0.5, "rgb(32, 144, 140)"], # Viridis green
