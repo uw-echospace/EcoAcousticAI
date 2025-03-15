@@ -139,63 +139,35 @@ def display_summary_statistics(combined_df):
     st.write(f"- **% of the Day with Detections:** {day_coverage:.2f}%")
 
 
+# Create the heatmap
 def combined_activity_chart(activity_df):
-    if activity_df.empty:
-        #st.warning("⚠ No activity data to plot.")
-        return
+    # Extract Time of Day
+    activity_df['time_of_day'] = activity_df['start_time'].dt.strftime('%H:%M')
 
-    # Define all 10-minute intervals for a 24-hour period
-    full_time_index = pd.date_range(start="00:00", end="23:59", freq="10min").time  # Corrected to 23:59
-
-    # Ensure the activity_df index is a DatetimeIndex
-    if not isinstance(activity_df.index, pd.DatetimeIndex):
-        activity_df.index = pd.to_datetime(activity_df.index, errors='coerce')
-
-    # Reindex to include all 10-minute intervals and fill missing heatmap values with 0
-    activity_df = activity_df.reindex(full_time_index, fill_value=0)
-
-    # Drop rows with invalid or placeholder values in 'class'
-    activity_df = activity_df[~activity_df['class'].isin([None, 'No Data', 0])]  # Remove invalid classes
-
-    # If 'heatmap_value' column doesn't exist, create it (use species_count or other metric)
-    if 'heatmap_value' not in activity_df.columns:
-        activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
-
-    # Create the heatmap, ensuring only valid data is plotted
-    fig = go.Figure(
-        data=go.Heatmap(
-            z=activity_df['heatmap_value'],  # Use heatmap_value for intensity
-            x=[t.strftime('%H:%M') for t in activity_df.index],  # X-axis formatted as HH:MM
-            y=activity_df['class'],  # Classes (species) for the Y-axis
-            colorscale=[
-                [0.0, 'rgb(248, 248, 248)'],  # Light gray for no activity
-                [0.1, 'rgb(68, 1, 84)'],      # Start of Viridis-like scale
-                [1.0, 'rgb(253, 231, 37)']    # End of Viridis-like scale
-            ],
-            zmin=0,  # Minimum value for heatmap
-            zmax=activity_df['heatmap_value'].max(),  # Maximum value for the scale
-            showscale=True,
-        )
+    # Create the heatmap data
+    heatmap_data = activity_df.pivot_table(
+        index='time_of_day',
+        columns='class',
+        values='heatmap_value',
+        fill_value=0  # Ensures zero values for detected species
     )
 
-    # Update layout for better readability
+    # Create the heatmap visualization
+    fig = go.Figure(data=go.Heatmap(
+        z=heatmap_data.values,
+        x=heatmap_data.columns,
+        y=heatmap_data.index,
+        colorscale='Viridis'
+    ))
+
     fig.update_layout(
-        title="Combined Activity Heatmap",
-        xaxis_title="Time of Day (HH:MM)",
-        yaxis_title="Species Detected",
-        xaxis=dict(
-            tickmode="array",
-            tickvals=np.arange(0, len(activity_df.index), 6),  # Tick every hour
-            ticktext=[t.strftime('%H:%M') for t in full_time_index[::6]],  # Format as HH:MM
-        ),
-        height=600,
-        width=900,
-        coloraxis_colorbar=dict(
-            orientation="h",  # Horizontal color scale
-            title="Species Count",
-        ),
+        title='UBNA Combined Activity Dashboard',
+        xaxis_title='Species Class',
+        yaxis_title='Time of Day (24-hour format)',
+        coloraxis_colorbar=dict(title="Detections"),
+        height=800,
+        width=900
     )
-
 
     st.plotly_chart(fig, use_container_width=True)
 
