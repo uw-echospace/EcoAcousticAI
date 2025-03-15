@@ -1,0 +1,69 @@
+name: Model Run Part 2 (Resume)
+
+on:
+  workflow_run:
+    workflows: ["Model Run to Manila Mount"]  # Name of the first workflow
+    types:
+      - completed
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  resume-docker:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up SSH Key for Remote Access
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
+          chmod 600 ~/.ssh/jetstream2_key
+          ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
+
+      - name: Resume Model Run
+        run: |
+            SSH_KEY=$HOME/.ssh/jetstream2_key
+            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+              cd /home/ubuntu/EcoAcousticAI/
+  
+              echo "Contents of new_directories.txt:"
+              cat new_directories.txt
+              echo "----------------------"
+              
+              chmod +x run_docker_part2.sh
+              ./run_docker_part2.sh
+
+
+            rm -f new_directories.txt
+            sudo umount /tmp/osn_bucket/
+
+  shelve-instance:
+    runs-on: ubuntu-latest
+    needs: resume-docker  # <-- This makes sure it runs ONLY after the first job completes
+    steps:
+        - name: Install OpenStack CLI
+          run: sudo apt update && sudo apt install -y python3-openstackclient
+        - name: Authenticate with OpenStack
+          run: |
+            mmkdir -p ~/.config/openstack
+                      echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
+                      chmod 600 ~/.config/openstack/clouds.yaml
+                      openstack --os-cloud=BIO230143_IU server list  # Debug check
+            
+                  - name: Shelve Instance
+                    run: |
+                      INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
+                      STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+            
+                      echo "Checking if instance is ready to be shelved..."
+                      while [[ "$STATUS" == "BUILD" || "$STATUS" == "REBOOT" || "$STATUS" == "UNSHELVING" ]]; do
+                        echo "Instance is still transitioning. Waiting 60 seconds..."
+                        sleep 60
+                        STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+                      done
+            
+                      if [[ "$STATUS" == "ACTIVE" ]]; then
+                        echo "Shelving instance now..."
+                        openstack --os-cloud=BIO230143_IU server shelve $INSTANCE_ID
+                      else
+                        echo "Instance is not in a valid state for shelving. Current status: $STATUS"
+                      fi
