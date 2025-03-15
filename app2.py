@@ -84,7 +84,7 @@ def combine_dataframes(manila_path):
             .resample('10min')  # Now works because index is DatetimeIndex
             .agg({
                 'species_count': 'sum',  # Sum species count per 10-minute interval
-                'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common species
+                'class': lambda x: x[x != 0].mode().iloc[0] if not x[x != 0].empty else None,  # Ignore '0' class from the resample
                 'class_prob': 'mean'  # Average confidence
             })
             .fillna(0)
