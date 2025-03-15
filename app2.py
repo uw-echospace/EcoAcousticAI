@@ -25,7 +25,7 @@ def safe_read_csv(file_path):
     """Attempts to read a CSV file, skipping empty or invalid ones."""
     try:
         if os.stat(file_path).st_size == 0:  # Check if file is empty
-            st.warning(f"⚠ Skipping empty file: {file_path}")
+            #st.warning(f"⚠ Skipping empty file: {file_path}")
             return None
 
         df = pd.read_csv(file_path)
@@ -35,7 +35,7 @@ def safe_read_csv(file_path):
         #     return None
 
         if 'start_time' not in df.columns or 'end_time' not in df.columns or 'class' not in df.columns:
-            st.warning(f"Skipping file with missing columns: {file_path}")
+            #st.warning(f"Skipping file with missing columns: {file_path}")
             return None
 
         return df
@@ -99,7 +99,7 @@ def display_summary_statistics(combined_df):
     """Prints key statistics about the acoustic detections instead of displaying a table."""
     
     if combined_df.empty:
-        st.warning("⚠ No activity data available to summarize.")
+        #st.warning("⚠ No activity data available to summarize.")
         return
 
     # 1. Count of Unique Species Detected
@@ -131,7 +131,7 @@ def display_summary_statistics(combined_df):
 
 def combined_activity_chart(activity_df):
     if activity_df.empty:
-        st.warning("⚠ No activity data to plot.")
+        #st.warning("⚠ No activity data to plot.")
         return
 
     # Define all 30-minute intervals for a 24-hour period
@@ -342,7 +342,11 @@ elif page == "dashboard":
                 
                 # Print Summary Statistics
                 display_summary_statistics(combined_df)
-    
+
+                # Display aggregated table before heatmap
+                st.write("### Aggregated Activity Table")
+                st.dataframe(activity_df)
+            
                 # Plot the combined activity chart
                 st.write("### EcoAcoustic Activity Heatmap")
                 combined_activity_chart(activity_df)
