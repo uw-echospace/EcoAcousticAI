@@ -160,12 +160,22 @@ def combined_activity_chart(activity_df):
     # Adjust data: Replace zero values with 0.1 for log scale while keeping the legend showing "0"
     heatmap_data_no_zero = heatmap_data.replace(0, 0.1)  # Replace zeros with small value for log scale
     custom_viridis_spectrum = [
-        [0.0, "#440154"],  # Dark Purple (lowest values)
-        [0.2, "#481d6f"],  # Violet
-        [0.4, "#355f8d"],  # Deep Blue
-        [0.6, "#2a788e"],  # Teal-Green
-        [0.8, "#22a884"],  # Bright Green
-        [1.0, "#fde725"]   # Bright Yellow (highest values)
+        [0.00, "#440154"],  # Dark Purple
+        [0.05, "#471365"],
+        [0.10, "#482576"],  
+        [0.15, "#433E85"],  
+        [0.20, "#3D4D8A"],  
+        [0.25, "#35608D"],  
+        [0.30, "#2A768E"],  
+        [0.35, "#21908D"],  
+        [0.40, "#1FA088"],  
+        [0.45, "#28AE80"],  
+        [0.50, "#3FBC73"],  
+        [0.55, "#5CC863"],  
+        [0.60, "#81D34D"],  
+        [0.65, "#AADC32"],  
+        [0.70, "#D8E219"],  
+        [0.75, "#FDE725"]   # Bright Yellow
     ]
     # Create the heatmap visualization
     fig = go.Figure(data=go.Heatmap(
