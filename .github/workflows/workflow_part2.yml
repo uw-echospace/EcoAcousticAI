@@ -32,7 +32,7 @@ jobs:
               chmod +x run_docker_part2.sh
               ./run_docker_part2.sh
 
-
+            # add code to 
             rm -f new_directories.txt
             sudo umount /tmp/osn_bucket/
 
@@ -49,8 +49,8 @@ jobs:
                       chmod 600 ~/.config/openstack/clouds.yaml
                       openstack --os-cloud=BIO230143_IU server list  # Debug check
             
-                  - name: Shelve Instance
-                    run: |
+        - name: Shelve Instance
+          run: |
                       INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
                       STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
             
