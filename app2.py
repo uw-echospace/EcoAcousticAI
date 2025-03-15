@@ -114,12 +114,12 @@ def display_summary_statistics(combined_df):
     hf_percentage = (hf_detections / total_detections) * 100 if total_detections > 0 else 0
 
     # 3. Percentage of the Day with a Detection
-    detected_times = combined_df['start_time'].dt.floor('min').nunique()  # Unique time slots with detections
+    detected_times = combined_df.index.floor('min').nunique()  # Unique time slots with detections
     total_time_slots = 24 * 60  # Total minutes in a day
 
     day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
 
-    selected_date = combined_df['start_time'].dt.date.min()  # Extracts the earliest date in the dataset
+    selected_date = combined_df.index.dt.date.min()  # Extracts the earliest date in the dataset
 
     # Print Summary
     st.write(f"### 📊 Summary Statistics for {selected_date}")
