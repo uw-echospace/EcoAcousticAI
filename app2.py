@@ -166,7 +166,7 @@ def combined_activity_chart(activity_df):
         [0.3, "#2b5078"],
         [0.4, "#355f8d"],  # Deep Blue
         [0.5, "#1f5e70"],
-        [0.6, "##2a8e8c"],  # Teal-Green
+        [0.6, "#2a8e8c"],  # Teal-Green
         [0.7, "#1d8566"],
         [0.8, "#49d1ad"],  # Bright Green
         [0.9, "#fde725"], 
