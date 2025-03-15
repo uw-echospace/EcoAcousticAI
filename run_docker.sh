@@ -8,22 +8,25 @@ while IFS= read -r directory; do
       echo "Skipping empty directory."
       continue
   fi
+# Get a list of all files in the directory
+  files=($(find "$directory" -type f))  # List of all files in the directory
 
-  # Run Docker for each directory
-  docker run --rm \
-    --mount type=bind,source=$directory,target=/app/recordings_buzz/ \
-    --mount type=bind,source=/ecoacoustic-storage/,target=/app/output_buzz/ \
-    buzzfindr-image:latest
+  # Calculate the midpoint to split the list into two halves
+  half_files=$(( ${#files[@]} / 2 ))  # Get the index for the first half
 
-  # Remove Buzz_Results_ directories after processing
-  sudo rm -rf $directory/Buzz_Results_*
+  # Iterate through the first half of the files
+  for ((i=0; i<$half_files; i++)); do
+    file="${files[$i]}"
+    filename=$(basename "$file")  # Get the filename
 
-  # Run the second Docker command for bat-detect-msds processing
-  docker run --rm \
-    --mount type=bind,source=$directory,target=/app/recordings_2023/ \
-    --mount type=bind,source=/ecoacoustic-storage/,target=/app/output_dir/ \
-    bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-    --input_audio='/app/recordings_2023/' \
-    --output_directory='/app/output_dir/' --run_model --csv
+    # Run the second Docker command for bat-detect-msds processing
+    docker run --rm \
+        --mount type=bind,source=$directory,target=/app/recordings_2023/ \
+        --mount type=bind,source=/mnt/ecoacoustic-storage,target=/app/output_dir/ \
+        bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
+        --input_audio="/app/recordings_2023/$filename" \
+        --output_directory="/app/output_dir/" --run_model --csv
+
+    done
 
 done < new_directories.txt

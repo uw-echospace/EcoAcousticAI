@@ -29,15 +29,14 @@ def get_files_from_rclone(directory):
     
     directory_path = os.path.join(rclone_mount_dir, directory)
     dir_path = '.' + directory_path +'/'
-    print('dir path')
-    print(dir_path)
+    
     for root, _, files in os.walk(dir_path):
         for file in files:
             #current_files.add(os.path.relpath(os.path.join(root, file), dir_path))
             full_path = os.path.join(root, file)
             #current_files.add(full_path)
             cleaned_path = full_path.replace(dir_path, '')
-            print('cleaned path', cleaned_path)
+            
             current_files.add(cleaned_path)
     return current_files
 
@@ -49,26 +48,32 @@ def check_for_new_files():
     for dir_name, filelist_name in zip(directories, filelist_files):
         file_path = os.path.join(metadata_dir, filelist_name)
         existing_files = read_filelist(file_path)
-        print(type(existing_files))
-        print(list(existing_files)[-1])
         # Get the current files in the corresponding directory from the rclone mount
         current_files = get_files_from_rclone(dir_name)
         print("current files", current_files)
+
         # Find new files (i.e., files in current_files but not in existing_files)
         new_files_in_current = list(current_files - existing_files)
 
+        print("new files in current",new_files_in_current)
+
         if new_files_in_current:
-            new_files.extend(new_files_in_current)
+            #new_files.extend(new_files_in_current)
+
+            # will be used to update new_directories.txt  
             for file in new_files_in_current:
-                path = './recordings_2023/ubna_data_01/recover-20210604_unit1/part6_duplicate.wav'
-                # The unwanted prefix you want to remove
-                prefix = './recordings_2023/'+ dir_name + '/'
+                print("new files", file)
+                if file.endswith(".WAV") or file.endswith(".wav"):
+                    full_path = os.path.join(rclone_mount_dir,dir_name,file)
+                    new_files.append(full_path)
 
-                # Remove the prefix from the path
-                cleaned_path = path.replace(prefix, '')
-
+                # write file to fielist 
                 with open(file_path, "a") as f:
-                    f.write(f"{cleaned_path}\n")
+                    if file.endswith(".WAV") or file.endswith(".wav"):
+                        if not file.endswith('\n'):
+                            f.write(f"{file}\n")
+                        else:
+                            f.write(file)
     
     return new_files
 
@@ -79,17 +84,18 @@ if __name__ == "__main__":
 
     # If new files are found, return success (exit code 0) and print the new files as JSON
     if new_files:
-        print("New files detected:")
+        print("New files detected:", new_files)
 
         new_directories = list(set(os.path.dirname(file) for file in new_files))
-        abs_path = '/home/ubuntu/'
+        abs_path = '/home/ubuntu/' 
         full_directories = [os.path.join(rclone_mount_dir, directory) for directory in new_directories]
-
-        print(new_files)
-
+        print('full dir', full_directories)
+        print("new dir", new_directories)
+        
         with open("new_directories.txt", "w") as f:
-            for directory in new_directories:
-                f.write(f"{directory}\n")
+            for directory in full_directories:
+                f.write(f".{directory}\n")
+        
         sys.exit(0)
 
     else:
