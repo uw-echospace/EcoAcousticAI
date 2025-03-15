@@ -167,7 +167,7 @@ def combined_activity_chart(activity_df):
         y=heatmap_data.index,
         xgap=1,
         zmin=0,
-        zmax=activity_df.max().max(),
+        #zmax=activity_df.max().max(),
         colorscale='Viridis'
     ))
 
