@@ -159,22 +159,21 @@ def combined_activity_chart(activity_df):
 
     # Adjust data: Replace zero values with 0.1 for log scale while keeping the legend showing "0"
     heatmap_data_no_zero = heatmap_data.replace(0, 0.1)  # Replace zeros with small value for log scale
+    
     custom_viridis_spectrum = [
         [0.0, "#2b0136"],   # Dark Purple (lowest values)
-        [0.03, "#3b0145"],  # Transition from dark purple to deep purple
+        [0.05, "#440154"],  # Deep Purple
         [0.1, "#47258a"],   # Violet
-        [0.2, "#39467b"],   # Smooth shift to blue tones
-        [0.3, "#2b5078"],   # Start of deep blue
-        [0.4, "#355f8d"],   # Deep Blue
-        [0.5, "#1f5e70"],   # Smooth teal transition
-        [0.55, "#208371"],  # Midway in teal shift
-        [0.6, "#2a8e8c"],   # Teal-Green
-        [0.65, "#258e76"],  # Teal heading to green
-        [0.8, "#49d1ad"],   # Bright Green
-        [0.9, "#fde725"],   # Yellow-Green
-        [1.0, "#f3f57a"]    # Bright Yellow (highest values)
+        [0.2, "#355f8d"],   # Blue
+        [0.3, "#2a8e8c"],   # Teal-Green
+        [0.4, "#1f9a70"],   # Strong Green
+        [0.5, "#49d1ad"],   # Bright Green
+        [0.6, "#82e583"],   # Light Green
+        [0.7, "#b7f053"],   # Green-Yellow
+        [0.8, "#fde725"],   # Yellow-Green
+        [0.9, "#f9ef5a"],   # Bright Yellow
+        [1.0, "#fcf9a6"]    # Light Yellow (highest values)
     ]
-
 
     # Create the heatmap visualization
     fig = go.Figure(data=go.Heatmap(
