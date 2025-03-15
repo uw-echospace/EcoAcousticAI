@@ -243,7 +243,7 @@ elif page == "dashboard":
     
                 # Plot the combined activity chart
                 st.write("### EcoAcoustic Activity Heatmap")
-                combined_activity_chart(activity_df)
+                combined_activity_chart(activity_df, combined_df)
             
             else:
                 st.info("📂 No data files found in this directory.")
