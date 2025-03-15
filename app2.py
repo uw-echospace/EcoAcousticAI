@@ -81,15 +81,25 @@ def combine_dataframes(manila_path):
         activity_df = (
             combined_df[['species_count', 'class', 'class_prob', 'KMEANS_CLASSES']]
             .drop_duplicates()
-            .resample('10min')  # Now works because index is DatetimeIndex
+            .resample('10min')  # Resample to 10min intervals
             .agg({
                 'species_count': 'sum',  # Sum species count per 10-minute interval
-                'class': lambda x: x[x != 0].mode().iloc[0] if not x[x != 0].empty else None,  # Ignore '0' class from the resample
-                'class_prob': 'mean'  # Average confidence
+                'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common valid species
+                'class_prob': 'mean'  # Average confidence for the interval
             })
-            .fillna(0)
         )
 
+        
+        # Replace remaining invalid or empty 'class' values with NaN
+        activity_df['class'] = activity_df['class'].replace({0: None, '0': None, 'No Data': None})
+
+        # Add a new column for plotting, e.g., filling missing intervals with zero values
+        activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
+
+        # Final cleanup for invalid or empty rows
+        activity_df = activity_df.dropna(subset=['class', 'heatmap_value'], how='all')
+
+        
         return combined_df, activity_df
     else:
         return pd.DataFrame(), pd.DataFrame()  # Return empty DataFrame if no data found
@@ -135,52 +145,46 @@ def combined_activity_chart(activity_df):
         return
 
     # Define all 30-minute intervals for a 24-hour period
-    full_time_index = pd.date_range(start="00:00", end="23:59", freq="30min").time  # Corrected to 23:59
+    full_time_index = pd.date_range(start="00:00", end="23:59", freq="10min").time  # Corrected to 23:59
 
-    # Ensure all intervals are included
-    activity_df = activity_df.set_index(activity_df.index.time)  # Use time as the index
-    activity_df = activity_df.reindex(full_time_index)
-    
-
-    # Ensure the index of activity_df is a DatetimeIndex
-    if not isinstance(activity_df.index, pd.DatetimeIndex):
-        activity_df.index = pd.to_datetime(activity_df.index, format='%H:%M', errors='coerce')
+    # Reindex activity_df to include all 10-minute intervals
+    activity_df = activity_df.reindex(full_time_index, fill_value={"heatmap_value": 0})
+    activity_df.index = activity_df.index.time  # Convert DatetimeIndex to time format
                                            
-    # Fill missing values for specific columns
-    activity_df['species_count'] = activity_df['species_count'].fillna(activity_df['species_count'].min())
-    activity_df['class'] = activity_df['class'].fillna("No Data")
-    activity_df.loc[activity_df['class'] == "No Data", 'species_count'] = -1  # Mark "No Data" intervals with -1
 
-    # Create heatmap
-    fig = go.Figure(data=go.Heatmap(
-        z=activity_df['species_count'],  # Heatmap values
-        x=activity_df.index.strftime('%H:%M'),
-        y=activity_df['class'],  # Class names on y-axis
-        colorscale=[
-            [0.0, 'red'],  # Red for missing intervals
-            [0.01, 'rgb(68, 1, 84)'],  # Low values (start of Viridis)
-            [1.0, 'rgb(253, 231, 37)']  # High values (end of Viridis)
-        ],
-        zmin=-1,  # Minimum value corresponds to "No Data"
-        zmax=activity_df['species_count'].max()  # Max species count for color scaling
-    ))
+  # Create the heatmap with a clean color scale
+    fig = go.Figure(
+        data=go.Heatmap(
+            z=activity_df['heatmap_value'],  # Use the 'heatmap_value' for the heatmap
+            x=[t.strftime('%H:%M') for t in activity_df.index],  # Format the x-axis as HH:MM
+            y=activity_df['class'],  # Classes (species) for the y-axis
+            colorscale=[
+                [0.0, 'rgb(248, 248, 248)'],  # Light gray for zero activity
+                [0.1, 'rgb(68, 1, 84)'],      # Start of Viridis-like scale
+                [1.0, 'rgb(253, 231, 37)']    # End of Viridis-like scale (bright yellow)
+            ],
+            zmin=0,  # Minimum value for heatmap
+            zmax=activity_df['heatmap_value'].max(),  # Maximum value for the scale
+            showscale=True,
+        )
+    )
 
-    # Adjust layout
+    # Update layout for readability and presentation
     fig.update_layout(
-        title='UBNA Acoustic Activity Heatmap',
-        xaxis_title='Time of Day (HH:MM)',
-        yaxis_title='Species Detected',
+        title="Combined Activity Heatmap",
+        xaxis_title="Time of Day (HH:MM)",
+        yaxis_title="Species Detected",
         xaxis=dict(
-            tickmode='array',
-            tickvals=np.arange(0, 1440, 30),  # 30-minute intervals in minutes
-            ticktext=[f"{h:02d}:{m:02d}" for h in range(24) for m in (0, 30)]  # Generate 24-hour labels
+            tickmode="array",
+            tickvals=np.arange(0, len(activity_df.index), 6),  # Show every 6th time interval
+            ticktext=[t.strftime('%H:%M') for t in full_time_index[::6]],  # Show formatted ticks
         ),
         height=600,
         width=900,
         coloraxis_colorbar=dict(
-            orientation="h",  # Set the colorbar to horizontal
+            orientation="h",  # Make the legend horizontal
             title="Species Count",
-        )
+        ),
     )
 
     st.plotly_chart(fig, use_container_width=True)
