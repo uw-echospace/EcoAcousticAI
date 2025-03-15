@@ -5,7 +5,7 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder = Path.cwd() / "sample_audio"
+audio_folder =  Path.cwd() / "test_audio"
 
 # Set separate output directory for results
 output_folder = Path.cwd() / "results" / "frogs"
