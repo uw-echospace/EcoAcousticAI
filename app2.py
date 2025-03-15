@@ -54,22 +54,33 @@ def combine_dataframes(manila_path):
         return pd.DataFrame(), pd.DataFrame()  # Return empty DataFrame if no data found
 
         
-# Plot activity chart
-def combined_activity_chart(activity_df):
+# Plot activity chart with species on X-axis
+def combined_activity_chart(activity_df, combined_df):
+    """Plots an activity heatmap with species as the x-axis and time of day as the y-axis."""
+
+    # Group data by species (class) and time
+    species_activity = (
+        combined_df
+        .groupby(['class', combined_df['start_time'].dt.strftime('%H:%M')])['class']
+        .count()
+        .unstack(fill_value=0)
+    )
+
+    # Create Heatmap
     fig = go.Figure(data=go.Heatmap(
-        z=activity_df['species_count'],
-        x=activity_df.index.strftime('%H:%M'),
-        y=activity_df.index.strftime('%Y-%m-%d'),
+        z=species_activity.values,   
+        x=species_activity.index,    # Species (class) on X-axis
+        y=species_activity.columns,  # Time of Day on Y-axis
         colorscale='Viridis'
     ))
 
     fig.update_layout(
         title='UBNA Combined Activity Dashboard',
-        xaxis_title='Time of Day (PST)',
-        yaxis_title='Date',
-        coloraxis_colorbar=dict(title="Species Count"),
+        xaxis_title='Species',
+        yaxis_title='Time of Day (PST)',
+        coloraxis_colorbar=dict(title="Detections"),
         height=600,
-        width=900
+        width=1000
     )
     
     st.plotly_chart(fig, use_container_width=True)
