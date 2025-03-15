@@ -138,7 +138,12 @@ def combined_activity_chart(activity_df):
     # Ensure all intervals are included
     activity_df = activity_df.set_index(activity_df.index.time)  # Use time as the index
     activity_df = activity_df.reindex(full_time_index)
+    
 
+    # Ensure the index of activity_df is a DatetimeIndex
+    if not isinstance(activity_df.index, pd.DatetimeIndex):
+        activity_df.index = pd.to_datetime(activity_df.index, format='%H:%M', errors='coerce'
+                                           
     # Fill missing values for specific columns
     activity_df['species_count'] = activity_df['species_count'].fillna(activity_df['species_count'].min())
     activity_df['class'] = activity_df['class'].fillna("No Data")
