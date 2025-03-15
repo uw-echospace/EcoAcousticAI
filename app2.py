@@ -133,7 +133,7 @@ def combined_activity_chart(activity_df):
         return
 
     # Define all 30-minute intervals for a 24-hour period
-    full_time_index = pd.date_range(start="00:00", end="23:59", freq="30min").time  # Corrected to 23:59
+    full_time_index = pd.date_range(start="00:00", end="23:59", freq="30min").time)  # Corrected to 23:59
 
     # Ensure all intervals are included
     activity_df = activity_df.set_index(activity_df.index.time)  # Use time as the index
