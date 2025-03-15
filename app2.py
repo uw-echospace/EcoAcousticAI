@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import pandas as pd
+import numpy as np
 from PIL import Image 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -77,7 +78,7 @@ def combine_dataframes(manila_path):
 
         # Resample to 1-minute intervals
         activity_df = (
-            combined_df[['start_time', 'species_count', 'class', 'class_prob']]
+            combined_df[['start_time', 'species_count', 'class', 'class_prob', 'KMEANS_CLASSES']]
             .drop_duplicates()
             .set_index('start_time')
             .resample('1T')  # 1-minute intervals
@@ -92,6 +93,37 @@ def combine_dataframes(manila_path):
         return combined_df, activity_df
     else:
         return pd.DataFrame(), pd.DataFrame()  # Return empty DataFrame if no data found
+
+def display_summary_statistics(combined_df):
+    """Prints key statistics about the acoustic detections instead of displaying a table."""
+    
+    if combined_df.empty:
+        st.warning("⚠ No activity data available to summarize.")
+        return
+
+    # 1. Count of Unique Species Detected
+    unique_species = combined_df['class'].nunique()
+    
+    # 2. Percentage of LF vs HF Detections
+    total_detections = len(combined_df)
+    lf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'LF'])
+    hf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'HF'])
+
+    lf_percentage = (lf_detections / total_detections) * 100 if total_detections > 0 else 0
+    hf_percentage = (hf_detections / total_detections) * 100 if total_detections > 0 else 0
+
+    # 3. Percentage of the Day with a Detection
+    detected_times = combined_df['start_time'].dt.floor('T').nunique()  # Unique time slots with detections
+    total_time_slots = 24 * 60  # Total minutes in a day
+
+    day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
+
+    # Print Summary
+    st.write("### 📊 Summary Statistics")
+    st.write(f"- **Total Unique Species Detected:** {unique_species}")
+    st.write(f"- **Low-Frequency Detections:** {lf_percentage:.2f}%")
+    st.write(f"- **High-Frequency Detections:** {hf_percentage:.2f}%")
+    st.write(f"- **% of the Day with Detections:** {day_coverage:.2f}%")
 
 # Plot activity chart
 def combined_activity_chart(activity_df):
@@ -280,9 +312,8 @@ elif page == "dashboard":
                         st.text_area("📄 File Contents", text_content, height=300)
 
                 
-                # Display the combined data table for detailed view
-                st.write("### Aggregated Activity Table")
-                st.dataframe(activity_df)
+                # Print Summary Statistics
+                display_summary_statistics(combined_df)
     
                 # Plot the combined activity chart
                 st.write("### EcoAcoustic Activity Heatmap")
