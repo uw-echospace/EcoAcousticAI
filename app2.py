@@ -30,32 +30,31 @@ def combine_dataframes(manila_path):
                 file_datetime = extract_datetime_from_filename(file)
 
                 if file_datetime:
-                    try:
-                        df = pd.read_csv(file_path)
-                        if df.empty:
-                            continue  # Skip empty files
+                    df = safe_read_csv(file_path)
+                    if df is None:
+                        continue  # Skip empty/invalid files
 
-                        if 'start_time' in df.columns and 'end_time' in df.columns:
-                            df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                            df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                            combined_data.append(df)
-                        else:
-                            st.warning(f"⚠ File '{file}' is missing 'start_time' or 'end_time' columns.")
-                    except pd.errors.EmptyDataError:
-                        st.warning(f"⚠ Skipping empty file: {file}")
+                    # Convert start & end times
+                    df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                    df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+
+                    # Drop rows where `class` is 0
+                    df = df[df['class'] != 0]
+
+                    # Compute species count per interval
+                    df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
+
+                    combined_data.append(df)
 
     if combined_data:
         combined_df = pd.concat(combined_data, ignore_index=True)
-        
-        # Remove any rows where class == 0
-        combined_df = combined_df[combined_df['class'] != 0]
 
-        # Aggregate and resample data
+        # Resample to 1-minute intervals
         activity_df = (
             combined_df[['start_time', 'species_count', 'class', 'class_prob']]
             .drop_duplicates()
             .set_index('start_time')
-            .resample('1T')  # Resample to 1-minute intervals
+            .resample('1T')  # 1-minute intervals
             .agg({
                 'species_count': 'sum',  # Sum species count per minute
                 'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common species
@@ -70,6 +69,10 @@ def combine_dataframes(manila_path):
 
 # Plot activity chart
 def combined_activity_chart(activity_df):
+    if activity_df.empty:
+        st.warning("⚠ No activity data available to plot.")
+        return
+
     # Ensure all time slots are covered, even if no detections exist
     all_times = pd.date_range(start="00:00", end="23:59", freq="30T").strftime('%H:%M')
     activity_df = activity_df.reindex(all_times, fill_value=0)
