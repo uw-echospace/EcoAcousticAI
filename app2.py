@@ -288,7 +288,7 @@ elif page == "dashboard":
 
                 # CSV Preview
                 if selected_file.endswith(".csv"):
-                    df = pd.safe_read_csv(file_path)
+                    df = safe_read_csv(file_path)
                     st.write("### 📊 CSV Preview")
                     st.dataframe(df)
 
