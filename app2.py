@@ -65,8 +65,6 @@ def combine_dataframes(manila_path):
                     df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
                     df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
 
-
-
                     # Compute species count per interval
                     df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
 
@@ -75,14 +73,17 @@ def combine_dataframes(manila_path):
     if combined_data:
         combined_df = pd.concat(combined_data, ignore_index=True)
 
-        # Resample to 1-minute intervals
+        # Convert 'start_time' to DatetimeIndex
+        combined_df['start_time'] = pd.to_datetime(combined_df['start_time'])
+        combined_df = combined_df.set_index('start_time')  # Set 'start_time' as the index
+
+        # Resample to 10-minute intervals
         activity_df = (
-            combined_df[['start_time', 'species_count', 'class', 'class_prob', 'KMEANS_CLASSES']]
+            combined_df[['species_count', 'class', 'class_prob', 'KMEANS_CLASSES']]
             .drop_duplicates()
-            .set_index('start_time')
-            .resample('10min')  # 10-minute intervals
+            .resample('10min')  # Now works because index is DatetimeIndex
             .agg({
-                'species_count': 'sum',  # Sum species count per minute
+                'species_count': 'sum',  # Sum species count per 10-minute interval
                 'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common species
                 'class_prob': 'mean'  # Average confidence
             })
@@ -92,6 +93,7 @@ def combine_dataframes(manila_path):
         return combined_df, activity_df
     else:
         return pd.DataFrame(), pd.DataFrame()  # Return empty DataFrame if no data found
+
 
 def display_summary_statistics(combined_df):
     """Prints key statistics about the acoustic detections instead of displaying a table."""
