@@ -28,7 +28,7 @@ jobs:
               echo "Contents of new_directories.txt:"
               cat new_directories.txt
               echo "----------------------"
-              
+
               chmod +x run_docker_part2.sh
               ./run_docker_part2.sh
 
@@ -44,7 +44,7 @@ jobs:
           run: sudo apt update && sudo apt install -y python3-openstackclient
         - name: Authenticate with OpenStack
           run: |
-            mmkdir -p ~/.config/openstack
+            mkdir -p ~/.config/openstack
                       echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
                       chmod 600 ~/.config/openstack/clouds.yaml
                       openstack --os-cloud=BIO230143_IU server list  # Debug check
