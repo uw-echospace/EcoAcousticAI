@@ -167,12 +167,15 @@ def combined_activity_chart(activity_df):
     ))
 
     fig.update_layout(
-        title='UBNA Combined Activity Dashboard',
+        title={
+            'text': 'UBNA Combined Activity Dashboard<br><span style="font-size:9px; color:grey;">If the downloaded PNG is blank, click the home icon to reset axes.</span>',
+            'x': 0.5  # Centers the title
+        },
         xaxis_title='Species Class',
         yaxis_title='Time of Day (24-hour format)',
         yaxis=dict(autorange='reversed'), # Flip Y-axis so 00:00 is on top
         coloraxis_colorbar=dict(title="Detections"),
-        height=1300,
+        height=1150,
         width=900
     )
 
