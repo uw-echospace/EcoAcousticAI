@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
-# Helper function to extract datetime from filename - Added for activity plot
+# Function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
     """Extracts datetime from a filename in format: 'batdetect2_pipeline_20210603_034102.csv'"""
     try:
@@ -30,24 +30,32 @@ def combine_dataframes(manila_path):
                 file_datetime = extract_datetime_from_filename(file)
 
                 if file_datetime:
-                    df = pd.read_csv(file_path)
-                    if 'start_time' in df.columns and 'end_time' in df.columns:
-                        df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                        df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                        combined_data.append(df)
-                    else:
-                        st.warning(f"⚠File '{file}' is missing 'start_time' or 'end_time' columns.")
+                    try:
+                        df = pd.read_csv(file_path)
+                        if df.empty:
+                            continue  # Skip empty files
+
+                        if 'start_time' in df.columns and 'end_time' in df.columns:
+                            df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                            df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                            combined_data.append(df)
+                        else:
+                            st.warning(f"⚠ File '{file}' is missing 'start_time' or 'end_time' columns.")
+                    except pd.errors.EmptyDataError:
+                        st.warning(f"⚠ Skipping empty file: {file}")
 
     if combined_data:
         combined_df = pd.concat(combined_data, ignore_index=True)
-        combined_df['species_count'] = combined_df.groupby('start_time')['class'].transform('nunique')
+        
+        # Remove any rows where class == 0
+        combined_df = combined_df[combined_df['class'] != 0]
 
-        # Resample to 1-minute intervals
+        # Aggregate and resample data
         activity_df = (
             combined_df[['start_time', 'species_count', 'class', 'class_prob']]
             .drop_duplicates()
             .set_index('start_time')
-            .resample('1T')  # Resampling to 1-minute intervals
+            .resample('1T')  # Resample to 1-minute intervals
             .agg({
                 'species_count': 'sum',  # Sum species count per minute
                 'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common species
@@ -62,22 +70,31 @@ def combine_dataframes(manila_path):
 
 # Plot activity chart
 def combined_activity_chart(activity_df):
+    # Ensure all time slots are covered, even if no detections exist
+    all_times = pd.date_range(start="00:00", end="23:59", freq="30T").strftime('%H:%M')
+    activity_df = activity_df.reindex(all_times, fill_value=0)
+
+    # Set colors: Red for missing data, gradient for species counts
+    activity_df['color'] = np.where(activity_df['species_count'] == 0, 'red', activity_df['species_count'])
+
     fig = go.Figure(data=go.Heatmap(
-        z=activity_df['class_prob'],
-        x=activity_df['class'],     # Class on x-axis
-        y=activity_df.index.strftime('%H:%M'),  # Time of day
-        colorscale='Viridis'
+        z=activity_df['color'],
+        x=activity_df['class'],  # X-axis is species
+        y=activity_df.index,  # Y-axis is time
+        colorscale='Viridis',
+        colorbar=dict(title="Species Count"),
+        zmin=0,  # Ensure empty values are included at the lowest color level
     ))
 
     fig.update_layout(
         title='UBNA Combined Activity Dashboard',
-        xaxis_title='Species (Class)',
-        yaxis_title='Time of Day (PST)',
-        coloraxis_colorbar=dict(title="Avg Probability"),
+        xaxis_title='Species',
+        yaxis_title='Time of Day (00:00 - 24:00)',
+        yaxis=dict(tickvals=np.arange(0, len(all_times), 2), ticktext=all_times[::2]),  # Show every other time
         height=600,
         width=900
     )
-    
+
     st.plotly_chart(fig, use_container_width=True)
 
 # Custom CSS for improved header design
