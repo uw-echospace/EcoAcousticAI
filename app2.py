@@ -19,7 +19,6 @@ def extract_datetime_from_filename(filename):
         st.error("Filename format incorrect. Expected format: batdetect2_pipeline_YYYYMMDD_HHMMSS.csv")
         return None
 
-# Combine dataframes and compute activity
 def combine_dataframes(manila_path):
     combined_data = []
 
@@ -30,13 +29,18 @@ def combine_dataframes(manila_path):
                 file_datetime = extract_datetime_from_filename(file)
 
                 if file_datetime:
-                    df = pd.read_csv(file_path)
-                    if 'start_time' in df.columns and 'end_time' in df.columns:
-                        df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                        df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                        combined_data.append(df)
-                    else:
-                        st.warning(f"⚠File '{file}' is missing 'start_time' or 'end_time' columns.")
+                    try:
+                        df = pd.read_csv(file_path)
+                        if 'start_time' in df.columns and 'end_time' in df.columns:
+                            df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                            df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                            combined_data.append(df)
+                        else:
+                            st.warning(f"⚠ File '{file}' is missing 'start_time' or 'end_time' columns.")
+                    except pd.errors.EmptyDataError:
+                        st.warning(f"Skipping empty file: {file}")
+                    except Exception as e:
+                        st.error(f"Error reading '{file}': {e}")
 
     if combined_data:
         combined_df = pd.concat(combined_data, ignore_index=True)
