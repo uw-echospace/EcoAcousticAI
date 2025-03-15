@@ -131,11 +131,9 @@ def combined_activity_chart(activity_df):
     if activity_df.empty:
         st.warning("⚠ No activity data to plot.")
         return
-    # Drop rows where `class` is 0
-    activity_df = activity_df[activity_df['class'] != 0]
-    
+
     # Define all 30-minute intervals for a 24-hour period
-    full_time_index = pd.date_range(start="00:00", end="24:00", freq="30T").time
+    full_time_index = pd.date_range(start="00:00", end="23:59:59", freq="30T").time  # Replace "24:00" with "23:59:59"
 
     # Ensure all intervals are included, filling missing times with placeholder data
     activity_df = activity_df.set_index(activity_df.index.time)  # Ensure index is time only
