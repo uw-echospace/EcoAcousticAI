@@ -154,23 +154,21 @@ def combined_activity_chart(activity_df):
         index='time_of_day',
         columns='class',
         values='heatmap_value',
-        fill_value=0  # Ensures zero values for detected species
+        fill_value=0 
     )
 
+    # Adjust data: Replace zero values with 0.1 for log scale while keeping the legend showing "0"
+    heatmap_data_no_zero = heatmap_data.replace(0, 0.1)  # Replace zeros with small value for log scale
+    
     # Create the heatmap visualization
     fig = go.Figure(data=go.Heatmap(
-        z=heatmap_data.values,
+        z=heatmap_data_no_zero.values,
         x=heatmap_data.columns,
         y=heatmap_data.index,
         xgap=1,
-        colorscale=[
-            [0.0, "rgb(103, 0, 31)"],   # Deep reddish-purple
-            [0.01, "rgb(68, 1, 84)"],   # Start of Viridis scale (dark purple)
-            [0.25, "rgb(58, 82, 139)"], # Viridis blue
-            [0.5, "rgb(32, 144, 140)"], # Viridis green
-            [0.75, "rgb(94, 201, 98)"], # Viridis yellow-green
-            [1.0, "rgb(253, 231, 37)"]  # Peak Viridis yellow
-        ]
+        zmin=0,
+        zmax=activity_df.max().max(),
+        colorscale='Viridis'
     ))
 
     fig.update_layout(
@@ -182,7 +180,7 @@ def combined_activity_chart(activity_df):
         yaxis=dict(autorange='reversed'), # Flip Y-axis so 00:00 is on top
         coloraxis_colorbar=dict(title="Detections"),
         height=1200,
-        width=700
+        width=500
     )
 
     st.plotly_chart(fig, use_container_width=True)
