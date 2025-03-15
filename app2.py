@@ -30,9 +30,9 @@ def safe_read_csv(file_path):
 
         df = pd.read_csv(file_path)
 
-        if df.empty:
-            st.warning(f"Skipping file with no data: {file_path}")
-            return None
+        # if df.empty:
+        #     st.warning(f"Skipping file with no data: {file_path}")
+        #     return None
 
         if 'start_time' not in df.columns or 'end_time' not in df.columns or 'class' not in df.columns:
             st.warning(f"Skipping file with missing columns: {file_path}")
@@ -65,8 +65,7 @@ def combine_dataframes(manila_path):
                     df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
                     df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
 
-                    # Drop rows where `class` is 0
-                    df = df[df['class'] != 0]
+
 
                     # Compute species count per interval
                     df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
@@ -127,31 +126,59 @@ def display_summary_statistics(combined_df):
     st.write(f"- **High-Frequency Detections:** {hf_percentage:.2f}%")
     st.write(f"- **% of the Day with Detections:** {day_coverage:.2f}%")
 
-# Plot activity chart
+
 def combined_activity_chart(activity_df):
     if activity_df.empty:
         st.warning("⚠ No activity data to plot.")
         return
+    # Drop rows where `class` is 0
+    activity_df = activity_df[activity_df['class'] != 0]
+    
+    # Define all 30-minute intervals for a 24-hour period
+    full_time_index = pd.date_range(start="00:00", end="24:00", freq="30T").time
 
+    # Ensure all intervals are included, filling missing times with placeholder data
+    activity_df = activity_df.set_index(activity_df.index.time)  # Ensure index is time only
+    activity_df = activity_df.reindex(full_time_index, fill_value={"species_count": activity_df['species_count'].min(), "class": "No Data"})
+    
+    # Handle cases where there is no data at all for a given interval
+    activity_df['species_count'] = activity_df['species_count'].fillna(activity_df['species_count'].min())
+    activity_df.loc[activity_df['class'] == "No Data", 'species_count'] = -1  # Mark missing intervals for red color
+
+    # Create heatmap
     fig = go.Figure(data=go.Heatmap(
         z=activity_df['species_count'],  # Ensure this is numeric
         x=activity_df.index.strftime('%H:%M'),
         y=activity_df['class'],  # Ensure 'class' is the y-axis (species names)
-        colorscale='Viridis',
-        zmin=activity_df['species_count'].min(),  # Ensure correct min/max scale
-        zmax=activity_df.select_dtypes(include=['number']).max().max()  # Use only numeric columns
+        colorscale=[
+            [0.0, 'red'],            # Red for missing time intervals
+            [0.01, 'rgb(68, 1, 84)'], # Lowest color (start of Viridis)
+            [1.0, 'rgb(253, 231, 37)'] # Highest color (end of Viridis)
+        ],
+        zmin=-1,  # Lowest value corresponds to "No Data" color (red)
+        zmax=activity_df['species_count'].max()  # Use the max species count for the scale
     ))
 
+    # Adjust layout
     fig.update_layout(
         title='UBNA Acoustic Activity Heatmap',
         xaxis_title='Time of Day (HH:MM)',
         yaxis_title='Species Detected',
-        xaxis=dict(tickmode='array', tickvals=list(range(0, 1440, 30)), ticktext=[f"{h:02d}:00" for h in range(24)]),  # Fix x-axis labels
+        xaxis=dict(
+            tickmode='array',
+            tickvals=np.arange(0, 1440, 30),  # 30-minute intervals (in minutes)
+            ticktext=[f"{h:02d}:{m:02d}" for h in range(24) for m in (0, 30)]  # Generate 24-hour labels
+        ),
         height=600,
-        width=900
+        width=900,
+        coloraxis_colorbar=dict(
+            orientation="h",  # Set legend to horizontal
+            title="Species Count",
+        )
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
 
 # Custom CSS for improved header design
 st.markdown("""
