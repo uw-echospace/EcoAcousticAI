@@ -119,7 +119,7 @@ def display_summary_statistics(combined_df):
 
     day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
 
-    selected_date = combined_df.index.dt.date.min()  # Extracts the earliest date in the dataset
+    selected_date = combined_df.index.date.min()  # Extracts the earliest date in the dataset
 
     # Print Summary
     st.write(f"### 📊 Summary Statistics for {selected_date}")
