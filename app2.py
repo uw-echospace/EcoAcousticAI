@@ -142,7 +142,7 @@ def display_summary_statistics(combined_df):
 # Create the heatmap
 def combined_activity_chart(activity_df):
     # Extract Time of Day
-    activity_df['time_of_day'] = activity_df['start_time'].dt.strftime('%H:%M')
+    activity_df['time_of_day'] = activity_df.index.strftime('%H:%M')
 
     # Create the heatmap data
     heatmap_data = activity_df.pivot_table(
