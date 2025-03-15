@@ -161,19 +161,29 @@ def combined_activity_chart(activity_df):
     heatmap_data_no_zero = heatmap_data.replace(0, 0.1)  # Replace zeros with small value for log scale
     
     custom_viridis_spectrum = [
-        [0.0, "#2b0136"],   # Dark Purple (lowest values)
-        [0.05, "#440154"],  # Deep Purple
-        [0.1, "#47258a"],   # Violet
-        [0.2, "#355f8d"],   # Blue
-        [0.3, "#2a8e8c"],   # Teal-Green
-        [0.4, "#1f9a70"],   # Strong Green
-        [0.5, "#49d1ad"],   # Bright Green
-        [0.6, "#82e583"],   # Light Green
-        [0.7, "#b7f053"],   # Green-Yellow
-        [0.8, "#fde725"],   # Yellow-Green
-        [0.9, "#f9ef5a"],   # Bright Yellow
-        [1.0, "#fcf9a6"]    # Light Yellow (highest values)
+        [0.0, "#2b0136"],    # Darkest Purple (Added to the bottom)
+        [0.05, "#440154FF"], # Deep Purple
+        [0.1, "#481567FF"],  # Violet
+        [0.15, "#482677FF"], # Violet transitioning to Blue
+        [0.2, "#453781FF"],  # Blue-Violet
+        [0.25, "#404788FF"], # Deep Blue
+        [0.3, "#39568CFF"],  # Blue-Green
+        [0.35, "#33638DFF"], # Teal-Blue
+        [0.4, "#2D708EFF"],  # Teal
+        [0.45, "#287D8EFF"], # Teal transitioning to Green
+        [0.5, "#238A8DFF"],  # Green-Teal
+        [0.55, "#1F968BFF"], # True Green
+        [0.6, "#20A387FF"],  # Bright Green
+        [0.65, "#29AF7FFF"], # Light Green
+        [0.7, "#3CBB75FF"],  # Green with Yellow Tint
+        [0.75, "#55C667FF"], # Lime Green
+        [0.8, "#73D055FF"],  # Bright Lime
+        [0.85, "#95D840FF"], # Yellowish Green
+        [0.9, "#B8DE29FF"],  # Yellow-Green
+        [0.95, "#DCE319FF"], # Bright Yellow
+        [1.0, "#FDE725FF"]   # Light Yellow (Top)
     ]
+
 
     # Create the heatmap visualization
     fig = go.Figure(data=go.Heatmap(
