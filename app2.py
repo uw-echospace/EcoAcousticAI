@@ -36,25 +36,22 @@ def combine_dataframes(manila_path):
                         df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
                         combined_data.append(df)
                     else:
-                        st.warning(f"⚠ File '{file}' is missing 'start_time' or 'end_time' columns.")
+                        st.warning(f"⚠File '{file}' is missing 'start_time' or 'end_time' columns.")
 
     if combined_data:
         combined_df = pd.concat(combined_data, ignore_index=True)
-
-        # Convert to DatetimeIndex for resampling
-        combined_df['start_time'] = pd.to_datetime(combined_df['start_time'])
-
         combined_df['species_count'] = combined_df.groupby('start_time')['class'].transform('nunique')
 
-        # Aggregating data for smoother visualization
+        # Resample to 1-minute intervals
         activity_df = (
-            combined_df[['start_time', 'class', 'class_prob']]
+            combined_df[['start_time', 'species_count', 'class', 'class_prob']]
             .drop_duplicates()
             .set_index('start_time')
-            .resample('10T')  # Resample to 10-minute intervals
+            .resample('1T')  # Resampling to 1-minute intervals
             .agg({
-                'class': lambda x: x.mode().iloc[0],  # Most common class in each interval
-                'class_prob': 'mean'                  # Average probability for better accuracy
+                'species_count': 'sum',  # Sum species count per minute
+                'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common species
+                'class_prob': 'mean'  # Average confidence
             })
             .fillna(0)
         )
