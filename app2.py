@@ -134,12 +134,12 @@ def combined_activity_chart(activity_df):
         return
 
     fig = go.Figure(data=go.Heatmap(
-        z=activity_df.T.values,  # Ensure correct orientation
-        x=activity_df.index.strftime('%H:%M'),  # Time of Day
-        y=activity_df.columns,  # Unique species ("class")
+        z=activity_df['species_count'],  # Ensure this is numeric
+        x=activity_df.index.strftime('%H:%M'),
+        y=activity_df['class'],  # Ensure 'class' is the y-axis (species names)
         colorscale='Viridis',
-        zmin=1,  # Minimum value to avoid blank spaces
-        zmax=activity_df.max().max(),  # Scale based on max detections
+        zmin=activity_df['species_count'].min(),  # Ensure correct min/max scale
+        zmax=activity_df.select_dtypes(include=['number']).max().max()  # Use only numeric columns
     ))
 
     fig.update_layout(
