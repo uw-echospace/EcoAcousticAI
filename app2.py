@@ -168,8 +168,7 @@ def combined_activity_chart(activity_df):
 
     fig.update_layout(
         title={
-            'text': 'UBNA Combined Activity Dashboard<br><span style="font-size:9px; color:grey;">If the downloaded PNG is blank, click the home icon to reset axes.</span>',
-            'x': 0.5  # Centers the title
+            'text': 'UBNA Combined Activity Dashboard<br><span style="font-size:12px; color:grey;">If the downloaded PNG is blank, click the home icon to reset axes.</span>',
         },
         xaxis_title='Species Class',
         yaxis_title='Time of Day (24-hour format)',
