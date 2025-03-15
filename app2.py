@@ -9,17 +9,23 @@ from datetime import datetime, timedelta
 # Helper function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
     """Extracts datetime from a filename in format: 'batdetect2_pipeline_20210603_034102.csv'"""
-    parts = filename.split('_')
-    date_str, time_str = parts[2], parts[3].split('.')[0]  # Extract date and time
-    file_datetime = datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S")
-    return file_datetime
+    try:
+        parts = filename.split('_')
+        date_str, time_str = parts[2], parts[3].split('.')[0]  # Extract date and time
+        file_datetime = datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S")
+        return file_datetime
+ 
+    except (IndexError, ValueError):
+        st.error("Filename format incorrect. Expected format: batdetect2_pipeline_YYYYMMDD_HHMMSS.csv")
+        return None
+
 
 # Create the cumulative plot - Added for activity plot
 def plot_activity_chart(df, file_datetime):
     """Generates a visual chart of species activity over time"""
-    df['start_time'] = df['Start Time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-    df['end_time'] = df['End Time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-    df['species_count'] = df.groupby('start_time')['Scientific Name'].transform('nunique')
+    df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+    df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+    df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
 
     # Aggregating data for a smoother visualization
     activity_df = df[['start_time', 'species_count']].drop_duplicates().set_index('start_time').resample('10T').sum().fillna(0)
