@@ -2,6 +2,46 @@ import os
 import streamlit as st
 import pandas as pd
 from PIL import Image 
+import plotly.express as px
+import plotly.graph_objects as go
+from datetime import datetime, timedelta
+
+# Helper function to extract datetime from filename - Added for activity plot
+def extract_datetime_from_filename(filename):
+    """Extracts datetime from a filename in format: 'batdetect2_pipeline_20210603_034102.csv'"""
+    parts = filename.split('_')
+    date_str, time_str = parts[2], parts[3].split('.')[0]  # Extract date and time
+    file_datetime = datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S")
+    return file_datetime
+
+# Create the cumulative plot - Added for activity plot
+def plot_activity_chart(df, file_datetime):
+    """Generates a visual chart of species activity over time"""
+    df['start_time'] = df['Start Time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+    df['end_time'] = df['End Time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+    df['species_count'] = df.groupby('start_time')['Scientific Name'].transform('nunique')
+
+    # Aggregating data for a smoother visualization
+    activity_df = df[['start_time', 'species_count']].drop_duplicates().set_index('start_time').resample('10T').sum().fillna(0)
+
+    # Plotting
+    fig = go.Figure(data=go.Heatmap(
+        z=activity_df['species_count'],
+        x=activity_df.index.strftime('%H:%M'),
+        y=activity_df.index.strftime('%Y-%m-%d'),
+        colorscale='Viridis'
+    ))
+
+    fig.update_layout(
+        title='🟣 UBNA Acoustic Activity Dashboard',
+        xaxis_title='Time of Day (PST)',
+        yaxis_title='Date',
+        coloraxis_colorbar=dict(title="Species Count"),
+        height=600,
+        width=900
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
 
 # Custom CSS for improved header design
 st.markdown("""
@@ -138,6 +178,13 @@ elif page == "dashboard":
                     st.write("### 📊 CSV Preview")
                     st.dataframe(df)
 
+                    # Extract datetime from filename - Added for activity plot
+                    file_datetime = extract_datetime_from_filename(selected_file)
+
+                    # Plot the Activity Chart
+                    plot_activity_chart(df, file_datetime)
+
+                
                 # Excel Preview
                 elif selected_file.endswith(('.xls', '.xlsx')):
                     df = pd.read_excel(file_path)
