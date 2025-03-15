@@ -69,8 +69,13 @@ def combine_dataframes(manila_path):
                     df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
 
                     combined_data.append(df)
-
+                    
+    
     if combined_data:
+
+        # Filter out empty dataframes before concatenation
+        combined_data = [df for df in combined_data if not df.empty]
+    
         combined_df = pd.concat(combined_data, ignore_index=True)
 
         # Convert 'start_time' to DatetimeIndex
@@ -149,6 +154,7 @@ def combined_activity_chart(activity_df):
         index='time_of_day',
         columns='class',
         values='heatmap_value',
+        xgap=1,
         fill_value=0  # Ensures zero values for detected species
     )
 
@@ -164,8 +170,9 @@ def combined_activity_chart(activity_df):
         title='UBNA Combined Activity Dashboard',
         xaxis_title='Species Class',
         yaxis_title='Time of Day (24-hour format)',
+        yaxis=dict(autorange='reversed'), # Flip Y-axis so 00:00 is on top
         coloraxis_colorbar=dict(title="Detections"),
-        height=800,
+        height=1300,
         width=900
     )
 
