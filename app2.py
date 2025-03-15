@@ -18,7 +18,33 @@ def extract_datetime_from_filename(filename):
     except (IndexError, ValueError):
         st.error("Filename format incorrect. Expected format: batdetect2_pipeline_YYYYMMDD_HHMMSS.csv")
         return None
+        
+# Function to safely read CSV files
+def safe_read_csv(file_path):
+    """Attempts to read a CSV file, skipping empty or invalid ones."""
+    try:
+        if os.stat(file_path).st_size == 0:  # Check if file is empty
+            st.warning(f"⚠ Skipping empty file: {file_path}")
+            return None
 
+        df = pd.read_csv(file_path)
+
+        if df.empty:
+            st.warning(f"Skipping file with no data: {file_path}")
+            return None
+
+        if 'start_time' not in df.columns or 'end_time' not in df.columns or 'class' not in df.columns:
+            st.warning(f"Skipping file with missing columns: {file_path}")
+            return None
+
+        return df
+    except pd.errors.EmptyDataError:
+        st.warning(f"Skipping corrupted file: {file_path}")
+        return None
+    except Exception as e:
+        st.error(f"Error reading file {file_path}: {e}")
+        return None
+        
 # Combine dataframes and compute activity
 def combine_dataframes(manila_path):
     combined_data = []
