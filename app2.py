@@ -154,7 +154,6 @@ def combined_activity_chart(activity_df):
         index='time_of_day',
         columns='class',
         values='heatmap_value',
-        xgap=1,
         fill_value=0  # Ensures zero values for detected species
     )
 
@@ -163,6 +162,7 @@ def combined_activity_chart(activity_df):
         z=heatmap_data.values,
         x=heatmap_data.columns,
         y=heatmap_data.index,
+        xgap=1,
         colorscale='Viridis'
     ))
 
