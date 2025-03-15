@@ -19,18 +19,39 @@ def extract_datetime_from_filename(filename):
         st.error("Filename format incorrect. Expected format: batdetect2_pipeline_YYYYMMDD_HHMMSS.csv")
         return None
 
+# Combine dataframes and compute activity
+def combine_dataframes(manila_path):
+    combined_data = []
 
-# Create the cumulative plot - Added for activity plot
-def plot_activity_chart(df, file_datetime):
-    """Generates a visual chart of species activity over time"""
-    df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-    df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-    df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
+    for root, _, files in os.walk(manila_path):
+        for file in files:
+            if file.endswith(".csv"):
+                file_path = os.path.join(root, file)
+                file_datetime = extract_datetime_from_filename(file)
 
-    # Aggregating data for a smoother visualization
-    activity_df = df[['start_time', 'species_count']].drop_duplicates().set_index('start_time').resample('10T').sum().fillna(0)
+                if file_datetime:
+                    df = pd.read_csv(file_path)
+                    if 'start_time' in df.columns and 'end_time' in df.columns:
+                        df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                        df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                        combined_data.append(df)
+                    else:
+                        st.warning(f"⚠File '{file}' is missing 'start_time' or 'end_time' columns.")
 
-    # Plotting
+    if combined_data:
+        combined_df = pd.concat(combined_data, ignore_index=True)
+        combined_df['species_count'] = combined_df.groupby('start_time')['class'].transform('nunique')
+
+        # Aggregating data for a smoother visualization
+        activity_df = combined_df[['start_time', 'species_count']].drop_duplicates().set_index('start_time').resample('10T').sum().fillna(0)
+
+        return combined_df, activity_df
+    else:
+        return pd.DataFrame(), pd.DataFrame()  # Return empty DataFrame if no data found
+
+        
+# Plot activity chart
+def combined_activity_chart(activity_df):
     fig = go.Figure(data=go.Heatmap(
         z=activity_df['species_count'],
         x=activity_df.index.strftime('%H:%M'),
@@ -39,7 +60,7 @@ def plot_activity_chart(df, file_datetime):
     ))
 
     fig.update_layout(
-        title='🟣 UBNA Acoustic Activity Dashboard',
+        title='UBNA Combined Activity Dashboard',
         xaxis_title='Time of Day (PST)',
         yaxis_title='Date',
         coloraxis_colorbar=dict(title="Species Count"),
@@ -171,6 +192,10 @@ elif page == "dashboard":
 
             # Display Data Files Dropdown
             if data_files:
+
+                # Combine data for the selected directory
+                combined_df, activity_df = combine_dataframes(dir_path)
+
                 selected_file = st.selectbox("📑 Select a Data File:", data_files)
                 file_path = os.path.join(dir_path, selected_file)
 
@@ -183,12 +208,6 @@ elif page == "dashboard":
                     df = pd.read_csv(file_path)
                     st.write("### 📊 CSV Preview")
                     st.dataframe(df)
-
-                    # Extract datetime from filename - Added for activity plot
-                    file_datetime = extract_datetime_from_filename(selected_file)
-
-                    # Plot the Activity Chart
-                    plot_activity_chart(df, file_datetime)
 
                 
                 # Excel Preview
@@ -203,7 +222,14 @@ elif page == "dashboard":
                     with open(file_path, "r", encoding="utf-8") as f:
                         text_content = f.read()
                         st.text_area("📄 File Contents", text_content, height=300)
-
+                            # Display the combined data table for detailed view
+                st.write("### Aggregated Activity Table")
+                st.dataframe(activity_df)
+    
+                # Plot the combined activity chart
+                st.write("### EcoAcoustic Activity Heatmap")
+                combined_activity_chart(activity_df)
+            
             else:
                 st.info("📂 No data files found in this directory.")
 
