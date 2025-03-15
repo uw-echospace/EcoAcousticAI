@@ -81,7 +81,7 @@ def combine_dataframes(manila_path):
             combined_df[['start_time', 'species_count', 'class', 'class_prob', 'KMEANS_CLASSES']]
             .drop_duplicates()
             .set_index('start_time')
-            .resample('1T')  # 1-minute intervals
+            .resample('10min')  # 1-minute intervals
             .agg({
                 'species_count': 'sum',  # Sum species count per minute
                 'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common species
@@ -118,8 +118,10 @@ def display_summary_statistics(combined_df):
 
     day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
 
+    selected_date = combined_df['start_time'].dt.date.min()  # Extracts the earliest date in the dataset
+
     # Print Summary
-    st.write("### 📊 Summary Statistics")
+    st.write(f"### 📊 Summary Statistics for {selected_date}")
     st.write(f"- **Total Unique Species Detected:** {unique_species}")
     st.write(f"- **Low-Frequency Detections:** {lf_percentage:.2f}%")
     st.write(f"- **High-Frequency Detections:** {hf_percentage:.2f}%")
@@ -128,30 +130,23 @@ def display_summary_statistics(combined_df):
 # Plot activity chart
 def combined_activity_chart(activity_df):
     if activity_df.empty:
-        st.warning("⚠ No activity data available to plot.")
+        st.warning("⚠ No activity data to plot.")
         return
 
-    # Ensure all time slots are covered, even if no detections exist
-    all_times = pd.date_range(start="00:00", end="23:59", freq="30T").strftime('%H:%M')
-    activity_df = activity_df.reindex(all_times, fill_value=0)
-
-    # Set colors: Red for missing data, gradient for species counts
-    activity_df['color'] = np.where(activity_df['species_count'] == 0, 'red', activity_df['species_count'])
-
     fig = go.Figure(data=go.Heatmap(
-        z=activity_df['color'],
-        x=activity_df['class'],  # X-axis is species
-        y=activity_df.index,  # Y-axis is time
+        z=activity_df.T.values,  # Ensure correct orientation
+        x=activity_df.index.strftime('%H:%M'),  # Time of Day
+        y=activity_df.columns,  # Unique species ("class")
         colorscale='Viridis',
-        colorbar=dict(title="Species Count"),
-        zmin=0,  # Ensure empty values are included at the lowest color level
+        zmin=1,  # Minimum value to avoid blank spaces
+        zmax=activity_df.max().max(),  # Scale based on max detections
     ))
 
     fig.update_layout(
-        title='UBNA Combined Activity Dashboard',
-        xaxis_title='Species',
-        yaxis_title='Time of Day (00:00 - 24:00)',
-        yaxis=dict(tickvals=np.arange(0, len(all_times), 2), ticktext=all_times[::2]),  # Show every other time
+        title='UBNA Acoustic Activity Heatmap',
+        xaxis_title='Time of Day (HH:MM)',
+        yaxis_title='Species Detected',
+        xaxis=dict(tickmode='array', tickvals=list(range(0, 1440, 30)), ticktext=[f"{h:02d}:00" for h in range(24)]),  # Fix x-axis labels
         height=600,
         width=900
     )
