@@ -81,7 +81,7 @@ def combine_dataframes(manila_path):
             combined_df[['start_time', 'species_count', 'class', 'class_prob', 'KMEANS_CLASSES']]
             .drop_duplicates()
             .set_index('start_time')
-            .resample('10min')  # 1-minute intervals
+            .resample('10min')  # 10-minute intervals
             .agg({
                 'species_count': 'sum',  # Sum species count per minute
                 'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common species
@@ -113,7 +113,7 @@ def display_summary_statistics(combined_df):
     hf_percentage = (hf_detections / total_detections) * 100 if total_detections > 0 else 0
 
     # 3. Percentage of the Day with a Detection
-    detected_times = combined_df['start_time'].dt.floor('T').nunique()  # Unique time slots with detections
+    detected_times = combined_df['start_time'].dt.floor('min').nunique()  # Unique time slots with detections
     total_time_slots = 24 * 60  # Total minutes in a day
 
     day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
@@ -288,7 +288,7 @@ elif page == "dashboard":
 
                 # CSV Preview
                 if selected_file.endswith(".csv"):
-                    df = pd.read_csv(file_path)
+                    df = pd.safe_read_csv(file_path)
                     st.write("### 📊 CSV Preview")
                     st.dataframe(df)
 
