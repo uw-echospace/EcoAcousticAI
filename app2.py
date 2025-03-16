@@ -19,7 +19,7 @@ def extract_datetime_from_filename(filename):
         for part in parts:
             if part.isdigit() and len(part) == 8:  # Date in YYYYMMDD format
                 date_str = part
-            elif part.isdigit() and len(part) == 6:  # Time in HHMMSS format
+            if part.isdigit() and len(part) == 6:  # Time in HHMMSS format
                 time_str = part
                 break  # Stop once both date and time are found
 
