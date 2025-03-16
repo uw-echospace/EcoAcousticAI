@@ -387,8 +387,8 @@ elif page == "contact":
             .justified-container {
                 display: flex;
                 align-items: flex-start;
-                gap: 5px; /* Controls spacing between image and text */
-                margin-bottom: 15px; /* Reduces space between members */
+                gap: 10px; /* Controls spacing between image and text */
+                margin-bottom: 10px; /* Reduces space between members */
             }
             .justified-image {
                 width: 300px;
@@ -422,18 +422,14 @@ elif page == "contact":
     # Display Members with Justified Pictures & Reduced Spacing
     for member in team_members:
         st.markdown("---")  # Visual separator
-        st.markdown(
-            f"""
-            <div class="justified-container">
-                <img src="{member['image']}" class="justified-image">
-                <div>
-                    <h3>{member['name']}</h3>
-                    <p class="bio-section">{member['bio']}</p>
-                </div>
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
+        col1, col2 = st.columns([1, 3])
+    
+        with col1:
+            st.image(member["image"], width=300)
+    
+        with col2:
+            st.markdown(f"### {member['name']}")
+            st.markdown(f'<div class="bio-section">{member["bio"]}</div>', unsafe_allow_html=True)
 
     
     st.markdown("""
