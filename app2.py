@@ -11,15 +11,24 @@ st.set_page_config(layout="wide")
 
 # Function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
-    """Extracts datetime from a filename in format: 'batdetect2_pipeline_20210603_034102.csv'"""
+    """Extracts datetime from a filename in format: '*_20210603_034102.csv'"""
     try:
         parts = filename.split('_')
-        date_str, time_str = parts[2], parts[3].split('.')[0]  # Extract date and time
+        
+        # Identify the position of the date-time
+        for part in parts:
+            if part.isdigit() and len(part) == 8:  # Date in YYYYMMDD format
+                date_str = part
+            elif part.isdigit() and len(part) == 6:  # Time in HHMMSS format
+                time_str = part
+                break  # Stop once both date and time are found
+
+        # Parse date and time
         file_datetime = datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S")
         return file_datetime
  
     except (IndexError, ValueError):
-        st.error("Filename format incorrect. Expected format: batdetect2_pipeline_YYYYMMDD_HHMMSS.csv")
+        st.error("Filename format incorrect. Expected format: *_YYYYMMDD_HHMMSS.csv")
         return None
         
 # Function to safely read CSV files
@@ -27,18 +36,18 @@ def safe_read_csv(file_path):
     """Attempts to read a CSV file, skipping empty or invalid ones."""
     try:
         if os.stat(file_path).st_size == 0:  # Check if file is empty
-            #st.warning(f"⚠ Skipping empty file: {file_path}")
+            #st.warning(f"Skipping empty file: {file_path}")
             return None
 
         df = pd.read_csv(file_path)
 
-        # if df.empty:
-        #     st.warning(f"Skipping file with no data: {file_path}")
-        #     return None
-
-        if 'start_time' not in df.columns or 'end_time' not in df.columns or 'class' not in df.columns:
-            #st.warning(f"Skipping file with missing columns: {file_path}")
+        if df.empty:
+            #st.warning(f"Skipping file with no data: {file_path}")
             return None
+
+        #if 'start_time' not in df.columns or 'end_time' not in df.columns or 'class' not in df.columns:
+            #st.warning(f"Skipping file with missing columns: {file_path}")
+            #return None
 
         return df
     except pd.errors.EmptyDataError:
@@ -73,7 +82,6 @@ def combine_dataframes(manila_path):
 
                         combined_data.append(df)
                     
-    
     if combined_data:
 
         # Filter out empty dataframes before concatenation
