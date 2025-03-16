@@ -426,7 +426,7 @@ elif page == "contact":
         col1, col2 = st.columns([1, 3])
     
         with col1:
-            st.image(member["image"], width=500)
+            st.image(member["image"], use_container_width=True)
     
         with col2:
             st.markdown(f"### {member['name']}")
