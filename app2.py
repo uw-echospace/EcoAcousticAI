@@ -379,53 +379,6 @@ elif page == "dashboard":
 
 elif page == "contact":
 
-    # Custom CSS for enhanced layout
-    st.markdown("""
-        <style>
-            .team-container {
-                display: flex;
-                gap: 30px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-    
-            .team-member {
-                width: 30%;  /* Large size for desktop, adjusts dynamically */
-                min-width: 300px; /* Ensures size consistency */
-                text-align: center;
-                background-color: #f0f2f6;
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
-            }
-    
-            .team-image {
-                width: 100%;
-                border-radius: 10px;
-                transition: transform 0.2s ease-in-out;
-            }
-    
-            .team-image:hover {
-                transform: scale(1.05); /* Subtle zoom effect */
-                cursor: pointer;
-            }
-    
-            .team-header {
-                font-size: 28px;
-                font-weight: bold;
-                color: #4CAF50;
-                margin-top: 15px;
-            }
-    
-            .team-bio {
-                text-align: justify;
-                font-size: 16px;
-                line-height: 1.6;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
-    
     st.title("Meet the Team:")
     
     # Team Members' Info and Image Paths
@@ -447,19 +400,12 @@ elif page == "contact":
         }
     ]
     
-    st.markdown("<div class='team-container'>", unsafe_allow_html=True)
-    
-    # Display team members in large responsive cards
+    # Display Members as Vertical Cards with Images on Top
     for member in team_members:
-        st.markdown(f"""
-            <div class='team-member'>
-                <img src="{member['image']}" class='team-image'>
-                <div class='team-header'>{member['name']}</div>
-                <div class='team-bio'>{member['bio']}</div>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("---")  # Visual separator
+        st.image(member["image"], use_container_width=True, caption=member["name"])
+        st.markdown(f"### {member['name']}")
+        st.markdown(member['bio'])
 
     
     st.markdown("""
