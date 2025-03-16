@@ -90,7 +90,7 @@ jobs:
             echo "after fusermount"
 
             # Step 3: Mount the FUSE filesystem with rclone using allow_other 
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ \
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/recover-20250127/UBNA_022/ /tmp/osn_bucket/ \
             --vfs-cache-mode off \
             --log-level DEBUG \
             --allow-other \
@@ -128,22 +128,12 @@ jobs:
           # Verify the permissions (optional)
           ls -l $FILE_PATH
 
-            # Define variables for the mount path and access details
-            #ACCESS_TO="ecoacousticaccess"  
-            #sudo mkdir -p /mnt/ecoacoustic-storage/
-            #pwd
-            #MOUNT_PATH="/mnt/ecoacoustic-storage/"
-            #CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
-
-            # Add entry to /etc/fstab to mount the storage on boot
-            #echo "$CEPH_PATH $MOUNT_PATH ceph name=$ACCESS_TO,x-systemd.device-timeout=30,x-systemd.mount-timeout=30,noatime,_netdev,rw 0 2" | sudo tee -a /etc/fstab > /dev/null
-
             # Verify the entry is added (optional)
             cat /etc/fstab
             sudo mount -a
             df -h | grep vol
 
-            cd ./EcoAcousticAI/
+            cd /home/ubuntu/EcoAcousticAI/
 
             chmod +x disk_space.sh
             ./disk_space.sh
