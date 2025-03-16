@@ -403,16 +403,16 @@ elif page == "contact":
         col1, col2 = st.columns([1, 3])  # Left column for image, right column for text
         
         with col1:
-            st.image(member["image"], width=150)  # Display image
+            st.image(member["image"], use_column_width=True)  # Display image
         
         with col2:
             st.markdown(f"### {member['name']}")
             st.markdown(member['bio'])
     st.markdown("""
 
-    *placeholder for sponser acknowledgment*
+    *\n\t placeholder for sponser acknowledgment*
     """)
-    st.write("/n For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
+    st.write("\n For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
 
 else:
     st.write("Page not found. Please use the navigation links above.")
