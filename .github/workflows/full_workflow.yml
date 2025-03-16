@@ -170,13 +170,18 @@ jobs:
             echo "Contents of new_directories.txt:"
             cat new_directories.txt
             echo "----------------------"
-            
+
             chmod +x run_buzzfindr.sh
             chmod +x run_frognet.sh
             chmod +x run_docker.sh
 
             ./run_buzzfindr.sh
+
+            echo "starting frognet model"
             ./run_frognet.sh
+
+            echo "done with frognet model..starting bat-detect"
+            
             ./run_docker.sh
 
 
