@@ -383,7 +383,7 @@ elif page == "contact":
     team_members = [
         {
             "name": "Isha Gokhale",
-            "image": "./assets/jacob_pic.jpg",  # path to Isha's image
+            "image": "./assets/jacob.png",  # path to Isha's image
             "bio": """Isha has experience as a Graduate Research Assistant at the University of Washington's Genomics Department, 
             where she contributed to enhancing a peptide sequencing model by detecting chimeric spectra through signal processing analysis. 
             She also worked as a Data Science Intern at Qualtrics, utilizing Athena and Redshift to query large databases 
@@ -393,7 +393,7 @@ elif page == "contact":
         },
         {
             "name": "Lawrie Brunswick",
-            "image": "./assets/jacob_pic.jpg",  # path to Lawrie's image
+            "image": "./assets/jacob.png",  # path to Lawrie's image
             "bio": """Lawrie has a Master’s of Science in Data Science with over nine years of experience in programming and analytics. 
             Lawrie has held roles such as: Data Science Trainee in the genomics Department at the University of Washington, 
             Senior Data Analyst at the American Institutes for Research, and Senior Reporting Analyst at Optum Inc. 
@@ -401,7 +401,7 @@ elif page == "contact":
         },
         {
             "name": "Jacob Peterson",
-            "image": "./assets/jacob_pic.jpg",  # path to Jacob's image
+            "image": "./assets/jacob.png",  # path to Jacob's image
             "bio": """Jacob is a skilled data science student with experience in statistical analysis, machine learning, and data analytics. 
             He works at the Port of Seattle, where he applies predictive modeling, providing critical insights for operational planning. 
             This role involved building and refining data pipelines and dashboards in collaboration with the business intelligence team."""
