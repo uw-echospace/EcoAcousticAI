@@ -151,7 +151,7 @@ jobs:
             cd buzzfindr/
             docker build -t buzzfindr-image .
 
-            cd birdnetlib/
+            cd ../birdnetlib
             docker build -t frognet .
 
       # Step 5: Mount the OSN bucket and process data in Docker
@@ -181,7 +181,7 @@ jobs:
             ./run_frognet.sh
 
             echo "done with frognet model..starting bat-detect"
-            
+
             ./run_docker.sh
 
 
