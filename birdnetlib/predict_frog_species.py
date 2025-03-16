@@ -5,7 +5,7 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder = Path('/app/frog_audio/')
+audio_folder = Path('/app/audio/')
 
 #audio_folder = '/tmp/osn_bucket/'
 

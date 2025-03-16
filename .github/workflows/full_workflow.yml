@@ -1,4 +1,4 @@
-name: Model Run to Manila Mount
+name: Model Run to Manila Mount Temp
 
 on:
   schedule:
@@ -136,8 +136,8 @@ jobs:
             cd /home/ubuntu/EcoAcousticAI/
 
             chmod +x disk_space.sh
-            ./disk_space.sh
-
+            #./disk_space.sh
+            docker image prune -a -f
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
             cd buzzfindr/
@@ -166,13 +166,13 @@ jobs:
             chmod +x run_buzzfindr.sh
             chmod +x run_frognet.sh
             chmod +x run_docker.sh
-            chmod +x change_owner.sh
+            #chmod +x change_owner.sh
 
             ./run_buzzfindr.sh
 
             echo "starting frognet model"
             ./run_frognet.sh
-            ./change_owner.sh
+            #./change_owner.sh
 
             echo "done with frognet model..starting bat-detect"
 

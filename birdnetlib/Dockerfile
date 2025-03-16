@@ -16,14 +16,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY . .
 
-RUN mkdir -p /app/frog_audio/
+RUN mkdir -p /app/audio/
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose necessary ports if applicable (e.g., API, web server)
 # EXPOSE 8000
+RUN chmod +x run_both_models.sh
 
-# Run the bat-detect MSDS script (or entry point) when the container starts\
-
-CMD ["python3", "predict_frog_species.py"]
-
+#CMD ["python3", "run_both_models.sh"]
+ENTRYPOINT ["/app/run_both_models.sh"]

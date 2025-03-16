@@ -6,10 +6,12 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder = Path.cwd() / "sample_audio"
+#audio_folder = Path.cwd() / "sample_audio"
+audio_folder = Path('/app/audio/')
 
 # Set separate output directory for results
-output_folder = Path.cwd() / "results" / "birdnet_wa_all"
+#output_folder = Path.cwd() / "results" / "birdnet_wa_all"
+output_folder = Path('/app/results/birdnet_wa_all/')
 output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold

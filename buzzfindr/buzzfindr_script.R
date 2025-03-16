@@ -6,22 +6,20 @@ library(buzzfindr)
 path = "/app/recordings_buzz"
 #path = "/Users/igokhale/EcoAcousticAI/recordings_2023/ubna_data_01/recover-20210604_unit1/UBNA06"
 out_file = "csv"
-accepted_path <-  "/app/accepted_files"  # Define the new directory path
-#accepted_path = "/Users/igokhale/EcoAcousticAI/accepted"
 
 all_files <- list.files(path = path, full.names = TRUE)
-print(all_files)
 
 # Iterate through the files in the directory
 for (file in all_files) {
     # Check if the file ends with .wav or .WAV
     if (grepl("\\.wav$", file, ignore.case = TRUE)) {
         # Convert .WAV to .wav by renaming the file (change extension to lowercase)
-        new_file_name <- file.path(accepted_path, paste0(tools::file_path_sans_ext(basename(file)), ".wav"))
-
+        new_file_name <- paste0(tools::file_path_sans_ext(basename(file)), ".wav")
+        
+        # Only rename if the file ends with .WAV and ensure it's changed to lowercase .wav
         if (tolower(file) != tolower(new_file_name)) {
-            file.copy(file, new_file_name)
-            cat("Copied and renamed:", file, "to", new_file_name, "\n")
+            file.rename(file, new_file_name)
+            cat("Renamed:", file, "to", new_file_name, "\n")
         }
     } else {
         cat("Skipping file (not .wav or .WAV):", file, "\n")
@@ -29,11 +27,8 @@ for (file in all_files) {
 }
 
 # Now run the detected_buzzes function with the updated file
-detected_buzzes <- buzzfindr(path = accepted_path , out.file = out_file)
+detected_buzzes <- buzzfindr(path = path , out.file = out_file)
 
-
-# Set source and target directories
-source_dir <- "/app/accepted_files/"
 target_dir <- "/app/output_buzz/"
 
 #target_dir = "/Users/igokhale/EcoAcousticAI/test_out"
@@ -42,7 +37,6 @@ target_dir <- "/app/output_buzz/"
 #subdirs <- list.dirs("/app/accepted_files/", full.names = TRUE, recursive = FALSE)
 
 subdirs = list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
-print(subdirs)
 
 buzz_result_subdirs <- subdirs[grepl("^Buzz_Results", basename(subdirs))]
 
