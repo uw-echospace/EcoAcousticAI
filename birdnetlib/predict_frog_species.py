@@ -5,13 +5,13 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder =  '/app/frog_audio/'
+audio_folder = Path('/app/frog_audio/')
 
 #audio_folder = '/tmp/osn_bucket/'
 
 # Set separate output directory for results
 #output_folder = Path.cwd() / "results" / "frogs"
-output_folder = '/app/results/frogs/'
+output_folder = Path('/app/results/frogs/')
 #output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
