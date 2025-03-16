@@ -4,74 +4,87 @@ library(buzzfindr)
 
 # Set the path to your recordings (ensure the path is correct and accessible)
 path = "/app/recordings_buzz"
+#path = "/Users/igokhale/EcoAcousticAI/recordings_2023/ubna_data_01/recover-20210604_unit1/UBNA06"
 out_file = "csv"
+accepted_path <-  "/app/accepted_files"  # Define the new directory path
+#accepted_path = "/Users/igokhale/EcoAcousticAI/accepted"
 
 all_files <- list.files(path = path, full.names = TRUE)
+print(all_files)
 
 print(all_files)
 # Iterate through the files in the directory
 for (file in all_files) {
     # Check if the file ends with .wav or .WAV
     if (grepl("\\.wav$", file, ignore.case = TRUE)) {
-        # Convert .wav to .WAV by renaming the file (change extension to uppercase)
-        new_file_name <- sub("\\.WAV$", ".wav", file, ignore.case = TRUE)
-        
-        # Rename the file (if necessary)
-        if (file != new_file_name) {
-            file.rename(file, new_file_name)
-            cat("Renamed:", file, "to", new_file_name, "\n")
+        # Convert .WAV to .wav by renaming the file (change extension to lowercase)
+        new_file_name <- file.path(accepted_path, paste0(tools::file_path_sans_ext(basename(file)), ".wav"))
+
+        if (tolower(file) != tolower(new_file_name)) {
+            file.copy(file, new_file_name)
+            cat("Copied and renamed:", file, "to", new_file_name, "\n")
         }
-
-        # Now run the detected_buzzes function with the updated file
-        detected_buzzes <- buzzfindr(path = path, out.file = out_file)
-        print(head(detected_buzzes))
-
     } else {
         cat("Skipping file (not .wav or .WAV):", file, "\n")
     }
 }
 
+# Now run the detected_buzzes function with the updated file
+detected_buzzes <- buzzfindr(path = accepted_path , out.file = out_file)
+
 
 # Set source and target directories
-source_dir <- "/app/recordings_buzz/"
+source_dir <- "/app/accepted_files/"
 target_dir <- "/app/output_buzz/"
 
+#target_dir = "/Users/igokhale/EcoAcousticAI/test_out"
+
 # List directories in /app/recordings_buzz
-subdirs <- list.dirs("/app/recordings_buzz/", full.names = TRUE, recursive = FALSE)
+#subdirs <- list.dirs("/app/accepted_files/", full.names = TRUE, recursive = FALSE)
 
-# Check if there are any subdirectories
-if (length(subdirs) > 0) {
-    # Get the last subdirectory
-    last_subdir <- subdirs[length(subdirs)]  # Access the last subdirectory
-    
-    # Change to the last subdirectory
-    setwd(last_subdir)
-    
-    # List all .csv files in the last subdirectory
-    csv_files <- list.files(pattern = "\\.csv$")
-    
-    if (length(csv_files) > 0) {
-        cat("Found the following .csv files:\n")
-        print(csv_files)
+subdirs = list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
+print(subdirs)
+
+buzz_result_subdirs <- subdirs[grepl("^Buzz_Results", basename(subdirs))]
+
+first_wav_file <- all_files[grepl("\\.wav$", all_files, ignore.case = TRUE)][1]
+
+date_part <- substr(basename(first_wav_file), 1, 8)
+
+# Check if there are any subdirectories starting with 'Buzz_Results'
+if (length(buzz_result_subdirs) > 0) {
+    for (subdir in buzz_result_subdirs) {
+        # Change to the subdirectory
+        setwd(subdir)
         
-        # Copy each .csv file to the target directory
-        for (file in csv_files) {
-            file_path <- file.path(last_subdir, file)  # Full path to the .csv file
-
-            timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-            new_file_name <- paste0(tools::file_path_sans_ext(file), "_", timestamp, ".csv")
-            target_path <- file.path(target_dir, new_file_name)  # Target path in the output directory
+        # List all .csv files in the subdirectory
+        csv_files <- list.files(pattern = "\\.csv$")
+        
+        if (length(csv_files) > 0) {
+            cat("Found the following .csv files in", subdir, ":\n")
+            print(csv_files)
             
-            file.copy(file_path, target_path)
-            cat("Copied:", file, "to", target_dir, "\n")
+            # Copy each .csv file to the target directory
+            for (file in csv_files) {
+                file_path <- file.path(subdir, file)  # Full path to the .csv file
 
-            # Remove the file from the source directory after copying
-            file.remove(file_path)
-            cat("Removed:", file, "from", last_subdir, "\n")
+                new_file_name <- paste0("Buzzfindr-", date_part, ".csv")
+
+                # Rename the .csv file based on the extracted date part
+                new_file_name <- paste0("Buzzfindr-", date_part, ".csv")
+                target_path <- file.path(target_dir, new_file_name)  # Target path in the output directory
+                
+                file.copy(file_path, target_path)
+                cat("Copied:", file, "to", target_dir, "\n")
+
+                # Remove the file from the source directory after copying
+                file.remove(file_path)
+                cat("Removed:", file, "from", subdir, "\n")
+            }
+        } else {
+            cat("No .csv files found in", subdir, ".\n")
         }
-    } else {
-        cat("No .csv files found in the last subdirectory.\n")
     }
 } else {
-    cat("No subdirectories found in /app/recordings_buzz/.\n")
+    cat("No subdirectories starting with 'Buzz_Results' found.\n")
 }
