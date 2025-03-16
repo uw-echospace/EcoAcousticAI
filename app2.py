@@ -378,36 +378,98 @@ elif page == "dashboard":
 
 
 elif page == "contact":
+
     st.title("Meet the Team:")
+
     # Team Members' Info and Image Paths
     team_members = [
         {
             "name": "Isha Gokhale",
-            "image": "./assets/isha.png",  # path to Isha's image
+            "image": "./assets/isha.png",
             "bio": """Isha has experience as a Graduate Research Assistant at the University of Washington's Genomics Department, where she contributed to enhancing a peptide sequencing model by detecting chimeric spectra through signal processing analysis. She also worked as a Data Science Intern at Qualtrics, utilizing Athena and Redshift to query large databases and analyze user behaviors related to value achievement. Additionally, Isha interned at Conversica, where she trained and analyzed transformer and LSTM models to detect client churn. She is skilled in data analysis, machine learning, and the development of predictive models. Isha is passionate about applying her technical expertise to solve real-world problems and optimize business outcomes through data-driven insights. Her professional interests include building end-to-end data pipelines, ETL processes, and applying machine learning techniques to large-scale datasets."""
         },
         {
             "name": "Lawrie Brunswick",
-            "image": "./assets/lawrie.png",  # path to Lawrie's image
+            "image": "./assets/lawrie.png",
             "bio": """Lawrie has a Master’s of Science in Data Science with over nine years of experience in programming and analytics. Lawrie has held roles such as: Data Science Trainee in the genomics Department at the University of Washington, Senior Data Analyst at the American Institutes for Research, and Senior Reporting Analyst at Optum Inc. She has built CI/CD pipelines, conducted detailed statistical analyses, and created visual reports for executive decision-making. Her skills include ML model training using Cellpose for nuclear segmentation and stereo-seq analysis for spatial transcriptomics, utilizing tools like TensorFlow and PyTorch. Lawrie is proficient in Python, R, SQL, SAS, and C++, with experience in big data environments like Hadoop, Teradata, and cluster computing via Sun Grid Engine. She has applied a range of statistical techniques, including regression, ANOVA, and factor analysis. Her strong data manipulation and automation skills have been vital to her success. Through her extensive experience in healthcare and biological research, Lawrie is eager to explore new industries and to expand skills in machine learning, deep learning, and AI."""
         },
         {
             "name": "Jacob Peterson",
-            "image": "./assets/jacob.png",  # path to Jacob's image
+            "image": "./assets/jacob.png",
             "bio": """Jacob is a skilled data science student with experience in statistical analysis, machine learning, and data analytics. He works at the Port of Seattle, where he applies predictive modeling, providing critical insights for operational planning. This role involved building and refining data pipelines and dashboards in collaboration with the business intelligence team to optimize data-driven decision-making processes. Proficient in Python, SQL, and predictive analytics, Jacob excels at developing scalable data systems and impactful visualizations. He is particularly interested in healthcare, AI, and cloud computing, with a focus on leveraging LLMs, machine learning algorithms, and data pipelines to drive innovation in tech and business intelligence."""
         }
     ]
     
-    for member in team_members:
-        # 2-column layout
-        col1, col2 = st.columns([1, 3])  # Left column for image, right column for text
-        
-        with col1:
-            st.image(member["image"], width=500)  # Display image
-        
-        with col2:
-            st.markdown(f"### {member['name']}")
-            st.markdown(member['bio'])
+    # Custom CSS for hover effects and expansion logic
+    st.markdown(
+        """
+        <style>
+            .team-container {
+                display: flex;
+                justify-content: space-around;
+                gap: 20px;
+            }
+            .team-member {
+                text-align: center;
+                cursor: pointer;
+                position: relative;
+                width: 200px;
+            }
+            .team-image {
+                width: 100%;
+                border-radius: 10px;
+            }
+            .hover-text {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: rgba(0, 0, 0, 0.6);
+                color: #fff;
+                padding: 5px 10px;
+                border-radius: 5px;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+            .team-member:hover .hover-text {
+                opacity: 1;
+            }
+            .expanded {
+                width: 100%;
+                margin-top: 20px;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    # Display team members in a row
+    expanded_bio = st.session_state.get('expanded_bio', None)
+    
+    with st.container():
+        st.markdown('<div class="team-container">', unsafe_allow_html=True)
+        for idx, member in enumerate(team_members):
+            key = f"bio_{idx}"
+            if st.button(f"Click to Expand {member['name']}", key=key):
+                st.session_state.expanded_bio = member
+    
+            st.markdown(
+                f"""
+                <div class="team-member">
+                    <img src="{member['image']}" class="team-image" />
+                    <div class="hover-text">Click to Expand</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+    
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Expanded Bio Display
+    if expanded_bio:
+        st.markdown(f"### {expanded_bio['name']}")
+        st.markdown(expanded_bio['bio'])
+            
     st.markdown("""
 
     \n\t *placeholder for sponser acknowledgment*
