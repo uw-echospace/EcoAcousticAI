@@ -403,7 +403,7 @@ elif page == "contact":
         col1, col2 = st.columns([1, 3])  # Left column for image, right column for text
         
         with col1:
-            st.image(member["image"], use_column_width=True)  # Display image
+            st.image(member["image"], use_container_width=True)  # Display image
         
         with col2:
             st.markdown(f"### {member['name']}")
