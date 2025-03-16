@@ -48,29 +48,30 @@ def safe_read_csv(file_path):
         st.error(f"Error reading file {file_path}: {e}")
         return None
         
-# Combine dataframes and compute activity
 def combine_dataframes(manila_path):
     combined_data = []
 
     for root, _, files in os.walk(manila_path):
-        for file in files:
-            if file.endswith(".csv"):
-                file_path = os.path.join(root, file)
-                file_datetime = extract_datetime_from_filename(file)
+        # Now we ensure the root path has the model folder structure
+        if any(model in root for model in ["frognet", "battybirdnet", "batdetect2", "buzzfindr"]):
+            for file in files:
+                if file.endswith(".csv"):
+                    file_path = os.path.join(root, file)
+                    file_datetime = extract_datetime_from_filename(file)
 
-                if file_datetime:
-                    df = safe_read_csv(file_path)
-                    if df is None:
-                        continue  # Skip empty/invalid files
+                    if file_datetime:
+                        df = safe_read_csv(file_path)
+                        if df is None:
+                            continue  # Skip empty/invalid files
 
-                    # Convert start & end times
-                    df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                    df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                        # Convert start & end times
+                        df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                        df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
 
-                    # Compute species count per interval
-                    df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
+                        # Compute species count per interval
+                        df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
 
-                    combined_data.append(df)
+                        combined_data.append(df)
                     
     
     if combined_data:
