@@ -162,8 +162,7 @@ jobs:
             cd /home/ubuntu/EcoAcousticAI/
         
             pwd
-            docker stop $(docker ps -aq)
-            docker rm $(docker ps -aq)
+            
             dos2unix new_directories.txt
             sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
             sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
@@ -171,7 +170,9 @@ jobs:
             echo "Contents of new_directories.txt:"
             cat new_directories.txt
             echo "----------------------"
+            
             chmod +x run_buzzfindr.sh
+            chmod +x run_frognet.sh
             chmod +x run_docker.sh
 
             ./run_buzzfindr.sh
