@@ -341,7 +341,7 @@ elif page == "dashboard":
         directories = [d for d in all_items if os.path.isdir(os.path.join(MANILA_STORAGE_PATH, d))]
 
         if directories:
-            selected_directory = st.selectbox("📂 Select a Date Directory:", directories)
+            selected_directory = st.selectbox("📂 Select a Date Directory:", sorted(directories))
             dir_path = os.path.join(MANILA_STORAGE_PATH, selected_directory)
             
             # Filter to only include existing model folders
@@ -351,7 +351,7 @@ elif page == "dashboard":
             ]
             
             if available_models:
-                selected_model = st.selectbox("🤖 Select a Model:", available_models)
+                selected_model = st.selectbox("🤖 Select a Model:", sorted(available_models))
                 model_path = os.path.join(dir_path, selected_model)
             
                 if os.path.exists(model_path):
