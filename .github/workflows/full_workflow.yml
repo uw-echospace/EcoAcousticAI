@@ -145,7 +145,8 @@ jobs:
 
             cd ./EcoAcousticAI/
 
-            docker image prune -f
+            docker image prune -a -f
+            
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
             cd buzzfindr/
