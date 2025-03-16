@@ -381,14 +381,18 @@ elif page == "contact":
 
     st.title("Meet the Team:")
 
-    # Custom CSS to reduce spacing
+       # Custom CSS for reduced spacing
     st.markdown("""
         <style>
-            .team-image {
-                margin-bottom: -10px;  /* Reduces space between image and bio */
+            .centered-image {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 350px;  /* Control image size */
             }
             .bio-section {
-                margin-top: 5px;  /* Adjusted top margin for cleaner spacing */
+                text-align: center;
+                margin-top: -10px;  /* Reduce space between image and bio */
             }
         </style>
     """, unsafe_allow_html=True)
@@ -412,14 +416,10 @@ elif page == "contact":
         }
     ]
     
-   # Display Members as Vertical Cards with Smaller Images on Top
-    for member in team_members:
+      for member in team_members:
         st.markdown("---")  # Visual separator
-        st.markdown(
-            f'<img src="{member["image"]}" class="team-image" width="500">',
-            unsafe_allow_html=True
-        )
-        st.markdown(f"### {member['name']}", unsafe_allow_html=True)
+        st.image(member["image"], width=500)  # Larger image with proper rendering
+        st.markdown(f"### {member['name']}")
         st.markdown(f'<div class="bio-section">{member["bio"]}</div>', unsafe_allow_html=True)
 
     
