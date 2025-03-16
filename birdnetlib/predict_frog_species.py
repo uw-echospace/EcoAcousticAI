@@ -5,13 +5,13 @@ from birdnetlib import Recording
 from datetime import datetime
 
 # Set directory containing .wav files
-audio_folder =  '/app/frog_audio/'
+audio_folder = Path('/app/frog_audio/')
 
 #audio_folder = '/tmp/osn_bucket/'
 
 # Set separate output directory for results
 #output_folder = Path.cwd() / "results" / "frogs"
-output_folder = '/app/results/frogs/'
+output_folder = Path('/app/results/frogs/')
 #output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
@@ -33,7 +33,7 @@ model = Analyzer(
 )
 
 # Process each .wav file in the folder
-for audio_file in sorted(audio_folder.glob("*.wav")):
+for audio_file in sorted(audio_folder.glob("*.WAV")):
     print(f"\n Processing: {audio_file.name}")
 
     # Create a Recording object (without lat/lon filtering to avoid empty results)
@@ -113,9 +113,9 @@ for audio_file in sorted(audio_folder.glob("*.wav")):
         combined_detections.append([audio_file.name, last_start, last_end, last_species, last_scientific, avg_conf])
 
     # Define output files
-    csv_output_file = output_folder / f"{audio_file.stem}_species.csv"
-    raven_output_file = output_folder / f"{audio_file.stem}_selection.txt"
-    
+    csv_output_file = output_folder / f"frognet_{audio_file.stem}_species.csv"
+    raven_output_file = output_folder / f"frognet_{audio_file.stem}_selection.txt"
+
     # Save results in CSV format
     with open(csv_output_file, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)

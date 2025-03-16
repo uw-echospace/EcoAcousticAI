@@ -90,7 +90,7 @@ jobs:
             echo "after fusermount"
 
             # Step 3: Mount the FUSE filesystem with rclone using allow_other 
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/recover-20230622/UBNA_007/ /tmp/osn_bucket/ \
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/recover-20250127/UBNA_022/ /tmp/osn_bucket/ \
             --vfs-cache-mode off \
             --log-level DEBUG \
             --allow-other \
@@ -128,24 +128,16 @@ jobs:
           # Verify the permissions (optional)
           ls -l $FILE_PATH
 
-            # Define variables for the mount path and access details
-            #ACCESS_TO="ecoacousticaccess"  
-            #sudo mkdir -p /mnt/ecoacoustic-storage/
-            #pwd
-            #MOUNT_PATH="/mnt/ecoacoustic-storage/"
-            #CEPH_PATH="149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/b726fc5b-0674-4ba8-a5c4-17a8684d0415/daf825a1-77fa-4c9e-8f5a-c56ed8f7d55c" 
-
-            # Add entry to /etc/fstab to mount the storage on boot
-            #echo "$CEPH_PATH $MOUNT_PATH ceph name=$ACCESS_TO,x-systemd.device-timeout=30,x-systemd.mount-timeout=30,noatime,_netdev,rw 0 2" | sudo tee -a /etc/fstab > /dev/null
-
             # Verify the entry is added (optional)
             cat /etc/fstab
             sudo mount -a
             df -h | grep vol
 
-            cd ./EcoAcousticAI/
+            cd /home/ubuntu/EcoAcousticAI/
 
-            docker image prune -f
+            chmod +x disk_space.sh
+            ./disk_space.sh
+
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
             cd buzzfindr/
@@ -174,46 +166,15 @@ jobs:
             chmod +x run_buzzfindr.sh
             chmod +x run_frognet.sh
             chmod +x run_docker.sh
+            chmod +x change_owner.sh
 
             ./run_buzzfindr.sh
 
             echo "starting frognet model"
             ./run_frognet.sh
+            ./change_owner.sh
 
             echo "done with frognet model..starting bat-detect"
 
             ./run_docker.sh
 
-
-#   shelve-instance:
-#     runs-on: ubuntu-latest
-#     needs: unshelve-and-run-model  # <-- This makes sure it runs ONLY after the first job completes
-#     steps:
-#       - name: Install OpenStack CLI
-#         run: sudo apt update && sudo apt install -y python3-openstackclient
-
-#       - name: Authenticate with OpenStack
-#         run: |
-#           mkdir -p ~/.config/openstack
-#           echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
-#           chmod 600 ~/.config/openstack/clouds.yaml
-#           openstack --os-cloud=BIO230143_IU server list  # Debug check
-
-#       - name: Shelve Instance
-#         run: |
-#           INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
-#           STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
-
-#           echo "Checking if instance is ready to be shelved..."
-#           while [[ "$STATUS" == "BUILD" || "$STATUS" == "REBOOT" || "$STATUS" == "UNSHELVING" ]]; do
-#             echo "Instance is still transitioning. Waiting 60 seconds..."
-#             sleep 60
-#             STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
-#           done
-
-#           if [[ "$STATUS" == "ACTIVE" ]]; then
-#             echo "Shelving instance now..."
-#             openstack --os-cloud=BIO230143_IU server shelve $INSTANCE_ID
-#           else
-#             echo "Instance is not in a valid state for shelving. Current status: $STATUS"
-#           fi

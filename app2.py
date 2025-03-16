@@ -7,6 +7,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
+st.set_page_config(layout="wide")
+
 # Function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
     """Extracts datetime from a filename in format: 'batdetect2_pipeline_20210603_034102.csv'"""
@@ -211,7 +213,6 @@ def combined_activity_chart(activity_df):
 
     st.plotly_chart(fig, use_container_width=True)
 
-
 # Custom CSS for improved header design
 st.markdown("""
     <style>
@@ -378,19 +379,65 @@ elif page == "dashboard":
 
 
 elif page == "contact":
+
     st.title("Meet the Team:")
+
+    # Custom CSS for justified images and reduced spacing
     st.markdown("""
-    **Isha Gokhale**
-    has experience as a Graduate Research Assistant at the University of Washington's Genomics Department, where she contributed to enhancing a peptide sequencing model by detecting chimeric spectra through signal processing analysis. She also worked as a Data Science Intern at Qualtrics, utilizing Athena and Redshift to query large databases and analyze user behaviors related to value achievement. Additionally, Isha interned at Conversica, where she trained and analyzed transformer and LSTM models to detect client churn. She is skilled in data analysis, machine learning, and the development of predictive models. Isha is passionate about applying her technical expertise to solve real-world problems and optimize business outcomes through data-driven insights. Her professional interests include building end-to-end data pipelines, ETL processes, and applying machine learning techniques to large-scale datasets.
+        <style>
+            .justified-container {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px; /* Controls spacing between image and text */
+                margin-bottom: 10px; /* Reduces space between members */
+            }
+            .justified-image {
+                width: 500px;
+                flex-shrink: 0; 
+            }
+            .bio-section {
+                margin-top: -10px; 
+            }
+        </style>
+    """, unsafe_allow_html=True)
     
-    **Lawrie Brunswick**
-    has a Master’s of Science in Data Science with over nine years of experience in programming and analytics. Lawrie has held roles such as: Data Science Trainee in the genomics Department at the University of Washington, Senior Data Analyst at the American Institutes for Research, and Senior Reporting Analyst at Optum Inc. She has built CI/CD pipelines, conducted detailed statistical analyses, and created visual reports for executive decision-making. Her skills include ML model training using Cellpose for nuclear segmentation and stereo-seq analysis for spatial transcriptomics, utilizing tools like TensorFlow and PyTorch. Lawrie is proficient in Python, R, SQL, SAS, and C++, with experience in big data environments like Hadoop, Teradata, and cluster computing via Sun Grid Engine. She has applied a range of statistical techniques, including regression, ANOVA, and factor analysis. Her strong data manipulation and automation skills have been vital to her success. Through her extensive experience in healthcare and biological research, Lawrie is eager to explore new industries and to expand skills in machine learning, deep learning, and AI.
+    # Team Members' Info and Image Paths
+    team_members = [
+        {
+            "name": "Isha Gokhale",
+            "image": "./assets/isha.png",  # path to Isha's image
+            "bio": """Isha has experience as a Graduate Research Assistant at the University of Washington's Genomics Department, where she contributed to enhancing a peptide sequencing model by detecting chimeric spectra through signal processing analysis. She also worked as a Data Science Intern at Qualtrics, utilizing Athena and Redshift to query large databases and analyze user behaviors related to value achievement. Additionally, Isha interned at Conversica, where she trained and analyzed transformer and LSTM models to detect client churn. She is skilled in data analysis, machine learning, and the development of predictive models. Isha is passionate about applying her technical expertise to solve real-world problems and optimize business outcomes through data-driven insights. Her professional interests include building end-to-end data pipelines, ETL processes, and applying machine learning techniques to large-scale datasets."""
+        },
+        {
+            "name": "Lawrie Brunswick",
+            "image": "./assets/lawrie.png",  # path to Lawrie's image
+            "bio": """Lawrie has a Master’s of Science in Data Science with over nine years of experience in programming and analytics. Lawrie has held roles such as: Data Science Trainee in the genomics Department at the University of Washington, Senior Data Analyst at the American Institutes for Research, and Senior Reporting Analyst at Optum Inc. She has built CI/CD pipelines, conducted detailed statistical analyses, and created visual reports for executive decision-making. Her skills include ML model training using Cellpose for nuclear segmentation and stereo-seq analysis for spatial transcriptomics, utilizing tools like TensorFlow and PyTorch. Lawrie is proficient in Python, R, SQL, SAS, and C++, with experience in big data environments like Hadoop, Teradata, and cluster computing via Sun Grid Engine. She has applied a range of statistical techniques, including regression, ANOVA, and factor analysis. Her strong data manipulation and automation skills have been vital to her success. Through her extensive experience in healthcare and biological research, Lawrie is eager to explore new industries and to expand skills in machine learning, deep learning, and AI."""
+        },
+        {
+            "name": "Jacob Peterson",
+            "image": "./assets/jacob.png",  # path to Jacob's image
+            "bio": """Jacob is a skilled data science student with experience in statistical analysis, machine learning, and data analytics. He works at the Port of Seattle, where he applies predictive modeling, providing critical insights for operational planning. This role involved building and refining data pipelines and dashboards in collaboration with the business intelligence team to optimize data-driven decision-making processes. Proficient in Python, SQL, and predictive analytics, Jacob excels at developing scalable data systems and impactful visualizations. He is particularly interested in healthcare, AI, and cloud computing, with a focus on leveraging LLMs, machine learning algorithms, and data pipelines to drive innovation in tech and business intelligence."""
+        }
+    ]
+    
+    # Display Members with Justified Pictures & Reduced Spacing
+    for member in team_members:
+        st.markdown("---")  # Visual separator
+        col1, col2 = st.columns([1, 3])
+    
+        with col1:
+            st.image(member["image"], use_container_width=True)
+    
+        with col2:
+            st.markdown(f"### {member['name']}")
+            st.markdown(f'<div class="bio-section">{member["bio"]}</div>', unsafe_allow_html=True)
 
-    **Jacob Peterson**
-    is a skilled data science student with experience in statistical analysis, machine learning, and data analytics. He works at the Port of Seattle, where he applies predictive modeling, providing critical insights for operational planning. This role involved building and refining data pipelines and dashboards in collaboration with the business intelligence team to optimize data-driven decision-making processes. Proficient in Python, SQL, and predictive analytics, Jacob excels at developing scalable data systems and impactful visualizations. He is particularly interested in healthcare, AI, and cloud computing, with a focus on leveraging LLMs, machine learning algorithms, and data pipelines to drive innovation in tech and business intelligence.
+    
+    st.markdown("""
 
+    \n\t *placeholder for sponser acknowledgment*
     """)
-    st.write("For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
+    st.write("\n\n\n\n\n\n For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
 
 else:
     st.write("Page not found. Please use the navigation links above.")
