@@ -306,87 +306,71 @@ elif page == "models":
 elif page == "dashboard":
     st.title("📊 Dashboard")
 
-    # Path to the Manila storage folder
     MANILA_STORAGE_PATH = "/ecoacoustic-storage"
-
     st.title("📂 Manila Storage Browser")
 
-    # Check if the Manila storage path exists
     if os.path.exists(MANILA_STORAGE_PATH):
-        st.write("✅ Manila storage is detected.")
+        st.write("Manila storage is detected.")
 
         all_items = os.listdir(MANILA_STORAGE_PATH)
-
-        # Separate directories
         directories = [d for d in all_items if os.path.isdir(os.path.join(MANILA_STORAGE_PATH, d))]
 
-        # Display Directories Dropdown
         if directories:
-            selected_directory = st.selectbox("📂 Select a Directory:", directories)
-
-            # Show contents of the selected directory
+            selected_directory = st.selectbox("📂 Select a Date Directory:", directories)
             dir_path = os.path.join(MANILA_STORAGE_PATH, selected_directory)
-            dir_contents = os.listdir(dir_path)
+            model_list = ["frognet", "battybirdnet", "batdetect2", "buzzfindr"]
+            selected_model = st.selectbox("🤖 Select a Model:", model_list)
 
-            # Separate files and PNGs within the selected directory
-            data_files = [f for f in dir_contents if f.endswith((".csv", ".xls", ".xlsx", ".txt"))]
-            png_files = [f for f in dir_contents if f.endswith(".png")]
+            # Combine path with the selected model
+            model_path = os.path.join(dir_path, selected_model)
 
-            # Display Data Files Dropdown
-            if data_files:
+            if os.path.exists(model_path):
+                dir_contents = os.listdir(model_path)
 
-                # Combine data for the selected directory
-                combined_df, activity_df = combine_dataframes(dir_path)
+                data_files = [f for f in dir_contents if f.endswith(('.csv', '.xls', '.xlsx', '.txt'))]
+                combined_df, activity_df = combine_dataframes(model_path)
 
-                selected_file = st.selectbox("📑 Select a Data File:", data_files)
-                file_path = os.path.join(dir_path, selected_file)
+                if data_files:
+                    selected_file = st.selectbox("📑 Select a Data File:", data_files)
+                    file_path = os.path.join(model_path, selected_file)
 
-                # Display Data File Content
-                with open(file_path, "rb") as f:
-                    st.download_button(label="⬇️ Download File", data=f, file_name=selected_file)
+                    with open(file_path, "rb") as f:
+                        st.download_button(label="⬇️ Download File", data=f, file_name=selected_file)
 
-                # CSV Preview
-                if selected_file.endswith(".csv"):
-                    df = safe_read_csv(file_path)
-                    st.write("### 📊 CSV Preview")
-                    st.dataframe(df)
+                    if selected_file.endswith(".csv"):
+                        df = safe_read_csv(file_path)
+                        st.write("### 📊 CSV Preview")
+                        st.dataframe(df)
 
-                
-                # Excel Preview
-                elif selected_file.endswith(('.xls', '.xlsx')):
-                    df = pd.read_excel(file_path)
-                    st.write("### 📊 Excel Preview")
-                    st.dataframe(df)
+                    elif selected_file.endswith(('.xls', '.xlsx')):
+                        df = pd.read_excel(file_path)
+                        st.write("### 📊 Excel Preview")
+                        st.dataframe(df)
 
-                # Text File Preview
-                elif selected_file.endswith(".txt"):
-                    st.write("### 📜 Text File Preview")
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        text_content = f.read()
-                        st.text_area("📄 File Contents", text_content, height=300)
+                    elif selected_file.endswith(".txt"):
+                        st.write("### 📜 Text File Preview")
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            text_content = f.read()
+                            st.text_area("📄 File Contents", text_content, height=300)
 
-                
-                # Print Summary Statistics
-                display_summary_statistics(combined_df)
+                    display_summary_statistics(combined_df)
+                    st.write("### Aggregated Activity Table")
+                    st.dataframe(activity_df)
+                    st.write("### EcoAcoustic Activity Heatmap")
+                    combined_activity_chart(activity_df)
+                else:
+                    st.info("📂 No data files found in this directory.")
 
-                # Display aggregated table before heatmap
-                st.write("### Aggregated Activity Table")
-                st.dataframe(activity_df)
-            
-                # Plot the combined activity chart
-                st.write("### EcoAcoustic Activity Heatmap")
-                combined_activity_chart(activity_df)
-            
-            else:
-                st.info("📂 No data files found in this directory.")
-
-            # Display PNG Files Dropdown
-            if png_files:
-                selected_png = st.selectbox("🖼️ Select a PNG File:", png_files)
-                png_path = os.path.join(dir_path, selected_png)
-                st.image(png_path, caption=selected_png, use_container_width=True)
-            else:
-                st.info("🖼️ No PNG images found in this directory.")
+            # Handle activity_plot PNG files
+            activity_plot_path = os.path.join(dir_path, "activity_plot")
+            if os.path.exists(activity_plot_path):
+                png_files = [f for f in os.listdir(activity_plot_path) if f.endswith(".png")]
+                if png_files:
+                    selected_png = st.selectbox("🖼️ Select an Activity Plot:", png_files)
+                    png_path = os.path.join(activity_plot_path, selected_png)
+                    st.image(png_path, caption=selected_png, use_container_width=True)
+                else:
+                    st.info("🖼️ No PNG images found in this directory.")
         else:
             st.warning("⚠️ No directories found in Manila storage.")
     else:
