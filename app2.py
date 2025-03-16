@@ -382,19 +382,44 @@ elif page == "contact":
     # Custom CSS for enhanced layout
     st.markdown("""
         <style>
-            .bio-container {
+            .team-container {
+                display: flex;
+                gap: 30px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+    
+            .team-member {
+                width: 30%;  /* Large size for desktop, adjusts dynamically */
+                min-width: 300px; /* Ensures size consistency */
+                text-align: center;
                 background-color: #f0f2f6;
                 padding: 20px;
-                border-radius: 10px;
-                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+                border-radius: 15px;
+                box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
             }
-            .bio-header {
-                font-size: 24px;
+    
+            .team-image {
+                width: 100%;
+                border-radius: 10px;
+                transition: transform 0.2s ease-in-out;
+            }
+    
+            .team-image:hover {
+                transform: scale(1.05); /* Subtle zoom effect */
+                cursor: pointer;
+            }
+    
+            .team-header {
+                font-size: 28px;
                 font-weight: bold;
                 color: #4CAF50;
+                margin-top: 15px;
             }
-            .bio-text {
+    
+            .team-bio {
                 text-align: justify;
+                font-size: 16px;
                 line-height: 1.6;
             }
         </style>
@@ -422,17 +447,21 @@ elif page == "contact":
         }
     ]
     
+    st.markdown("<div class='team-container'>", unsafe_allow_html=True)
+    
+    # Display team members in large responsive cards
     for member in team_members:
-        # 2-column layout
-        col1, col2 = st.columns([1, 3])  # Left column for image, right column for text
-        
-        with col1:
-            st.image(member["image"], use_container_width=True)  # Display image
-        
-        with col2:
-            st.markdown(f"### {member['name']}")
-            st.markdown(member['bio'])
-            
+        st.markdown(f"""
+            <div class='team-member'>
+                <img src="{member['image']}" class='team-image'>
+                <div class='team-header'>{member['name']}</div>
+                <div class='team-bio'>{member['bio']}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    
     st.markdown("""
 
     \n\t *placeholder for sponser acknowledgment*
