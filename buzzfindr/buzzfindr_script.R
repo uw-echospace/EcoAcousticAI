@@ -19,7 +19,6 @@ for (file in all_files) {
         # Only rename if the file ends with .WAV and ensure it's changed to lowercase .wav
         if (tolower(file) != tolower(new_file_name)) {
             file.rename(file, new_file_name)
-            cat("Renamed:", file, "to", new_file_name, "\n")
         }
     } else {
         cat("Skipping file (not .wav or .WAV):", file, "\n")
