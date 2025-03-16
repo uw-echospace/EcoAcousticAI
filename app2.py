@@ -7,6 +7,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
+st.set_page_config(layout="wide")
+
 # Function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
     """Extracts datetime from a filename in format: 'batdetect2_pipeline_20210603_034102.csv'"""
@@ -211,22 +213,6 @@ def combined_activity_chart(activity_df):
 
     st.plotly_chart(fig, use_container_width=True)
 
-# Fullscreen CSS (Global Override)
-st.markdown(
-    """
-    <style>
-        .main .block-container {
-            padding-top: 0rem;
-            padding-right: 0rem;
-            padding-left: 0rem;
-            padding-bottom: 0rem;
-            max-width: 100% !important;
-            margin: 0 !important;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 # Custom CSS for improved header design
 st.markdown("""
     <style>
