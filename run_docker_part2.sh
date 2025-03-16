@@ -47,12 +47,9 @@ directory="/tmp/osn_bucket/"
   for ((i=$half_files; i<${#files[@]}; i++)); do
     file="${files[$i]}"
     filename=$(basename "$file")  # Get the filename (e.g., 'file.wav')
-    if [[ "$filename" == *.wav ]]; then
+    if [[ "$filename" == *.WAV ]]; then
         # Rename the file to .WAV
-        new_filename="${filename%.wav}.WAV"
-        mv "$filename" "$new_filename"
-        echo "Renamed $filename to $new_filename"
-        echo "Running Docker for file: $new_filename"
+        echo "Running Docker for file: $filename"
     
 
         # Run Docker command with the full directory mounted
@@ -60,7 +57,7 @@ directory="/tmp/osn_bucket/"
         --mount type=bind,source="$directory",target="/app/recordings_2023/" \
         --mount type=bind,source="/mnt/ecoacoustic-storage/",target="/app/output_dir/" \
         bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-        --input_audio="/app/recordings_2023/$new_filename" \
+        --input_audio="/app/recordings_2023/$filename" \
         --output_directory="/app/output_dir/" --run_model --csv
     else
         echo "Skipping non-WAV file: $filename"

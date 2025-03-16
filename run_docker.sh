@@ -51,12 +51,8 @@ files=($(find "$directory" -type f))  # List of all files in the directory
     filename=$(basename "$file")  # Get the filename
 
     # Check if the file ends with .WAV or .wav
-    if [[ "$filename" == *.wav ]]; then
-        # Rename the file to .WAV
-        new_filename="${filename%.wav}.WAV"
-        mv "$filename" "$new_filename"
-        echo "Renamed $filename to $new_filename"
-        echo "Running Docker for file: $new_filename"
+    if [[ "$filename" == *.WAV ]]; then
+        echo "Running Docker for file: $filename"
 
 
         # Run the second Docker command for bat-detect-msds processing
@@ -64,7 +60,7 @@ files=($(find "$directory" -type f))  # List of all files in the directory
             --mount type=bind,source=$directory,target=/app/recordings_2023/ \
             --mount type=bind,source=/mnt/ecoacoustic-storage,target=/app/output_dir/ \
             bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-            --input_audio="/app/recordings_2023/$new_filename" \
+            --input_audio="/app/recordings_2023/$filename" \
             --output_directory="/app/output_dir/" --run_model --csv
     else
         echo "Skipping non-WAV file: $filename"
