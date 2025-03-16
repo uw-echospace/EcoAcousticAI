@@ -12,7 +12,7 @@ audio_folder =  '/app/frog_audio/'
 # Set separate output directory for results
 #output_folder = Path.cwd() / "results" / "frogs"
 output_folder = '/app/results/frogs/'
-output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
+#output_folder.mkdir(parents=True, exist_ok=True)  # Ensure output folder exists
 
 # Confidence threshold
 CONFIDENCE_THRESHOLD = 0.7
