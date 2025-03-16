@@ -1,47 +1,51 @@
 import os
-import re
 import shutil
-from datetime import datetime
+import re
 
-# Path to Manila storage
-MANILA_STORAGE_PATH = "/ecoacoustic-storage"
+# Define patterns for file types and their corresponding subdirectories
+FILE_PATTERNS = {
+    r'batdetect2_pipeline_(\d{8})_(\d{6})\.csv': 'batdetect2',
+    r'Buzz_Results_(\d{8})_(\d{6})\.csv': 'buzzfindr',
+    r'(\d{8})_(\d{6})_selection\.txt': 'frognet',
+    r'(\d{8})_(\d{6})_species\.csv': 'frognet',
+    r'(\d{8})_(\d{6})\.bat\.results_USA\.csv': 'battybirdnet'
+}
 
-# Regex patterns for CSV files with date in filename
-FILE_PATTERNS = [
-    re.compile(r"batdetect2_pipeline_(\d{8})_\d{6}\.csv"),
-    re.compile(r"Buzz_Results_(\d{8})_\d{6}\.csv")
-]
+# Base directory for the Manila storage
+BASE_DIR = "/ecoacoustic-storage"
 
-def organize_files():
-    if not os.path.exists(MANILA_STORAGE_PATH):
-        print(f"Error: Manila storage path '{MANILA_STORAGE_PATH}' not found.")
-        return
+def move_files():
+    # Iterate through both the base directory and existing date directories
+    for root, _, files in os.walk(BASE_DIR):
+        for filename in files:
+            file_path = os.path.join(root, filename)
 
-    # List all files in the Manila storage root
-    files = [f for f in os.listdir(MANILA_STORAGE_PATH) if os.path.isfile(os.path.join(MANILA_STORAGE_PATH, f))]
-    print(files)
+            # Skip files already correctly placed in their subfolders
+            if any(subfolder in file_path for subfolder in FILE_PATTERNS.values()):
+                continue
 
-    for file in files:
-        for pattern in FILE_PATTERNS:
-            match = pattern.match(file)
-            if match:
-                file_date = match.group(1)  # Extract date from filename (e.g., '20230825')
+            # Check each pattern to determine the correct folder
+            for pattern, subfolder in FILE_PATTERNS.items():
+                match = re.match(pattern, filename)
+                if match:
+                    # Extract date from filename or root folder if already in date dir
+                    date_str = match.group(1)
 
-                # Create the target directory if it doesn't exist
-                target_directory = os.path.join(MANILA_STORAGE_PATH, file_date)
-                os.makedirs(target_directory, exist_ok=True)
-                print(target_directory)
+                    # Create the date directory if it doesn't exist
+                    date_dir = os.path.join(BASE_DIR, date_str)
+                    os.makedirs(date_dir, exist_ok=True)
 
-                # Move the file
-                source_path = os.path.join(MANILA_STORAGE_PATH, file)
-                target_path = os.path.join(target_directory, file)
+                    # Create the subfolder inside the date directory
+                    subfolder_dir = os.path.join(date_dir, subfolder)
+                    os.makedirs(subfolder_dir, exist_ok=True)
 
-                shutil.move(source_path, target_path)
-                print(f"Moved {file} → {target_directory}")
-                break  # Found a match, skip checking the second pattern
+                    # Move the file to the appropriate folder
+                    dest = os.path.join(subfolder_dir, filename)
+                    shutil.move(file_path, dest)
 
-    print("File organization complete.")
+                    print(f"Moved {filename} to {dest}")
+                    break  # Stop checking patterns once matched
 
 if __name__ == "__main__":
-    organize_files()
+    move_files()
 
