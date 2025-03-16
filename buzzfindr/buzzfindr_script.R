@@ -9,15 +9,15 @@ out_file = "csv"
 
 all_files <- list.files(path = path, full.names = TRUE)
 
-# Iterate through the files in the directory
 for (file in all_files) {
-    # Check if the file ends with .wav or .WAV
+    # Check if the file ends with .WAV (case insensitive)
     if (grepl("\\.wav$", file, ignore.case = TRUE)) {
-        # Convert .WAV to .wav by renaming the file (change extension to lowercase)
+        # Create the new file name by changing the extension to lowercase .wav
         new_file_name <- paste0(tools::file_path_sans_ext(basename(file)), ".wav")
         
-        # Only rename if the file ends with .WAV and ensure it's changed to lowercase .wav
+        # Only rename if the file ends with .WAV (case-insensitive check) and ensure it's changed to lowercase .wav
         if (tolower(file) != tolower(new_file_name)) {
+            cat("Renaming file:", file, "to", new_file_name, "\n")
             file.rename(file, new_file_name)
         }
     } else {
