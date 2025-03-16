@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 COPY . .
 
+RUN mkdir -p /app/frog_audio/
 
 RUN pip install --no-cache-dir -r requirements.txt
 
