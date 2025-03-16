@@ -10,10 +10,12 @@ FILE_PATTERNS = {
     r"batdetect2_pipeline_(\d{8})_\d{6}\.csv": 'batdetect2',
     r"Buzz_Results_(\d{8})_\d{6}\.csv": 'buzzfindr',
     r"activity_recover-(\d{8})_UBNA_\d{3}\.png": 'activity_plot',
-    r"(\d{8})_(\d{6})_selection\.txt": 'frognet',
-    r"(\d{8})_(\d{6})_species\.csv": 'frognet',
-    r"(\d{8})_(\d{6)\.bat\.results_USA\.csv": 'battybirdnet'
+    r"frognet_(\d{8})_(\d{6})_selection\.txt": 'frognet',
+    r"frognet_(\d{8})_(\d{6})_species\.csv": 'frognet',
+    r"(\d{8})_(\d{6})\.bat\.results_USA\.csv": 'battybirdnet',
+    r"cumulative_activity__\d{4}_.*\.png": 'cumulative_activity',  # New Pattern for cumulative_activity
 }
+
 
 def organize_files():
     if not os.path.exists(MANILA_STORAGE_PATH):
