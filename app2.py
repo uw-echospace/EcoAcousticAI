@@ -211,7 +211,22 @@ def combined_activity_chart(activity_df):
 
     st.plotly_chart(fig, use_container_width=True)
 
-
+# Fullscreen CSS (Global Override)
+st.markdown(
+    """
+    <style>
+        .main .block-container {
+            padding-top: 0rem;
+            padding-right: 0rem;
+            padding-left: 0rem;
+            padding-bottom: 0rem;
+            max-width: 100% !important;
+            margin: 0 !important;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 # Custom CSS for improved header design
 st.markdown("""
     <style>
@@ -391,7 +406,7 @@ elif page == "contact":
                 margin-bottom: 10px; /* Reduces space between members */
             }
             .justified-image {
-                width: 300px;
+                width: 500px;
                 flex-shrink: 0; 
             }
             .bio-section {
@@ -425,7 +440,7 @@ elif page == "contact":
         col1, col2 = st.columns([1, 3])
     
         with col1:
-            st.image(member["image"], width=300)
+            st.image(member["image"], width=500)
     
         with col2:
             st.markdown(f"### {member['name']}")
@@ -436,7 +451,7 @@ elif page == "contact":
 
     \n\t *placeholder for sponser acknowledgment*
     """)
-    st.write("\n\n\n For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
+    st.write("\n\n\n\n\n\n For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
 
 else:
     st.write("Page not found. Please use the navigation links above.")
