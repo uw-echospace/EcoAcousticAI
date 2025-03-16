@@ -18,6 +18,7 @@
 # done < new_directories.txt
 
  docker run --rm \
-        --mount type=bind,source=/tmp/osn_bucket/,target=/app/frog_audio/ \
+        --mount type=bind,source=/tmp/osn_bucket/,target=/app/audio/ \
         --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/results/frogs/ \
-        frognet:latest
+        --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/results/birdnet_wa_all/ \
+        frog_bird:latest
