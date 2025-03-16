@@ -13,6 +13,6 @@ while IFS= read -r directory; do
     docker run --rm \
         --mount type=bind,source=$directory,target=/app/frog_audio/ \
         --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/results/frogs/ \
-        frognet-image:latest
+        frognet:latest
 
 done < new_directories.txt
