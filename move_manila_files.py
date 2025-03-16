@@ -26,24 +26,29 @@ def organize_files():
     print("Files to organize:", files)
 
     for file in files:
+        print(f"Checking file: {file}")
         for pattern, subfolder in FILE_PATTERNS.items():
             match = re.match(pattern, file)
             if match:
-                file_date = match.group(1)  # Extract date from filename (e.g., '20230825')
+                print(f"Matched pattern '{pattern}' for file '{file}'")
 
-                # Create the target directory and subdirectory
+                # Handle special cases like 'cumulative_activity'
+                if 'cumulative_activity' in subfolder:
+                    file_date = match.group(0).split('__')[1][:4]  # Extract year
+                else:
+                    file_date = match.group(1)  # Standard date extraction
+
                 date_directory = os.path.join(MANILA_STORAGE_PATH, file_date)
                 target_directory = os.path.join(date_directory, subfolder)
                 os.makedirs(target_directory, exist_ok=True)
-                print(f"Created directory: {target_directory}")
 
-                # Move the file
                 source_path = os.path.join(MANILA_STORAGE_PATH, file)
                 target_path = os.path.join(target_directory, file)
 
                 shutil.move(source_path, target_path)
                 print(f"Moved {file} → {target_directory}")
-                break  # Found a match, skip checking the remaining patterns
+                break
+
 
     print("File organization complete.")
 
