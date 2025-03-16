@@ -45,11 +45,25 @@ def safe_read_csv(file_path):
             #st.warning(f"Skipping file with no data: {file_path}")
             return None
 
-        #if 'start_time' not in df.columns or 'end_time' not in df.columns or 'class' not in df.columns:
-            #st.warning(f"Skipping file with missing columns: {file_path}")
-            #return None
+        # Handle 'start_time' vs 'tstart' (buzzfindr)
+        if 'start_time' in df.columns:
+            df.rename(columns={'start_time': 'start_time'}, inplace=True)
+        elif 'tstart' in df.columns:
+            df.rename(columns={'tstart': 'start_time'}, inplace=True)
+        else:
+            # Skip files missing BOTH 'start_time' and 'tstart'
+            return None
+
+        # For non-buzzfindr files, check for 'end_time'
+        if 'buzzfindr' not in file_path.lower() and 'end_time' not in df.columns:
+            return None  # Non-buzzfindr files still require 'end_time'
+
+        # Ensure 'class' column is present
+        if 'class' not in df.columns:
+            return None
 
         return df
+        
     except pd.errors.EmptyDataError:
         st.warning(f"Skipping corrupted file: {file_path}")
         return None
