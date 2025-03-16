@@ -379,6 +379,45 @@ elif page == "dashboard":
 
 elif page == "contact":
     st.title("Meet the Team:")
+    # Team Members' Info and Image Paths
+    team_members = [
+        {
+            "name": "Isha Gokhale",
+            "image": "./assets/jacob_pic.jpg",  # path to Isha's image
+            "bio": """Isha has experience as a Graduate Research Assistant at the University of Washington's Genomics Department, 
+            where she contributed to enhancing a peptide sequencing model by detecting chimeric spectra through signal processing analysis. 
+            She also worked as a Data Science Intern at Qualtrics, utilizing Athena and Redshift to query large databases 
+            and analyze user behaviors related to value achievement. Additionally, Isha interned at Conversica, 
+            where she trained and analyzed transformer and LSTM models to detect client churn. 
+            Isha is passionate about applying her technical expertise to solve real-world problems and optimize business outcomes."""
+        },
+        {
+            "name": "Lawrie Brunswick",
+            "image": "./assets/jacob_pic.jpg",  # path to Lawrie's image
+            "bio": """Lawrie has a Master’s of Science in Data Science with over nine years of experience in programming and analytics. 
+            Lawrie has held roles such as: Data Science Trainee in the genomics Department at the University of Washington, 
+            Senior Data Analyst at the American Institutes for Research, and Senior Reporting Analyst at Optum Inc. 
+            She has built CI/CD pipelines, conducted detailed statistical analyses, and created visual reports for executive decision-making."""
+        },
+        {
+            "name": "Jacob Peterson",
+            "image": "./assets/jacob_pic.jpg",  # path to Jacob's image
+            "bio": """Jacob is a skilled data science student with experience in statistical analysis, machine learning, and data analytics. 
+            He works at the Port of Seattle, where he applies predictive modeling, providing critical insights for operational planning. 
+            This role involved building and refining data pipelines and dashboards in collaboration with the business intelligence team."""
+        }
+    ]
+    
+    for member in team_members:
+        # 2-column layout
+        col1, col2 = st.columns([1, 3])  # Left column for image, right column for text
+        
+        with col1:
+            st.image(member["image"], width=150)  # Display image
+        
+        with col2:
+            st.markdown(f"### {member['name']}")
+            st.markdown(member['bio'])
     st.markdown("""
     **Isha Gokhale**
     has experience as a Graduate Research Assistant at the University of Washington's Genomics Department, where she contributed to enhancing a peptide sequencing model by detecting chimeric spectra through signal processing analysis. She also worked as a Data Science Intern at Qualtrics, utilizing Athena and Redshift to query large databases and analyze user behaviors related to value achievement. Additionally, Isha interned at Conversica, where she trained and analyzed transformer and LSTM models to detect client churn. She is skilled in data analysis, machine learning, and the development of predictive models. Isha is passionate about applying her technical expertise to solve real-world problems and optimize business outcomes through data-driven insights. Her professional interests include building end-to-end data pipelines, ETL processes, and applying machine learning techniques to large-scale datasets.
