@@ -416,7 +416,7 @@ elif page == "contact":
         }
     ]
     
-      for member in team_members:
+    for member in team_members:
         st.markdown("---")  # Visual separator
         st.image(member["image"], width=500)  # Larger image with proper rendering
         st.markdown(f"### {member['name']}")
