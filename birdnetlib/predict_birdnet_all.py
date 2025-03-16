@@ -105,8 +105,8 @@ for audio_file in sorted(audio_folder.glob("*.wav")):
         combined_detections.append([audio_file.name, last_start, last_end, last_species, last_scientific, avg_conf])
 
     # Define output files
-    csv_output_file = output_folder / f"{audio_file.stem}_species.csv"
-    raven_output_file = output_folder / f"{audio_file.stem}_selection.txt"
+    csv_output_file = output_folder / f"birdnet{audio_file.stem}_species.csv"
+    raven_output_file = output_folder / f"birdnet{audio_file.stem}_selection.txt"
     
     # Save results in CSV format
     with open(csv_output_file, mode="w", newline="") as csvfile:
