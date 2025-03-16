@@ -361,7 +361,7 @@ elif page == "dashboard":
                     combined_df, activity_df = combine_dataframes(model_path)
             
                     if data_files:
-                        selected_file = st.selectbox("📑 Select a Data File:", data_files)
+                        selected_file = st.selectbox("📑 Select a Data File:", sorted(data_files))
                         file_path = os.path.join(model_path, selected_file)
             
                         with open(file_path, "rb") as f:
