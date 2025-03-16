@@ -13,6 +13,7 @@ st.set_page_config(layout="wide")
 def extract_datetime_from_filename(filename):
     """Extracts datetime from a filename in format: '*_20210603_034102.csv'"""
     try:
+        filename = os.path.splitext(filename)[0]
         parts = filename.split('_')
         
         # Identify the position of the date-time
