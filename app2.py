@@ -327,6 +327,8 @@ elif page == "dashboard":
 
         if directories:
             selected_directory = st.selectbox("📂 Select a Date Directory:", directories)
+            dir_path = os.path.join(MANILA_STORAGE_PATH, selected_directory)
+            
             # Filter to only include existing model folders
             available_models = [
                 model for model in ["frognet", "battybirdnet", "batdetect2", "buzzfindr"]
