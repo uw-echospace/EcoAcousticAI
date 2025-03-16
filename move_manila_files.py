@@ -8,11 +8,12 @@ FILE_PATTERNS = {
     r'Buzz_Results_(\d{8})_(\d{6})\.csv': 'buzzfindr',
     r'(\d{8})_(\d{6})_selection\.txt': 'frognet',
     r'(\d{8})_(\d{6})_species\.csv': 'frognet',
-    r'(\d{8})_(\d{6})\.bat\.results_USA\.csv': 'battybirdnet'
+    r'(\d{8})_(\d{6})\.bat\.results_USA\.csv': 'battybirdnet',
+    r'activity_recover-(\d{8})_UBNA_\d{3}\.png': 'activity_plot'
 }
 
 # Base directory for the Manila storage
-BASE_DIR = "/ecoacoustic-storage"
+BASE_DIR = "/path/to/manila/storage"
 
 def move_files():
     # Iterate through both the base directory and existing date directories
@@ -48,4 +49,5 @@ def move_files():
 
 if __name__ == "__main__":
     move_files()
+
 
