@@ -380,7 +380,7 @@ elif page == "dashboard":
 elif page == "contact":
 
     st.title("Meet the Team:")
-
+    
     # Custom CSS for sleek design
     st.markdown("""
         <style>
@@ -411,6 +411,7 @@ elif page == "contact":
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                border-radius: 15px;
             }
     
             .team-overlay {
@@ -471,24 +472,18 @@ elif page == "contact":
     # Row of Team Members
     st.markdown('<div class="team-container">', unsafe_allow_html=True)
     for idx, member in enumerate(team_members):
-        st.markdown(
-            f"""
-            <div class="team-card" onclick="window.location.href='#{member['name'].replace(' ', '_')}'">
-                <img src="{member['image']}" />
-                <div class="team-overlay">Click to Learn More</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    st.markdown('</div>', unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 3])  # Image on the left, text on the right
+        
+        with col1:
+            st.image(member["image"], use_column_width=True, caption=f"{member['name']}")
     
-    # Bio Section
-    for member in team_members:
-        if selected_member == member['name']:
-            st.markdown(f'<div class="bio-container" id="{member["name"].replace(" ", "_")}">', unsafe_allow_html=True)
-            st.markdown(f"### {member['name']}")
-            st.markdown(member['bio'])
-            st.markdown('</div>', unsafe_allow_html=True)
+        with col2:
+            if st.button(f"More About {member['name']}", key=f"bio_{idx}"):
+                st.markdown(f'<div class="bio-container">', unsafe_allow_html=True)
+                st.markdown(f"### {member['name']}")
+                st.markdown(member['bio'])
+                st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
             
     st.markdown("""
 
