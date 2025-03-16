@@ -20,7 +20,7 @@ while IFS= read -r directory; do
     filename=$(basename "$file")  # Get the filename
 
     # Check if the file ends with .WAV or .wav
-    if [[ "$filename" == *.WAV]]; then
+    if [[ "$filename" == *.WAV ]]; then
         echo "Running Docker for file: $filename"
 
 

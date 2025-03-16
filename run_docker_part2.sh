@@ -19,7 +19,7 @@ while IFS= read -r directory; do
   for ((i=$half_files; i<${#files[@]}; i++)); do
     file="${files[$i]}"
     filename=$(basename "$file")  # Get the filename (e.g., 'file.wav')
-    if [[ "$filename" == *.WAV]]; then
+    if [[ "$filename" == *.WAV ]]; then
         echo "Running Docker for file: $filename"
     
 
