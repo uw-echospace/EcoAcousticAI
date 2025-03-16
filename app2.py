@@ -381,18 +381,21 @@ elif page == "contact":
 
     st.title("Meet the Team:")
 
-       # Custom CSS for reduced spacing
+    # Custom CSS for justified images and reduced spacing
     st.markdown("""
         <style>
-            .centered-image {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-                width: 350px;  /* Control image size */
+            .justified-container {
+                display: flex;
+                align-items: flex-start;
+                gap: 5px; /* Controls spacing between image and text */
+                margin-bottom: 15px; /* Reduces space between members */
+            }
+            .justified-image {
+                width: 300px;
+                flex-shrink: 0; 
             }
             .bio-section {
-                text-align: center;
-                margin-top: -10px;  /* Reduce space between image and bio */
+                margin-top: -10px; 
             }
         </style>
     """, unsafe_allow_html=True)
@@ -416,11 +419,21 @@ elif page == "contact":
         }
     ]
     
+    # Display Members with Justified Pictures & Reduced Spacing
     for member in team_members:
         st.markdown("---")  # Visual separator
-        st.image(member["image"], width=500)  # Larger image with proper rendering
-        st.markdown(f"### {member['name']}")
-        st.markdown(f'<div class="bio-section">{member["bio"]}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="justified-container">
+                <img src="{member['image']}" class="justified-image">
+                <div>
+                    <h3>{member['name']}</h3>
+                    <p class="bio-section">{member['bio']}</p>
+                </div>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 
     
     st.markdown("""
