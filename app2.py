@@ -631,7 +631,7 @@ elif page == "contact":
     st.markdown("## Sponsors:")
     
     st.markdown("""
-    We extend a special thank you to our sponsors, Wu-Jung Lee and Aditya Krishna, for their invaluable mentorship. Their countless hours of guidance on the complexities of audio signal processing helped us overcome challenges and discover the best solutions every step of the way.
+    We extend a special thank you to our sponsors, **Wu-Jung Lee** and **Aditya Krishna**, for their invaluable mentorship. Their countless hours of guidance on the complexities of audio signal processing helped us overcome challenges and discover the best solutions every step of the way.
     
     We also acknowledge UW-Echospace for their support and collaboration. Their commitment to advancing acoustic research has been instrumental in the development and success of our project.
     """)
