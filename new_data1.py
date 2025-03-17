@@ -20,7 +20,6 @@ def get_files_from_rclone(directory):
     current_files = set()
     
     directory_path = os.path.join(rclone_mount_dir, directory)
-    print('directory path r clone', directory_path)
     dir_path = directory_path + '/'
     
     for root, _, files in os.walk(dir_path):
@@ -42,11 +41,9 @@ def check_for_new_files():
         
         # Get the current files in the corresponding directory from the rclone mount
         current_files = get_files_from_rclone(dir_name)
-        print(f"Current files in {dir_name}: {current_files}")
 
         # Find new files (i.e., files in current_files but not in existing_files)
         new_files_in_current = list(current_files - existing_files)
-        print(f"New files in {dir_name}: {new_files_in_current}")
 
         if new_files_in_current:
             for file in new_files_in_current:
@@ -76,8 +73,6 @@ if __name__ == "__main__":
         new_directories = list(set(os.path.dirname(file) for file in new_files))
         abs_path = '/home/ubuntu/' 
         full_directories = [os.path.join(rclone_mount_dir, directory) for directory in new_directories]
-        print('Full directories:', full_directories)
-        print("New directories:", new_directories)
         
         # Write the full paths to new_directories.txt
         with open("new_directories.txt", "w") as f:
