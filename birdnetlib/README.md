@@ -6,7 +6,6 @@ FrogNet is a custom neural network model designed to [briefly describe the prima
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 
 
@@ -28,7 +27,7 @@ Data can be collected from the following sources for frogs:
   a. For use when iNaturalist and Amphibia Web don't have enough samples 
    
 
-## Installation and Training Custom Model
+## Installation
 
 To install FrogNet, follow these steps:
 
@@ -76,7 +75,7 @@ Here's how to train you Custom Model:
 
 4. **Set desired parameters like**:
 
-   ![parameters used to train frognet](birdnetlib/frognet_model/assets/frognet_train.jpg)
+   ![parameters used to train frognet](frognet_model/assets/frognet_train.jpg)
    
 6.  **Run Predictions using your custom model using the multi-file tab**
 
