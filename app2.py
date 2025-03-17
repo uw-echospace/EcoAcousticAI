@@ -199,8 +199,7 @@ def display_summary_statistics(combined_df):
 
      # Print Summary
     start_date = combined_df.index.date.min()  # Extracts the earliest date in the dataset
-    end_date = combined_df.index.date.max()
-    st.write(f"### 📊 Summary Statistics for {start_date} - {end_date}")
+    st.write(f"### 📊 Summary Statistics for {start_date}")
     
     if 'species' in combined_df.columns:
     # 1. Count of Unique Species Detected
@@ -240,8 +239,11 @@ def combined_activity_chart(activity_df):
     if 'start_time' in activity_df.columns:
         activity_df = activity_df.reset_index(drop=False).set_index('start_time')
 
-    # Fix: Handle duplicate indices by grouping and summing counts
-    activity_df = activity_df.groupby(activity_df.index).sum()
+    # Handle duplicate indices by grouping and summing counts
+    activity_df = activity_df.groupby([activity_df.index, 'species']).agg({
+        'species_count': 'sum',
+        'heatmap_value': 'sum'
+    }).reset_index().set_index('start_time')
     
     # Now you can apply strftime
     activity_df['time_of_day'] = activity_df.index.strftime('%H:%M')
@@ -259,7 +261,7 @@ def combined_activity_chart(activity_df):
     )
 
     # Adjust data: Replace zero values with 0.1 for log scale while keeping the legend showing "0"
-    heatmap_data_no_zero = heatmap_data.replace(0, 0.1)  # Replace zeros with small value for log scale
+    #heatmap_data_no_zero = heatmap_data.replace(0, 0.05)  
     
     custom_viridis_spectrum = [
         [0.0, '#2b0136'],    # Darkest Purple (this is the only added color so we could see a zero-value more clearly)
@@ -289,7 +291,7 @@ def combined_activity_chart(activity_df):
 
     # Create the heatmap visualization
     fig = go.Figure(data=go.Heatmap(
-        z=heatmap_data_no_zero.values,
+        z=heatmap_data.values,
         x=heatmap_data.columns,
         y=heatmap_data.index,
         xgap=1,
