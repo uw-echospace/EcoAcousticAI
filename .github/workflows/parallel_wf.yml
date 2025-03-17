@@ -149,7 +149,13 @@ jobs:
     needs: unshelve-and-ready-instance
     runs-on: ubuntu-latest
     steps:
-      # Step 5: Mount the OSN bucket and process data in Docker
+      - name: Set up SSH Key for Remote Access
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
+          chmod 600 ~/.ssh/jetstream2_key
+          ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
+          
       - name: Process data in Docker
         run: |
             SSH_KEY=$HOME/.ssh/jetstream2_key
@@ -182,8 +188,15 @@ jobs:
     needs: unshelve-and-ready-instance
     runs-on: ubuntu-latest
     steps:
-       - name: Run Batdetect Part 1
-         run : |
+      - name: Set up SSH Key for Remote Access
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
+          chmod 600 ~/.ssh/jetstream2_key
+          ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
+
+      - name: Run Batdetect Part 1
+        run : |
             SSH_KEY=$HOME/.ssh/jetstream2_key
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
             cd /home/ubuntu/EcoAcousticAI/
@@ -208,8 +221,15 @@ jobs:
     needs: unshelve-and-ready-instance
     runs-on: ubuntu-latest
     steps:
-       - name: Run Batdetect Part 1
-         run : |
+      - name: Set up SSH Key for Remote Access
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
+          chmod 600 ~/.ssh/jetstream2_key
+          ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
+
+      - name: Run Batdetect Part 1
+        run : |
                 SSH_KEY=$HOME/.ssh/jetstream2_key
                 ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
                 cd /home/ubuntu/EcoAcousticAI/
