@@ -130,13 +130,14 @@ def combine_dataframes(manila_path):
             )
 
             # Replace remaining invalid or empty 'class' values with NaN
-            activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
+            if not activity_df.empty and 'species' in activity_df.columns:
+                activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
     
-            # Add a new column for plotting, e.g., filling missing intervals with zero values
-            activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
+                # Add a new column for plotting, e.g., filling missing intervals with zero values
+                activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
     
-            # Final cleanup for invalid or empty rows
-            activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
+                # Final cleanup for invalid or empty rows
+                activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
 
         if 'event' in combined_df.columns:
             # Resample to 10-minute intervals
@@ -152,13 +153,14 @@ def combine_dataframes(manila_path):
             )
 
             # Replace remaining invalid or empty 'class' values with NaN
-            activity_df['event'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
-    
-            # Add a new column for plotting, e.g., filling missing intervals with zero values
-            activity_df['heatmap_value'] = activity_df['event_count'].fillna(0)
-    
-            # Final cleanup for invalid or empty rows
-            activity_df = activity_df.dropna(subset=['event', 'heatmap_value'], how='all')
+            if not activity_df.empty and 'event' in activity_df.columns:
+                activity_df['event'] = activity_df['event'].replace({0: None, '0': None, 'No Data': None})
+            
+                # Add a new column for plotting, e.g., filling missing intervals with zero values
+                activity_df['heatmap_value'] = activity_df['event_count'].fillna(0)
+        
+                # Final cleanup for invalid or empty rows
+                activity_df = activity_df.dropna(subset=['event', 'heatmap_value'], how='all')
 
         
         return combined_df, activity_df
