@@ -628,25 +628,26 @@ elif page == "dashboard":
                 else:
                     st.info("📂 No data files found in this directory.")
 
-        if directories_4digit:
-            selected_4digit_dir = st.selectbox("📂 Select a Cumulative Activity Directory:", sorted(directories_4digit))
-            cumulative_activity_path = os.path.join(MANILA_STORAGE_PATH, selected_4digit_dir, "cumulative_activity")
+        # Check if the current directory is a bat model folder
+        is_bat_folder = any(bat_keyword in selected_model.lower() 
+                            for bat_keyword in ['bat', 'buzz'])
             
-            # Check if the current directory is a bat model folder
-            is_bat_folder = any(bat_keyword in selected_4digit_dir.lower() 
-                                for bat_keyword in ['bat', 'chiroptera', 'myotis', 'eptesicus', 'lasiurus'])
             
             # Only show PNG viewer for bat model folders
             if is_bat_folder and os.path.exists(cumulative_activity_path):
-                cumulative_files = [f for f in os.listdir(cumulative_activity_path) if f.endswith(".png")]
-                if cumulative_files:
-                    selected_cumulative_file = st.selectbox("Select a Cumulative Activity Plot:", cumulative_files)
-                    cumulative_file_path = os.path.join(cumulative_activity_path, selected_cumulative_file)
-                    st.image(cumulative_file_path, caption=selected_cumulative_file, use_container_width=True)
-                else:
-                    st.info("🖼️ No cumulative activity plots found in this directory.")
-            elif not is_bat_folder:
-                pass  # Silent behavior for non-bat folders
+                if directories_4digit:
+                    selected_4digit_dir = st.selectbox("📂 Select a Cumulative Activity Directory:", sorted(directories_4digit))
+                    cumulative_activity_path = os.path.join(MANILA_STORAGE_PATH, selected_4digit_dir, "cumulative_activity")
+                    cumulative_files = [f for f in os.listdir(cumulative_activity_path) if f.endswith(".png")]
+                    
+                    if cumulative_files:
+                        selected_cumulative_file = st.selectbox("Select a Cumulative Activity Plot:", cumulative_files)
+                        cumulative_file_path = os.path.join(cumulative_activity_path, selected_cumulative_file)
+                        st.image(cumulative_file_path, caption=selected_cumulative_file, use_container_width=True)
+                    else:
+                        st.info("🖼️ No cumulative activity plots found in this directory.")
+                elif not is_bat_folder:
+                    pass  # Silent behavior for non-bat folders
             else:
                 st.info("🖼️ No cumulative activity plots found in this directory.")
         
