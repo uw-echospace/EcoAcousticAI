@@ -338,45 +338,45 @@ elif page == "dashboard":
         st.write("Manila storage is detected.")
 
         all_items = os.listdir(MANILA_STORAGE_PATH)
-        directories = [d for d in all_items if os.path.isdir(os.path.join(MANILA_STORAGE_PATH, d))]
+        directories_8digit = [d for d in all_items if len(d) == 8 and os.path.isdir(os.path.join(MANILA_STORAGE_PATH, d))]
+        directories_4digit = [d for d in all_items if len(d) == 4 and os.path.isdir(os.path.join(MANILA_STORAGE_PATH, d))]
 
-        if directories:
-            selected_directory = st.selectbox("📂 Select a Date Directory:", sorted(directories))
+        if directories_8digit:
+            selected_directory = st.selectbox("📂 Select a Date Directory:", sorted(directories_8digit))
             dir_path = os.path.join(MANILA_STORAGE_PATH, selected_directory)
-            
-            # Filter to only include existing model folders
+
             available_models = [
                 model for model in ["frognet", "battybirdnet", "batdetect2", "buzzfindr"]
                 if os.path.exists(os.path.join(dir_path, model))
             ]
-            
+
             if available_models:
-                selected_model = st.selectbox("🤖 Select a Model:", sorted(available_models))
+                selected_model = st.selectbox("Select a Model:", sorted(available_models))
                 model_path = os.path.join(dir_path, selected_model)
-            
+
                 if os.path.exists(model_path):
                     dir_contents = os.listdir(model_path)
-            
+
                     data_files = [f for f in dir_contents if f.endswith(('.csv', '.xls', '.xlsx', '.txt'))]
                     combined_df, activity_df = combine_dataframes(model_path)
-            
+
                     if data_files:
                         selected_file = st.selectbox("📑 Select a Data File:", sorted(data_files))
                         file_path = os.path.join(model_path, selected_file)
-            
+
                         with open(file_path, "rb") as f:
                             st.download_button(label="⬇️ Download File", data=f, file_name=selected_file)
-            
+
                         if selected_file.endswith(".csv"):
                             df = safe_read_csv(file_path)
                             st.write("### 📊 CSV Preview")
                             st.dataframe(df)
-            
+
                         elif selected_file.endswith(('.xls', '.xlsx')):
                             df = pd.read_excel(file_path)
                             st.write("### 📊 Excel Preview")
                             st.dataframe(df)
-            
+
                         elif selected_file.endswith(".txt"):
                             st.write("### 📜 Text File Preview")
                             with open(file_path, "r", encoding="utf-8") as f:
@@ -391,20 +391,24 @@ elif page == "dashboard":
                 else:
                     st.info("📂 No data files found in this directory.")
 
-            # Handle activity_plot PNG files
-            activity_plot_path = os.path.join(dir_path, "activity_plot")
-            if os.path.exists(activity_plot_path):
-                png_files = [f for f in os.listdir(activity_plot_path) if f.endswith(".png")]
-                if png_files:
-                    selected_png = st.selectbox("🖼️ Select an Activity Plot:", png_files)
-                    png_path = os.path.join(activity_plot_path, selected_png)
-                    st.image(png_path, caption=selected_png, use_container_width=True)
+
+        if directories_4digit:
+            selected_4digit_dir = st.selectbox("📂 Select a Cumulative Activity Directory:", sorted(directories_4digit))
+            cumulative_activity_path = os.path.join(MANILA_STORAGE_PATH, selected_4digit_dir, "cumulative_activity")
+
+            if os.path.exists(cumulative_activity_path):
+                cumulative_files = [f for f in os.listdir(cumulative_activity_path) if f.endswith(".png")]
+                if cumulative_files:
+                    selected_cumulative_file = st.selectbox("Select a Cumulative Activity Plot:", cumulative_files)
+                    cumulative_file_path = os.path.join(cumulative_activity_path, selected_cumulative_file)
+                    st.image(cumulative_file_path, caption=selected_cumulative_file, use_container_width=True)
                 else:
-                    st.info("🖼️ No PNG images found in this directory.")
+                    st.info("🖼️ No cumulative activity plots found in this directory.")
         else:
             st.warning("⚠️ No directories found in Manila storage.")
     else:
         st.error("🚫 Manila storage path does not exist. Make sure it is mounted correctly.")
+
 
 
 elif page == "contact":
