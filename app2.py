@@ -65,6 +65,9 @@ def safe_read_csv(file_path):
         df.rename(columns={col: 'species' for col in df.columns if 'scientific' in col.lower() or col.lower() == 'class'}, inplace=True)
         # Rename columns == 'buzz' to 'event'
         df.rename(columns={col: 'event' for col in df.columns if col.lower() == 'buzz'}, inplace=True)
+
+        # Handle duplicate columns by appending suffixes
+        df.columns = pd.io.parsers.ParserBase({'names': df.columns})._maybe_dedup_names(df.columns)
         
         return df
         
