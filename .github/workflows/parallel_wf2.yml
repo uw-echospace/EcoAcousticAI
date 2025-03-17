@@ -2,7 +2,7 @@ name: Parallel Part 2
 
 on:
   workflow_run:
-    workflows: ["Parallel Birdnet and Batdetect"]  # Name of the first workflow
+    workflows: ["Parallel Birdnet and Batdetect_no"]  # Name of the first workflow
     types:
       - completed
   workflow_dispatch:  # Allows manual trigger

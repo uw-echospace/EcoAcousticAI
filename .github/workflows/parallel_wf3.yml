@@ -2,7 +2,7 @@ name: Parallel Part 3
 
 on:
   workflow_run:
-    workflows: ["Parallel Part 2"]  # Name of the first workflow
+    workflows: ["Parallel Part 2_no"]  # Name of the first workflow
     types:
       - completed
   workflow_dispatch:  # Allows manual trigger
