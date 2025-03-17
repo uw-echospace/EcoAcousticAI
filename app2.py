@@ -335,39 +335,106 @@ page = st.query_params.get("page", "home")
 
 # Content for Each Page
 if page == "home":
-    st.title("🏡 Home")
-    st.write("Welcome to the EcoAcoustic AI project portal!")
+    st.title("🏡 Welcome to the EcoAcoustic AI project portal!")
+
     st.markdown("""
     ## Introduction
     The Union Bay Natural Area (UBNA) is an ecologically significant urban habitat in Seattle, characterized by its proximity to major highways and Lake Washington, which introduces unique soundscape complexities. This diverse environment hosts various wildlife, including birds and bats, while also being influenced by human-made noise such as traffic and recreational activities.  
 
     ## Project Overview
-    The EcoAcoustic AI project focuses on developing a cloud-hosted automated pipeline for monitoring wildlife sounds in UBNA. Building on previous research centered around bat call detection, this project expands detection capabilities across multiple animal groups and human-generated sounds. The goal is to create a modular, scalable tool for research and community science engagement, promoting ecological awareness within the Greater Seattle area.  
+    The EcoAcoustic AI project focuses on developing a cloud-hosted automated pipeline for monitoring wildlife sounds in UBNA. Building on previous research centered around bat call detection, this project expands detection capabilities across multiple animal groups and human-generated sounds. The goal was to create a modular, scalable tool for research and community science engagement, promoting ecological awareness within the Greater Seattle area.  
 
     ## Data Pipeline
-    Our project processes passive acoustic monitoring (PAM) data collected from UBNA using AudioMoth devices. These devices capture high-resolution audio (192 kHz or 250 kHz), providing detailed insights into the Union Bay soundscape. Since 2021, over 45 TB of audio data has been collected and stored in NSF Open Storage Network buckets.  
+    Our project processes passive acoustic monitoring (PAM) data collected from UBNA using AudioMoth devices. These devices capture high-resolution audio (sampled at 192 kHz or 250 kHz), providing detailed insights into the Union Bay soundscape. Since 2021, over 65 TB of audio data has been collected and stored in NSF Open Storage Network buckets.  
 
-    To analyze this data, we utilize Jetstream2, a cloud computing resource. The pipeline processes raw data files into intermediate data files by breaking 30-minute audio recordings into 30-second segments for model input. The data remains in .wav format, compatible with models such as **BatDetect2**, **BirdNET-Analyzer**, **BuzzFindr**, and **Batty-BirdNET**, which generate .csv outputs for further analysis and visualization.  
+    To analyze this data, we utilize Jetstream2, a cloud computing resource. The pipeline processes raw data files into intermediate data files by breaking 30-minute audio recordings into 30-second segments for model input. The data remains in .wav format, compatible with models such as **BatDetect2**, **BirdNET-Analyzer**, **BuzzFindr**, and **Batty-BirdNET**, which generate .csv outputs containing detections for further analysis and visualization.  
 
-    The project’s primary challenge is ensuring proper authentication and permissions between Jetstream2 and OSN for seamless data access and implementing automated pipeline triggers for new data uploads. Ultimately, the processed data will be accessible via a client-facing web portal, enhancing data-driven research and community engagement.
+    The project’s primary challenge was ensuring proper authentication and permissions between Jetstream2 and OSN for seamless data access and implementing automated pipeline triggers for new data uploads. Ultimately, the processed data will be accessible via a client-facing web portal, enhancing data-driven research and community engagement.
     """)
 
 elif page == "models":
-    st.title("EcoAcoustic Pipeline Model Integration ")
+
+
+    st.title("🌿 EcoAcoustic Pipeline Model Integration ")
     st.markdown("""
-    The EcoAcoustic pipeline integrates multiple specialized models to detect and identify multiple species (bats, birds, frogs) from audio recordings. Our pipeline includes the following models:
+    The EcoAcoustic pipeline integrates multiple specialized models to detect and identify multiple species (bats, birds, frogs) from audio recordings. Our pipeline includes the following models:    
+    """)
     
-    - **[BatDetect2](https://github.com/macaodha/batdetect2)**: A deep learning-based bat call detection pipeline that automatically detects and classifies bat echolocation calls in high-frequency recordings. By pinpointing true bat call events, it improves the accuracy of downstream bat species identification in noisy field recordings.
+    st.markdown("""
+    <style>
+        .model-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;  /* Space between logo and text */
+            background-color: #f0f9f0;  /* Light green for eco theme */
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .model-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+        .model-text {
+            flex: 1;
+        }
+    </style>
+    """, unsafe_allow_html=True)
     
-    - **[Batty-BirdNET-Analyzer](https://github.com/rdz-oss/BattyBirdNET-Analyzer)**: A BirdNET-based classifier retrained on ultrasonic bat recordings (e.g. 256 kHz sampling) to identify bat species. It classifies bat call segments (as detected by BatDetect2) using BirdNET’s deep neural network architecture adapted for echolocation calls, enabling automated bat call classification.
+    # Display each model with its logo
+    models = [
+        {
+            "name": "BatDetect2",
+            "url": "https://github.com/macaodha/batdetect2",
+            "logo": "./assets/batdetect2_logo.png",
+            "description": "A deep learning-based bat call detection pipeline that automatically detects and classifies bat echolocation calls in high-frequency recordings. By pinpointing true bat call events, it improves the accuracy of downstream bat species identification in noisy field recordings."
+        },
+        {
+            "name": "Batty-BirdNET-Analyzer",
+            "url": "https://github.com/rdz-oss/BattyBirdNET-Analyzer",
+            "logo": "./assets/battybirdnet_logo.png",
+            "description": "A BirdNET-based classifier retrained on ultrasonic bat recordings (e.g. 256 kHz sampling) to identify bat species. It classifies bat call segments (as detected by BatDetect2) using BirdNET’s deep neural network architecture adapted for echolocation calls, enabling automated bat call classification."
+        },
+        {
+            "name": "BirdNET-Analyzer",
+            "url": "https://github.com/birdnet-team/BirdNET-Analyzer",
+            "logo": "./assets/birdnet_logo.png",
+            "description": "An open-source tool that recognizes and classifies bird vocalizations using deep neural networks. It processes audible frequency audio to identify bird species present by their calls, allowing simultaneous avian biodiversity monitoring within the pipeline."
+        },
+        {
+            "name": "Custom Frog Model",
+            "url": "https://github.com/uw-echospace/EcoAcousticAI/tree/main/birdnetlib/frognet_model",
+            "logo": "./assets/frognet_logo.png",
+            "description": "A BirdNET-derived acoustic model trained specifically on Washington frog calls to enhance amphibian call identification in the Union Bay Seattle area. Using the BirdNET framework extended to include frog species, this model detects and classifies frog vocalizations, adding anuran amphibians to the multi-species analysis."
+        },
+        {
+            "name": "Buzzfindr",
+            "url": "https://github.com/joelwjameson/buzzfindr",
+            "logo": "./assets/buzzfindr_logo.png",
+            "description": "An automated detector for bat feeding buzzes – the rapid sequence of pulses bats emit during the final stage of insect prey capture. Buzzfindr flags these feeding buzz events in the recordings, providing behavioral insights into bat foraging activity and aiding habitat use analysis."
+        }
+    ]
+
+    # Display each model entry
+    for model in models:
+        st.markdown(
+            f"""
+            <div class='model-container'>
+                <img class='model-logo' src='{model['logo']}' />
+                <div class='model-text'>
+                    <b> <a href="{model['url']}" target="_blank">{model['name']}</a> </b><br>
+                    {model['description']}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
     
-    - **[BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer)**: An open-source tool that recognizes and classifies bird vocalizations using deep neural networks. It processes audible frequency audio to identify bird species present by their calls, allowing simultaneous avian biodiversity monitoring within the pipeline.
-    
-    - **Custom Frog Model**: A BirdNET-derived acoustic model trained specifically on Washington frog calls to enhance amphibian call identification in the Union Bay Seattle area. Using the BirdNET framework (originally for ~984 bird species) extended to include frog species, this model detects and classifies frog vocalizations, adding anuran amphibians to the multi-species analysis.
-    
-    - **[Buzzfindr](https://github.com/joelwjameson/buzzfindr)**: An automated detector for bat feeding buzzes – the rapid sequence of pulses bats emit during the final stage of insect prey capture. Buzzfindr flags these feeding buzz events in the recordings, providing behavioral insights into bat foraging activity and aiding habitat use analysis.
-    
-    Together, these models operate in concert as an integrated pipeline, each focusing on specific taxa or acoustic behaviors. This allows the system to concurrently monitor bats, birds, and frogs from the same acoustic data, contributing to comprehensive, multi-species biodiversity assessments through passive acoustic analysis.
+    st.markdown("""
+    Together, these models operate in concert as an integrated pipeline, each focusing on specific species or acoustic behaviors (e.g., echolocation or feeding buzzes). This allows the system to concurrently monitor bats, birds, and frogs from the same acoustic data, contributing to comprehensive, multi-species biodiversity assessments through passive acoustic analysis.
     """)
 
 
