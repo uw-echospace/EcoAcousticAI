@@ -15,7 +15,7 @@ for (file in all_files) {
         # Create the new file name by changing the extension to lowercase .wav
         #new_file_name <- paste0(tools::file_path_sans_ext(basename(file)), ".wav")
         new_file_name <- file.path(dirname(file), paste0(tools::file_path_sans_ext(basename(file)), ".wav"))
-
+        cat(new_file_name)
         # Only rename if the file ends with .WAV (case-insensitive check) and ensure it's changed to lowercase .wav
         if (tolower(file) != tolower(new_file_name)) {
             cat("Renaming file:", file, "to", new_file_name, "\n")
