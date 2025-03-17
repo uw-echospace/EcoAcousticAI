@@ -250,6 +250,9 @@ def combined_activity_chart(activity_df):
     full_time_range = pd.date_range('00:00', '23:59', freq='1min').strftime('%H:%M')
     activity_df = activity_df.reindex(full_time_range, fill_value=0)
     
+    print(activity_df.index)
+    print(activity_df.columns)
+    
     # Create the heatmap data
     heatmap_data = activity_df.pivot_table(
         index='time_of_day',
