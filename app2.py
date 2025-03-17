@@ -130,11 +130,7 @@ def combine_dataframes(manila_path):
                 'species': 'first',  # Ensures each row is unique for each species
                 'species_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
-            })
-
-            # Drop 'species' from index before resetting to avoid duplication
-            if 'species' in activity_df.index.names:
-                activity_df = activity_df.droplevel('species').reset_index().set_index('start_time')
+            }).reset_index().set_index('start_time')
 
             print(activity_df.index)
             print(activity_df.columns)
@@ -163,10 +159,7 @@ def combine_dataframes(manila_path):
                 'event': 'first',  # Ensures each row is unique for each species
                 'event_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
-            })
-            # Drop 'species' from index before resetting to avoid duplication
-            if 'species' in activity_df.index.names:
-                activity_df = activity_df.droplevel('species').reset_index().set_index('start_time')
+            }).reset_index().set_index('start_time')
             
             print(activity_df.index)
             print(activity_df.columns)
@@ -409,8 +402,8 @@ elif page == "models":
                 transform: scale(1.02); /* Slight zoom on hover */
             }
             .model-logo {
-                width: 200px; /* Increased size for better clarity */
-                height: 200px;
+                width: 150px; /* Increased size for better clarity */
+                height: 150px;
                 border-radius: 50%;
                 object-fit: contain;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* subtle shadow */
