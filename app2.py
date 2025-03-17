@@ -130,7 +130,7 @@ def combine_dataframes(manila_path):
                 #'species': 'first',  # Ensures each row is unique for each species
                 'species_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
-            }).reset_index().set_index('start_time')
+            }).reset_index()
 
             print(activity_df.index)
             print(activity_df.columns)
@@ -159,7 +159,7 @@ def combine_dataframes(manila_path):
                 #'event': 'first',  # Ensures each row is unique for each species
                 'event_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
-            }).reset_index().set_index('start_time')
+            }).reset_index()
             
             print(activity_df.index)
             print(activity_df.columns)
@@ -183,87 +183,50 @@ def combine_dataframes(manila_path):
         return pd.DataFrame(), pd.DataFrame()  # Return empty DataFrame if no data found
 
 
-def display_summary_statistics(combined_df):
-    """Prints key statistics about the acoustic detections instead of displaying a table."""
-    
-    if combined_df.empty:
-        #st.warning("⚠ No activity data available to summarize.")
-        return
-
-     # Print Summary
-    start_date = combined_df.index.date.min()  # Extracts the earliest date in the dataset
-    st.write(f"### 📊 Summary Statistics for {start_date}")
-    
-    if 'species' in combined_df.columns:
-    # 1. Count of Unique Species Detected
-        unique_species = combined_df['species'].nunique()
-        st.write(f"- **Total Unique Species Detected:** {unique_species}")
-
-    
-    # 2. Percentage of LF vs HF Detections
-    total_detections = len(combined_df)
-
-    if 'KMEANS_CLASSES' in combined_df.columns:
-        lf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'LF'])
-        hf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'HF'])
-    
-        lf_percentage = (lf_detections / total_detections) * 100 if total_detections > 0 else 0
-        hf_percentage = (hf_detections / total_detections) * 100 if total_detections > 0 else 0
-        
-        st.write(f"- **Low-Frequency Detections:** {lf_percentage:.2f}%")
-        st.write(f"- **High-Frequency Detections:** {hf_percentage:.2f}%")
-        
-    # 3. Percentage of the Day with a Detection
-    detected_times = combined_df.index.floor('min').nunique()  # Unique time slots with detections
-    total_time_slots = 24 * 60  # Total minutes in a day
-
-    day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
-    
-    st.write(f"- **% of the Day with Detections:** {day_coverage:.2f}%")
-
-   
-    
 
 
 # Create the heatmap
 def combined_activity_chart(activity_df):
-    # Extract Time of Day
-    print("Columns passed to combined_activity_chart:", activity_df.columns)  # Debug print
+    # Make a copy to avoid modifying the original dataframe
+    copy_df = activity_df.copy()
 
-    # Check if 'species' column exists.  If not, raise an error *early*.
-    if 'species' not in activity_df.columns:
-        raise KeyError("The 'species' column is missing from activity_df.  Ensure it is created BEFORE calling this function.")
-
-    # Ensure 'start_time' is datetime and 'species' is string
-    activity_df['start_time'] = pd.to_datetime(activity_df['start_time'])
-    activity_df['species'] = activity_df['species'].astype(str)
-
-    # Set 'start_time' as index *before* any other operations.
-    activity_df = activity_df.set_index('start_time')
-
-    # Now apply strftime
-    activity_df['time_of_day'] = activity_df.index.get_level_values('start_time').strftime('%H:%M')
-
-    # Ensure full 24-hour coverage
-    full_time_range = pd.date_range('00:00', '23:59', freq='1min').strftime('%H:%M')
-    activity_df = activity_df.reindex(full_time_range, fill_value=0)
+    print("Columns passed to combined_activity_chart:", df.columns)
+        
+    # Check if we need to reset the index first
+    if 'start_time' not in df.columns and not df.index.name == 'start_time':
+        # If start_time is part of a MultiIndex
+        if isinstance(df.index, pd.MultiIndex) and 'start_time' in df.index.names:
+            df = df.reset_index()
+        else:
+            raise KeyError("The 'start_time' column is missing from activity_df and not found in index.")
     
-    # Debug: Check if species column exists
-    print("Columns in activity_df:", activity_df.columns)
-    if 'species' not in activity_df.columns:
-        raise KeyError("The 'species' column is missing from activity_df.")
-
-    # Reset index and ensure 'species' is treated as a column
-    activity_df = activity_df.reset_index()
-
+    # Check for species column
+    if 'species' not in df.columns:
+        raise KeyError("The 'species' column is missing from activity_df. Ensure it is created BEFORE calling this function.")
+    
+    # Ensure data types
+    if 'start_time' in df.columns:
+        df['start_time'] = pd.to_datetime(df['start_time'])
+    df['species'] = df['species'].astype(str)
+    
+    # Extract time of day
+    if 'start_time' in df.columns:
+        df['time_of_day'] = df['start_time'].dt.strftime('%H:%M')
+    else:
+        df['time_of_day'] = df.index.strftime('%H:%M')
+    
+    # Ensure we have heatmap_value column
+    if 'heatmap_value' not in df.columns:
+        if 'species_count' in df.columns:
+            df['heatmap_value'] = df['species_count'].fillna(0)
+        else:
+            raise KeyError("Neither 'heatmap_value' nor 'species_count' columns exist in the dataframe.")
+    
     # Aggregate duplicate timestamps
-    activity_df = activity_df.groupby(['start_time', 'species']).agg({
-        'species_count': 'sum',
+    pivot_data = df.groupby(['time_of_day', 'species']).agg({
         'heatmap_value': 'sum'
-    })
-
-    # Debug: Check DataFrame after grouping
-    print("Grouped activity_df:\n", activity_df.head())
+    }).reset_index()
+    
     # Create the heatmap data
     heatmap_data = activity_df.pivot_table(
         index='time_of_day',
@@ -326,6 +289,48 @@ def combined_activity_chart(activity_df):
 
     st.plotly_chart(fig, use_container_width=True)
 
+
+
+def display_summary_statistics(combined_df):
+    """Prints key statistics about the acoustic detections instead of displaying a table."""
+    
+    if combined_df.empty:
+        #st.warning("⚠ No activity data available to summarize.")
+        return
+
+     # Print Summary
+    start_date = combined_df.index.date.min()  # Extracts the earliest date in the dataset
+    st.write(f"### 📊 Summary Statistics for {start_date}")
+    
+    if 'species' in combined_df.columns:
+    # 1. Count of Unique Species Detected
+        unique_species = combined_df['species'].nunique()
+        st.write(f"- **Total Unique Species Detected:** {unique_species}")
+
+    
+    # 2. Percentage of LF vs HF Detections
+    total_detections = len(combined_df)
+
+    if 'KMEANS_CLASSES' in combined_df.columns:
+        lf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'LF'])
+        hf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'HF'])
+    
+        lf_percentage = (lf_detections / total_detections) * 100 if total_detections > 0 else 0
+        hf_percentage = (hf_detections / total_detections) * 100 if total_detections > 0 else 0
+        
+        st.write(f"- **Low-Frequency Detections:** {lf_percentage:.2f}%")
+        st.write(f"- **High-Frequency Detections:** {hf_percentage:.2f}%")
+        
+    # 3. Percentage of the Day with a Detection
+    detected_times = combined_df.index.floor('min').nunique()  # Unique time slots with detections
+    total_time_slots = 24 * 60  # Total minutes in a day
+
+    day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
+    
+    st.write(f"- **% of the Day with Detections:** {day_coverage:.2f}%")
+
+   
+    
 # Custom CSS for improved header design
 st.markdown("""
     <style>
