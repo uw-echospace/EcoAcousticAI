@@ -18,10 +18,14 @@ def extract_datetime_from_filename(filename):
         
         # Identify the position of the date-time
         for part in parts:
-            if part.isdigit() and len(part) == 8:  # Date in YYYYMMDD format
-                date_str = part
-            if part.isdigit() and len(part) == 6:  # Time in HHMMSS format
-                time_str = part
+
+            # Extract only numeric characters
+            numeric_part = ''.join(filter(str.isdigit, part))
+            
+            if len(numeric_part) == 8:  # Date in YYYYMMDD format
+                date_str = numeric_part
+            if len(numeric_part) == 6:  # Time in HHMMSS format
+                time_str = numeric_part
                 break  # Stop once both date and time are found
 
         # Parse date and time
