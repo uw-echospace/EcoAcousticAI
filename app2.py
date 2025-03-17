@@ -58,7 +58,7 @@ def safe_read_csv(file_path):
         df.rename(columns={col: 'start_time' for col in df.columns if 'start' in col.lower()}, inplace=True)
         df.rename(columns={col: 'end_time' for col in df.columns if 'end' in col.lower()}, inplace=True)
         # Dynamically rename any column containing 'prob' or 'confidence' to 'confidence'
-        df.rename(columns={col: 'confidence' for col in df.columns if any(x in col.lower() for x in ['prob', 'confidence'])}, inplace=True)
+        df.rename(columns={col: 'confidence' for col in df.columns if any(x in col.lower() for x in ['buzzprob', 'class_prob', 'confidence'])}, inplace=True)
 
 
         # Rename columns containing 'scientific' or == 'class' to 'species'
