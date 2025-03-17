@@ -250,9 +250,22 @@ def combined_activity_chart(activity_df):
     full_time_range = pd.date_range('00:00', '23:59', freq='1min').strftime('%H:%M')
     activity_df = activity_df.reindex(full_time_range, fill_value=0)
     
-    print(activity_df.index)
-    print(activity_df.columns)
-    
+    # Debug: Check if species column exists
+    print("Columns in activity_df:", activity_df.columns)
+    if 'species' not in activity_df.columns:
+        raise KeyError("The 'species' column is missing from activity_df.")
+
+    # Reset index and ensure 'species' is treated as a column
+    activity_df = activity_df.reset_index()
+
+    # Aggregate duplicate timestamps
+    activity_df = activity_df.groupby(['start_time', 'species']).agg({
+        'species_count': 'sum',
+        'heatmap_value': 'sum'
+    })
+
+    # Debug: Check DataFrame after grouping
+    print("Grouped activity_df:\n", activity_df.head())
     # Create the heatmap data
     heatmap_data = activity_df.pivot_table(
         index='time_of_day',
