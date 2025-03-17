@@ -300,12 +300,21 @@ def combined_activity_chart(activity_df):
         colorscale=custom_viridis_spectrum
     ))
 
-    # Calculate dynamic width based on number of categories
+    # Calculate much narrower width based on number of categories
     num_categories = len(heatmap_data.columns)
-    # Base width for time axis + minimum width per category + some padding
-    dynamic_width = max(350, min(500, 200 + (num_categories * 80)))
     
-    # Update layout with dynamic width
+    # Much more aggressive width scaling for few categories:
+    # - 1-2 categories: very narrow (250px)
+    # - 3-5 categories: moderate (300-400px)
+    # - 6+ categories: wider (up to 500px max)
+    if num_categories <= 2:
+        dynamic_width = 250  # Very narrow for just 1-2 species
+    elif num_categories <= 5:
+        dynamic_width = 300 + ((num_categories - 3) * 50)  # 300px for 3, scaling up to 400px for 5
+    else:
+        dynamic_width = 400 + min(100, (num_categories - 5) * 20)  # 400px for 6, scaling up to max 500px
+    
+    # Update layout with more aggressive dynamic width
     fig.update_layout(
         title={
             'text': 'UBNA Combined Activity Dashboard<br><span style="font-size:12px; color:grey;">If the downloaded PNG is blank, click the home icon to reset axes.</span>',
@@ -315,10 +324,12 @@ def combined_activity_chart(activity_df):
         yaxis=dict(autorange='reversed'),  # Flip Y-axis so 00:00 is on top
         coloraxis_colorbar=dict(title="Detections"),
         height=1200,
-        width=dynamic_width,  # Use dynamic width based on number of categories
+        width=dynamic_width,  # Use much more aggressive dynamic width
         margin=dict(l=50, r=50, b=100, t=100, pad=4)
     )
     
+    # Option to use container width only if there are many categories
+    use_container = num_categories > 5
     st.plotly_chart(fig, use_container_width=True)
 
 
