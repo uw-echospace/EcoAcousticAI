@@ -360,30 +360,6 @@ elif page == "models":
     The EcoAcoustic pipeline integrates multiple specialized models to detect and identify multiple species (bats, birds, frogs) from audio recordings. Our pipeline includes the following models:    
     """)
     
-    st.markdown("""
-    <style>
-        .model-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;  /* Space between logo and text */
-            background-color: #f0f9f0;  /* Light green for eco theme */
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        .model-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: contain;
-        }
-        .model-text {
-            flex: 1;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-    
     # Display each model with its logo
     models = [
         {
@@ -419,20 +395,17 @@ elif page == "models":
     ]
 
     # Display each model entry
+    # Display models in a visually appealing format
     for model in models:
-        st.markdown(
-            f"""
-            <div class='model-container'>
-                <img class='model-logo' src='{model['logo']}' />
-                <div class='model-text'>
-                    <b> <a href="{model['url']}" target="_blank">{model['name']}</a> </b><br>
-                    {model['description']}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-    
+        col1, col2 = st.columns([1, 5])
+        
+        with col1:
+            st.image(model['logo'], width=70)
+            
+        with col2:
+            st.markdown(f"### [{model['name']}]({model['url']})")
+            st.write(model['description'])
+        
     st.markdown("""
     Together, these models operate in concert as an integrated pipeline, each focusing on specific species or acoustic behaviors (e.g., echolocation or feeding buzzes). This allows the system to concurrently monitor bats, birds, and frogs from the same acoustic data, contributing to comprehensive, multi-species biodiversity assessments through passive acoustic analysis.
     """)
