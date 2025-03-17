@@ -199,7 +199,7 @@ def combined_activity_chart(activity_df):
     # Make a copy to avoid modifying the original dataframe
     copy_df = activity_df.copy()
 
-    print("Columns passed to combined_activity_chart:", df.columns)
+    print("Columns passed to combined_activity_chart:", copy_df.columns)
         
     # Check if we need to reset the index first
     if 'start_time' not in copy_df.columns and not copy_df.index.name == 'start_time':
