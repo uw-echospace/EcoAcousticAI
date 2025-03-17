@@ -228,22 +228,20 @@ def display_summary_statistics(combined_df):
 # Create the heatmap
 def combined_activity_chart(activity_df):
     # Extract Time of Day
-    # Ensure the index is properly set to 'start_time'
-    if 'start_time' in activity_df.columns:
-        activity_df = activity_df.reset_index(drop=False).set_index(['start_time', 'species'])
+    print("Columns passed to combined_activity_chart:", activity_df.columns)  # Debug print
 
-    # Ensure 'species' is treated as a string to avoid numeric conversion
-    if 'species' in activity_df.columns:
-        activity_df['species'] = activity_df['species'].astype(str)
+    # Check if 'species' column exists.  If not, raise an error *early*.
+    if 'species' not in activity_df.columns:
+        raise KeyError("The 'species' column is missing from activity_df.  Ensure it is created BEFORE calling this function.")
 
-    # Aggregate duplicate timestamps to ensure unique index combinations
-    activity_df = activity_df.groupby(['start_time', 'species']).agg({
-        'species_count': 'sum',
-        'heatmap_value': 'sum'
-    })
+    # Ensure 'start_time' is datetime and 'species' is string
+    activity_df['start_time'] = pd.to_datetime(activity_df['start_time'])
+    activity_df['species'] = activity_df['species'].astype(str)
 
+    # Set 'start_time' as index *before* any other operations.
+    activity_df = activity_df.set_index('start_time')
 
-    # Now you can apply strftime
+    # Now apply strftime
     activity_df['time_of_day'] = activity_df.index.get_level_values('start_time').strftime('%H:%M')
 
     # Ensure full 24-hour coverage
