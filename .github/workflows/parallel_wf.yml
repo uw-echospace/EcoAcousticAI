@@ -137,12 +137,11 @@ jobs:
             git pull -v origin main
 
             python3 new_data1.py
-            cat new_directories.txt
             
-            git add osn_bucker_metadata/ubna01_wav_files_TEST.txt
+            git add osn_bucket_metadata/ubna01_wav_files_TEST.txt
             git commit -m "updated wav files"
             git push
-            
+
       - name: Mount Manila Storage
         run:  |
           SSH_KEY=$HOME/.ssh/jetstream2_key
