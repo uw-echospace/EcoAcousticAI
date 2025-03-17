@@ -25,7 +25,7 @@ to ensure a structured and organized storage environment.
 
 ### Usage
 Run the script directly using:
-    python3 organize_files.py
+    python3 move_manila_files.py
 """
 
 import os
