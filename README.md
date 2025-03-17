@@ -15,15 +15,15 @@ The Union Bay Natural Area (UBNA) is an ecologically significant urban wildlife 
 
 ## Integrated Models
 
-- BirdNET-Analyzer: Uses ResNet to identify 6,000+ species including: birds, frogs, bugs… 
+- **[BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer):** Uses ResNet to identify 6,000+ species including birds, frogs, bugs, and more.
 
-- Batty-BirdNET-Analyzer: Utilizes transfer learning via BirdNET, resampling input audio to 256 kHz to classify bat echolocation calls. 
+- **[Batty-BirdNET-Analyzer](https://github.com/rdz-oss/BattyBirdNET-Analyzer):** Utilizes transfer learning via BirdNET, resampling input audio to 256 kHz to classify bat echolocation calls.
 
-- BatDetect2: Applies a deep neural network to detect and classify bat echolocation calls
+- **[BatDetect2](https://github.com/macaodha/batdetect2):** Applies a deep neural network to detect and classify bat echolocation calls.
 
-- Buzzfindr: Identifies rapid sequences in bat echolocation indicative of feeding behavior.
+- **[Buzzfindr](https://github.com/joelwjameson/buzzfindr):** Identifies rapid sequences in bat echolocation indicative of feeding behavior.
 
-- Custom FrogNET: Adapts BirdNET-Analyzer to detect and classify frog vocalizations.
+- **Custom FrogNET:** Adapts BirdNET-Analyzer to detect and classify frog vocalizations.
 
 See Acknowledgments section for adapted repository links
 
@@ -116,6 +116,20 @@ This keeps the same public IP address when unshelving. If this box is not unchec
 - Created using code from Aditya Krishna
 - Plots BatDetect2 activity results for an entire year
 - Each plot is relevant for a specific location within UBNA
+
+## Future Work
+
+Further developments include enhancing model adaptability, pipeline scalability, and geolocation of calls by microphone. We are working on adapting the Batty-BirdNET-Analyzer model to output species identification formats comparable to BatDetect2. Other visual display options could include higher complexity dashboards such as Bokeh or Tableau.
+
+## Acknowledgments
+
+We extend a special thank you to our sponsors, Wu-Jung Lee and Aditya Krishna, for their invaluable mentorship. 
+[1] Kahl, S., et al. BirdNET-Analyzer. GitHub. https://github.com/kahst/BirdNET-Analyzer.
+[2] Zinke, R., et al. Batty-BirdNET-Analyzer. GitHub. https://github.com/rdz-oss/BattyBirdNET-Analyzer.
+[3] Mac Aodha, O., et al. BatDetect2. GitHub. https://github.com/macaodha/batdetect2.
+[4] Jameson, J. (n.d.). Buzzfindr. GitHub. https://github.com/joelwjameson/buzzfindr 
+[5] Code Author: Aditya Krishna, UW Echospace
+
 
 
 
