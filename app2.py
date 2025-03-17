@@ -330,7 +330,7 @@ def combined_activity_chart(activity_df):
     
     # Option to use container width only if there are many categories
     use_container = num_categories > 5
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=use_container)
 
 
 
