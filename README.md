@@ -23,7 +23,7 @@ The Union Bay Natural Area (UBNA) is an ecologically significant urban wildlife 
 
 - **[Buzzfindr](https://github.com/joelwjameson/buzzfindr):** Identifies rapid sequences in bat echolocation indicative of feeding behavior.
 
-- **Custom FrogNET:** Adapts BirdNET-Analyzer to detect and classify frog vocalizations.
+- **[Custom FrogNET](https://github.com/uw-echospace/EcoAcousticAI/tree/main/birdnetlib/frognet_model):** Adapts BirdNET-Analyzer to detect and classify frog vocalizations.
 
 See Acknowledgments section for adapted repository links
 
@@ -58,7 +58,7 @@ EcoAcousticAI/
 ├── LICENSE
 ├── README.md
 │
-├── app2.py                     # Streamlit app files for visualizations
+├── app.py                     # Streamlit app files for visualizations
 │
 ├── change_owner.sh
 ├── disk_space.sh
@@ -156,6 +156,13 @@ Open the following link in your browser:
 http://149.165.174.37:8501/
 ```
 
+or while the domain remains registered, the web app will be accessible via:
+
+```
+https://ecoacousticai.com
+```
+
+
 ---
 
 ### **Shelving the Instance**
@@ -173,10 +180,16 @@ This keeps the same public IP address when unshelving. If this box is not unchec
 - Includes output file dropdown by date
     - Subdirectory model folders
         - Individual result files
-- Displays selected file
-- Provides summary information including aggregated activity tables and activity heatmaps
+- Displays downloadable selected file
 
-### Cumulative Activity Plots
+### Cumulative Activity Heatmap
+
+- Inspired by code from Aditya Krishna
+- Provides summary information including aggregated activity tables and activity heatmaps for all files in a given directory folder (entire day)
+- Runs activity plots based on species classified for: birdnet-analyzer, frognet, battybirdnet, batdetect2
+- Runs activity plot based on feeding buzz event detected for: buzzfindr
+
+### Cumulative Activity PNG Viewer
 
 - Created using code from Aditya Krishna
 - Plots BatDetect2 activity results for an entire year
