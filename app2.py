@@ -128,7 +128,7 @@ def combine_dataframes(manila_path):
                     'confidence': 'mean'  # Average confidence for the interval
                 })
             )
-
+            
             # Replace remaining invalid or empty 'class' values with NaN
             if not activity_df.empty and 'species' in activity_df.columns:
                 activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
@@ -139,10 +139,15 @@ def combine_dataframes(manila_path):
                 # Final cleanup for invalid or empty rows
                 activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
 
-        if 'event' in combined_df.columns:
+                if 'KMEANS_CLASSES' in activity_df.columns:
+                    species_to_kmeans_map = combined_df[['species', 'KMEANS_CLASSES']].drop_duplicates().set_index('species')['KMEANS_CLASSES'].to_dict()
+                    # Add 'KMEANS_CLASSES' based on the species map
+                    activity_df['KMEANS_CLASSES'] = activity_df['species'].map(species_to_kmeans_map)
+
+        elif 'event' in combined_df.columns:
             # Resample to 10-minute intervals
             activity_df = pd.DataFrame(
-                combined_df[['species_count', 'species', 'confidence']]
+                combined_df[['event_count', 'event', 'confidence']]
                 .drop_duplicates()
                 .resample('10min')  # Resample to 10min intervals
                 .agg({
