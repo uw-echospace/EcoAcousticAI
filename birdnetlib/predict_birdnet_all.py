@@ -27,7 +27,7 @@ custom_species_list_path = Path.cwd() / "custom_species_list" / "washington_spec
 model = Analyzer(custom_species_list_path=str(custom_species_list_path))
 
 # Process each .wav file in the folder
-for audio_file in sorted(audio_folder.glob("*.wav")):
+for audio_file in sorted(audio_folder.glob("*.WAV")):
     print(f"\n Processing: {audio_file.name}")
 
     # Create a Recording object (without lat/lon filtering to avoid empty results)
