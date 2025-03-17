@@ -49,20 +49,20 @@ def safe_read_csv(file_path):
         if df.empty:
             #st.warning(f"Skipping file with no data: {file_path}")
             return None
-
-        # Handle 'start_time' vs 'tstart' (buzzfindr)
-        if 'start_time' in df.columns:
-            df.rename(columns={'start_time': 'start_time'}, inplace=True)
-        elif 'tstart' in df.columns:
-            df.rename(columns={'tstart': 'start_time'}, inplace=True)
-        elif 'Start Time' in df.columns:
-            df.rename(columns={'Start Time': 'start_time'}, inplace=True)
-        else:
-            # Skip files missing BOTH 'start_time' and 'tstart'
-            return None
+            
+        # Dynamically rename any column containing 'start' to 'start_time' (same for end_time)
+        df.rename(columns={col: 'start_time' for col in df.columns if 'start' in col.lower()}, inplace=True)
+        df.rename(columns={col: 'end_time' for col in df.columns if 'end' in col.lower()}, inplace=True)
+        # Dynamically rename any column containing 'prob' or 'confidence' to 'confidence'
+        df.rename(columns={col: 'confidence' for col in df.columns if any(x in col.lower() for x in ['prob', 'confidence'])}, inplace=True)
 
 
-
+        # Rename columns containing 'scientific' or == 'class' to 'species'
+        df.rename(columns={col: 'species' for col in df.columns if 'scientific' in col.lower() or col.lower() == 'class'}, inplace=True)
+        
+        if 'buzz' in df.columns:
+            df.rename(columns={'buzz': 'event'}, inplace=True)
+            
         return df
         
     except pd.errors.EmptyDataError:
@@ -89,11 +89,16 @@ def combine_dataframes(manila_path):
                             continue  # Skip empty/invalid files
 
                         # Convert start & end times
-                        df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-                        df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
-
-                        # Compute species count per interval
-                        df['species_count'] = df.groupby('start_time')['class'].transform('nunique')
+                        if 'start_time' in df.columns:
+                            df['start_time'] = df['start_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
+                            # Compute species count per interval
+                            if 'species' in df.columns:
+                                df['species_count'] = df.groupby('start_time')['species'].transform('nunique')
+                            if 'event' in df.columns:
+                                df['event_count'] = df.groupby('start_time')['event'].transform('nunique')
+                                
+                        if 'end_time' in df.columns:
+                            df['end_time'] = df['end_time'].apply(lambda x: file_datetime + timedelta(seconds=x))
 
                         combined_data.append(df)
                     
@@ -108,27 +113,52 @@ def combine_dataframes(manila_path):
         combined_df['start_time'] = pd.to_datetime(combined_df['start_time'])
         combined_df = combined_df.set_index('start_time')  # Set 'start_time' as the index
 
-        # Resample to 10-minute intervals
-        activity_df = (
-            combined_df[['species_count', 'class', 'class_prob', 'KMEANS_CLASSES']]
-            .drop_duplicates()
-            .resample('10min')  # Resample to 10min intervals
-            .agg({
-                'species_count': 'sum',  # Sum species count per 10-minute interval
-                'class': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common valid species
-                'class_prob': 'mean'  # Average confidence for the interval
-            })
-        )
+        if 'species' in combined_df.columns:
+            # Resample to 10-minute intervals
+            activity_df = (
+                combined_df[['species_count', 'species', 'confidence']]
+                .drop_duplicates()
+                .resample('10min')  # Resample to 10min intervals
+                .agg({
+                    'species_count': 'sum',  # Sum species count per 10-minute interval
+                    'species': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common valid species
+                    'confidence': 'mean'  # Average confidence for the interval
+                })
+            )
 
-        
-        # Replace remaining invalid or empty 'class' values with NaN
-        activity_df['class'] = activity_df['class'].replace({0: None, '0': None, 'No Data': None})
+        if 'event' in combined_df.columns:
+            # Resample to 10-minute intervals
+            activity_df = (
+                combined_df[['species_count', 'species', 'confidence']]
+                .drop_duplicates()
+                .resample('10min')  # Resample to 10min intervals
+                .agg({
+                    'event_count': 'sum',  # Sum species count per 10-minute interval
+                    'event': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common valid species
+                    'confidence': 'mean'  # Average confidence for the interval
+                })
+            )
 
-        # Add a new column for plotting, e.g., filling missing intervals with zero values
-        activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
+        if 'species' in activity_df.columns:
+            # Replace remaining invalid or empty 'class' values with NaN
+            activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
+    
+            # Add a new column for plotting, e.g., filling missing intervals with zero values
+            activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
+    
+            # Final cleanup for invalid or empty rows
+            activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
 
-        # Final cleanup for invalid or empty rows
-        activity_df = activity_df.dropna(subset=['class', 'heatmap_value'], how='all')
+
+        if 'event' in activity_df.columns:
+            # Replace remaining invalid or empty 'class' values with NaN
+            activity_df['event'] = activity_df['class'].replace({0: None, '0': None, 'No Data': None})
+    
+            # Add a new column for plotting, e.g., filling missing intervals with zero values
+            activity_df['heatmap_value'] = activity_df['event_count'].fillna(0)
+    
+            # Final cleanup for invalid or empty rows
+            activity_df = activity_df.dropna(subset=['event', 'heatmap_value'], how='all')
 
         
         return combined_df, activity_df
@@ -143,31 +173,38 @@ def display_summary_statistics(combined_df):
         #st.warning("⚠ No activity data available to summarize.")
         return
 
+     # Print Summary
+    st.write(f"### 📊 Summary Statistics for {selected_date}")
+    
+    if 'species' in combined_df.columns:
     # 1. Count of Unique Species Detected
-    unique_species = combined_df['class'].nunique()
+        unique_species = combined_df['species'].nunique()
+        st.write(f"- **Total Unique Species Detected:** {unique_species}")
+
     
     # 2. Percentage of LF vs HF Detections
     total_detections = len(combined_df)
-    lf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'LF'])
-    hf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'HF'])
 
-    lf_percentage = (lf_detections / total_detections) * 100 if total_detections > 0 else 0
-    hf_percentage = (hf_detections / total_detections) * 100 if total_detections > 0 else 0
-
+    if 'KMEANS_CLASSES' in combined_df.columns:
+        lf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'LF'])
+        hf_detections = len(combined_df[combined_df['KMEANS_CLASSES'] == 'HF'])
+    
+        lf_percentage = (lf_detections / total_detections) * 100 if total_detections > 0 else 0
+        hf_percentage = (hf_detections / total_detections) * 100 if total_detections > 0 else 0
+        
+        st.write(f"- **Low-Frequency Detections:** {lf_percentage:.2f}%")
+        st.write(f"- **High-Frequency Detections:** {hf_percentage:.2f}%")
+        
     # 3. Percentage of the Day with a Detection
     detected_times = combined_df.index.floor('min').nunique()  # Unique time slots with detections
     total_time_slots = 24 * 60  # Total minutes in a day
 
     day_coverage = (detected_times / total_time_slots) * 100 if total_time_slots > 0 else 0
-
-    selected_date = combined_df.index.date.min()  # Extracts the earliest date in the dataset
-
-    # Print Summary
-    st.write(f"### 📊 Summary Statistics for {selected_date}")
-    st.write(f"- **Total Unique Species Detected:** {unique_species}")
-    st.write(f"- **Low-Frequency Detections:** {lf_percentage:.2f}%")
-    st.write(f"- **High-Frequency Detections:** {hf_percentage:.2f}%")
+    
     st.write(f"- **% of the Day with Detections:** {day_coverage:.2f}%")
+
+   
+    
 
 
 # Create the heatmap
@@ -175,6 +212,10 @@ def combined_activity_chart(activity_df):
     # Extract Time of Day
     activity_df['time_of_day'] = activity_df.index.strftime('%H:%M')
 
+    # Ensure full 24-hour coverage
+    full_time_range = pd.date_range('00:00', '23:59', freq='1min').strftime('%H:%M')
+    activity_df = activity_df.reindex(full_time_range, fill_value=0)
+    
     # Create the heatmap data
     heatmap_data = activity_df.pivot_table(
         index='time_of_day',
