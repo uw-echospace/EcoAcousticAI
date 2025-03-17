@@ -541,7 +541,7 @@ elif page == "dashboard":
                         st.dataframe(activity_df)
 
                         st.write("### EcoAcoustic Activity Heatmap")
-                        #combined_activity_chart(activity_df)
+                        combined_activity_chart(activity_df)
                     else:
                         st.info("No aggregated activity data available.")
                 else:
