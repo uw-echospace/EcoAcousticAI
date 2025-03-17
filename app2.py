@@ -2,13 +2,19 @@ import os
 import streamlit as st
 import pandas as pd
 import numpy as np
+import base64
 from PIL import Image 
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 
 st.set_page_config(layout="wide")
-    
+
+def encode_image(file_path):
+    """Encodes an image file to base64 format."""
+    with open(file_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode("utf-8")
+
 # Function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
     """Extracts datetime from a filename in format: '*_20210603_034102.csv'"""
@@ -436,20 +442,21 @@ elif page == "models":
         }
     ]
 
-    # Display each model entry with better structure
+    # Render models using base64 encoded images
     for model in models:
         st.markdown(
             f"""
             <div class='model-container'>
-                <img class='model-logo' src='{model['logo']}' alt='Logo for {model['name']}' />
+                <img class='model-logo' src='data:image/png;base64,{model['logo']}' alt='Logo for {model["name"]}' />
                 <div class='model-text'>
-                    <div class='model-title'><b><a href="{model['url']}" target="_blank">{model['name']}</a></b></div>
-                    <div class='model-description'>{model['description']}</div>
+                    <b><a href="{model['url']}" target="_blank">{model['name']}</a></b><br>
+                    {model['description']}
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
+
         
     st.markdown("""
     Together, these models operate in concert as an integrated pipeline, each focusing on specific species or acoustic behaviors (e.g., echolocation or feeding buzzes). This allows the system to concurrently monitor bats, birds, and frogs from the same acoustic data, contributing to comprehensive, multi-species biodiversity assessments through passive acoustic analysis.
