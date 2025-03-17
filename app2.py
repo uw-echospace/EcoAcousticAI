@@ -134,7 +134,7 @@ def combine_dataframes(manila_path):
             print(activity_df.index)
             print(activity_df.columns)
             # Add total_count and unique_species_count for each time frame
-            activity_df['total_count'] = activity_df.groupby('start_time')['species_count'].transform('sum')
+            activity_df['total_activity'] = activity_df.groupby('start_time')['species_count'].transform('sum')
             activity_df['unique_species_count'] = activity_df.groupby('start_time')['species'].transform('nunique')
             
             # Replace remaining invalid or empty 'class' values with NaN
@@ -162,7 +162,7 @@ def combine_dataframes(manila_path):
             print(activity_df.index)
             print(activity_df.columns)
             # Add total_count and unique_species_count for each time frame
-            activity_df['total_count'] = activity_df.groupby('start_time')['event_count'].transform('sum')
+            activity_df['total_activity'] = activity_df.groupby('start_time')['event_count'].transform('sum')
             activity_df['unique_event_count'] = activity_df.groupby('start_time')['event'].transform('nunique')
 
             # Replace remaining invalid or empty 'class' values with NaN
@@ -170,7 +170,7 @@ def combine_dataframes(manila_path):
                 activity_df['event'] = activity_df['event'].replace({0: None, '0': None, 'No Data': None})
             
                 # Add a new column for plotting, e.g., filling missing intervals with zero values
-                activity_df['heatmap_value'] = activity_df['event_count'].fillna(0)
+                activity_df['heatmap_value'] = activity_df['total_activity'].fillna(0)
         
                 # Final cleanup for invalid or empty rows
                 activity_df = activity_df.dropna(subset=['event', 'heatmap_value'], how='all')
