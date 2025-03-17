@@ -142,7 +142,7 @@ def combine_dataframes(manila_path):
                 activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
     
                 # Add a new column for plotting, e.g., filling missing intervals with zero values
-                activity_df['heatmap_value'] = activity_df['total_activity'].fillna(0)
+                activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
     
                 # Final cleanup for invalid or empty rows
                 activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
@@ -170,7 +170,7 @@ def combine_dataframes(manila_path):
                 activity_df['event'] = activity_df['event'].replace({0: None, '0': None, 'No Data': None})
             
                 # Add a new column for plotting, e.g., filling missing intervals with zero values
-                activity_df['heatmap_value'] = activity_df['total_activity'].fillna(0)
+                activity_df['heatmap_value'] = activity_df['event_count'].fillna(0)
         
                 # Final cleanup for invalid or empty rows
                 activity_df = activity_df.dropna(subset=['event', 'heatmap_value'], how='all')
@@ -227,6 +227,10 @@ def display_summary_statistics(combined_df):
 # Create the heatmap
 def combined_activity_chart(activity_df):
     # Extract Time of Day
+    # Reset MultiIndex and set 'start_time' as the index
+    activity_df = activity_df.reset_index().set_index('start_time')
+    
+    # Now you can apply strftime
     activity_df['time_of_day'] = activity_df.index.strftime('%H:%M')
 
     # Ensure full 24-hour coverage
@@ -236,7 +240,7 @@ def combined_activity_chart(activity_df):
     # Create the heatmap data
     heatmap_data = activity_df.pivot_table(
         index='time_of_day',
-        columns='class',
+        columns='species',
         values='heatmap_value',
         fill_value=0 
     )
