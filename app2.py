@@ -377,11 +377,11 @@ elif page == "models":
                 transform: scale(1.02); /* Slight zoom on hover */
             }
             .model-logo {
-                width: 200px; /* Increased size for better clarity */
-                height: 200px;
+                width: 500px; /* Increased size for better clarity */
+                height: 500px;
                 border-radius: 50%;
                 object-fit: contain;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* subtle shadow */
             }
             .model-text {
                 flex: 1;
