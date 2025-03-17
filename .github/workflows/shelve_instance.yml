@@ -1,45 +1,14 @@
-name: Parallel Part 3
+name: Shut Down Instance
 
 on:
-  workflow_run:
-    workflows: ["Parallel Part 2_no"]  # Name of the first workflow
-    types:
-      - completed
-  workflow_dispatch:  # Allows manual trigger
+  schedule:
+    # Runs every Tuesday at 08:00 AM UTC
+    - cron: '0 8 * * 2'
+  workflow_dispatch: # Allow manual triggering if needed
 
 jobs:
-  bat_detect_part3:
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-
-      - name: Set up SSH Key for Remote Access
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
-          chmod 600 ~/.ssh/jetstream2_key
-          ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
-
-      - name: Resume Model Run
-        run: |
-            SSH_KEY=$HOME/.ssh/jetstream2_key
-            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
-              cd /home/ubuntu/EcoAcousticAI/
-  
-              echo "Contents of new_directories.txt:"
-              cat new_directories.txt
-              echo "----------------------"
-
-              sudo chmod +x ./docker_runs/run_batdetect_part3.sh
-              ./docker_runs/run_batdetect_part3.sh
-
-            rm -f new_directories.txt
-            #sudo umount /tmp/osn_bucket/
-
   shelve-instance:
     runs-on: ubuntu-latest
-    needs: bat_detect_part3  # <-- This makes sure it runs ONLY after the first job completes
-    if: always()
     steps:
         - name: Install OpenStack CLI
           run: sudo apt update && sudo apt install -y python3-openstackclient
@@ -49,7 +18,18 @@ jobs:
                       echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
                       chmod 600 ~/.config/openstack/clouds.yaml
                       openstack --os-cloud=BIO230143_IU server list  # Debug check
+
+        - name: Remove New Directories
+          run: |
+            SSH_KEY=$HOME/.ssh/jetstream2_key
+            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
             
+            sudo umount /tmp/osn_bucket/ubna_data_01
+            sudo umount /tmp/osn_bucket/ubna_data_02
+            sudo umount /tmp/osn_bucket/ubna_data_03
+            sudo umount /tmp/osn_bucket/ubna_data_04
+            sudo umount /tmp/osn_bucket/ubna_data_04
+
         - name: Shelve Instance
           run: |
                       INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"

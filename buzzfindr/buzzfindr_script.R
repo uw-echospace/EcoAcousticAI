@@ -13,8 +13,9 @@ for (file in all_files) {
     # Check if the file ends with .WAV (case insensitive)
     if (grepl("\\.wav$", file, ignore.case = TRUE)) {
         # Create the new file name by changing the extension to lowercase .wav
-        new_file_name <- paste0(tools::file_path_sans_ext(basename(file)), ".wav")
-        
+        #new_file_name <- paste0(tools::file_path_sans_ext(basename(file)), ".wav")
+        new_file_name <- file.path(dirname(file), paste0(tools::file_path_sans_ext(basename(file)), ".wav"))
+
         # Only rename if the file ends with .WAV (case-insensitive check) and ensure it's changed to lowercase .wav
         if (tolower(file) != tolower(new_file_name)) {
             cat("Renaming file:", file, "to", new_file_name, "\n")
@@ -35,7 +36,7 @@ target_dir <- "/app/output_buzz/"
 # List directories in /app/recordings_buzz
 #subdirs <- list.dirs("/app/accepted_files/", full.names = TRUE, recursive = FALSE)
 
-subdirs = list.dirs(source_dir, full.names = TRUE, recursive = FALSE)
+subdirs = list.dirs('/app/recordings_buzz', full.names = TRUE, recursive = FALSE)
 
 buzz_result_subdirs <- subdirs[grepl("^Buzz_Results", basename(subdirs))]
 
@@ -59,8 +60,6 @@ if (length(buzz_result_subdirs) > 0) {
             # Copy each .csv file to the target directory
             for (file in csv_files) {
                 file_path <- file.path(subdir, file)  # Full path to the .csv file
-
-                new_file_name <- paste0("Buzzfindr-", date_part, ".csv")
 
                 # Rename the .csv file based on the extracted date part
                 new_file_name <- paste0("Buzzfindr-", date_part, ".csv")

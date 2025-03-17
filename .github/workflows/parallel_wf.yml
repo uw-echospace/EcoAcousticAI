@@ -129,7 +129,6 @@ jobs:
             sleep 30  # Adjust sleep time as necessary to give rclone time to mount
             sudo chown -R ubuntu:ubuntu /home/ubuntu/EcoAcousticAI/
             sudo chmod -R 777 /home/ubuntu/EcoAcousticAI/
-            ls -ld /home/ubuntu/EcoAcousticAI/
 
             git config --global --add safe.directory /home/ubuntu/EcoAcousticAI
             cd ./EcoAcousticAI/
@@ -169,8 +168,6 @@ jobs:
 
             cd /home/ubuntu/EcoAcousticAI/
 
-            chmod +x disk_space.sh
-            #./disk_space.sh
             docker image prune -a -f
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
@@ -190,15 +187,12 @@ jobs:
           chmod 600 ~/.ssh/jetstream2_key
           ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
 
-      - name: Run Frognet Part 1
+      - name: Run Frognet and Birdnet
         run: |
             SSH_KEY=$HOME/.ssh/jetstream2_key
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
             cd /home/ubuntu/EcoAcousticAI/
         
-            pwd
-            
-            dos2unix new_directories.txt
             sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
             sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
 
@@ -216,11 +210,6 @@ jobs:
             nohup bash ./docker_runs/run_frognet.sh > ./model_output_frognet.log 2>&1 &
             EOF
 
-            #./docker_runs/run_frognet.sh
-
-
-
-            #echo "done with frognet model..starting bat-detect"
 
   run_batdetect_part1:
     needs: unshelve-and-ready-instance
@@ -233,7 +222,7 @@ jobs:
           chmod 600 ~/.ssh/jetstream2_key
           ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
 
-      - name: Run Batdetect Part 1
+      - name: Run Batdetect 
         run : |
             SSH_KEY=$HOME/.ssh/jetstream2_key
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
@@ -248,12 +237,11 @@ jobs:
             cat new_directories.txt
             echo "----------------------"
 
-            sudo chmod +x ./docker_runs/run_batdetect_part1.sh
+            sudo chmod +x ./docker_runs/run_batdetect.sh
 
             echo "starting bat-detect"
-            nohup bash ./docker_runs/run_batdetect_part1.sh > ./model_output_batdetect.log 2>&1 &
+            nohup bash ./docker_runs/run_batdetect.sh > ./model_output_batdetect.log 2>&1 &
             EOF
-            #./docker_runs/run_batdetect_part1.sh
 
 
 
