@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 
-from src.models.bat_call_detector.model_detector import BatCallDetector
+from models.bat_call_detector.model_detector import BatCallDetector
 
 # Contains configurable paramters for analysis portion of the pipeline. Anything that is not a CLI 
 # argument (stuff that doesn't interact with the host OS) should be in here.
