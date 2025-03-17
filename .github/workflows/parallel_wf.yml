@@ -1,0 +1,234 @@
+name: Parallel Birdnet and Batdetect
+
+on:
+  schedule:
+    - cron: '0 16 * * 1'  # 8 AM PT (16:00 UTC) every Monday - Unshelve instance
+    - cron: '0 2 * * 2'   # 6 PM PT (02:00 UTC Tuesday) - Shelve instance
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  unshelve-and-ready-instance:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 16 * * 1' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Install OpenStack CLI
+        run: sudo apt update && sudo apt install -y python3-openstackclient
+
+      - name: Authenticate with OpenStack
+        run: |
+          mkdir -p ~/.config/openstack
+          echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
+          chmod 600 ~/.config/openstack/clouds.yaml
+          openstack --os-cloud=BIO230143_IU server list  # Debug check
+
+      - name: Unshelve the Instance
+        run: |
+          INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
+          STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+          
+          if [[ "$STATUS" == "SHELVED_OFFLOADED" ]]; then
+            echo "Instance is shelved. Unshelving now..."
+            openstack --os-cloud=BIO230143_IU server unshelve $INSTANCE_ID
+          fi
+
+          echo "Waiting for the instance to become ACTIVE..."
+          for i in {1..10}; do  # Wait up to 10 minutes
+            STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+            if [[ "$STATUS" == "ACTIVE" ]]; then
+              echo "Instance is now ACTIVE!"
+              exit 0
+            fi
+            echo "Instance is still $STATUS. Waiting 60 seconds..."
+            sleep 60
+          done
+
+          echo "Instance failed to become ACTIVE within 10 minutes."
+          exit 1  # Force GitHub Actions to fail if unshelving takes too long
+
+
+      - name: Start Instance
+        run: |
+          INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
+          STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+          if [[ "$STATUS" == "ACTIVE" ]]; then
+            echo "Instance is already active."
+          else
+            echo "Starting instance..."
+            openstack --os-cloud=BIO230143_IU server start $INSTANCE_ID
+          fi
+         
+
+      - name: Set Up SSH Key
+        run: |
+              mkdir -p ~/.ssh
+              echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
+              chmod 600 ~/.ssh/jetstream2_key
+              ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts      
+    
+      - name: Mount OSN and Check for New Data
+        run: |
+            SSH_KEY=$HOME/.ssh/jetstream2_key
+            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+            sudo apt-get update
+            sudo apt-get install -y rclone
+            sudo apt install git
+            mkdir -p ~/.config/rclone
+            echo "[osn_sdsc_ubna]" > ~/.config/rclone/rclone.conf
+            echo "type = s3" >> ~/.config/rclone/rclone.conf
+            echo "provider = Ceph" >> ~/.config/rclone/rclone.conf
+            echo "access_key_id = " >> ~/.config/rclone/rclone.conf  # Leave blank for public access
+            echo "secret_access_key = " >> ~/.config/rclone/rclone.conf  # Leave blank for public access
+            echo "endpoint = https://sdsc.osn.xsede.org" >> ~/.config/rclone/rclone.conf
+            echo "no_check_bucket = true" >> ~/.config/rclone/rclone.conf
+
+            cd /home/ubuntu/
+            mkdir -p /tmp/osn_bucket/
+            chmod 777 /tmp/osn_bucket/
+
+            sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
+
+            echo "after fusermount"
+
+            # Step 3: Mount the FUSE filesystem with rclone using allow_other 
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/recover-20250127/UBNA_026/ /tmp/osn_bucket/ \
+            --vfs-cache-mode off \
+            --log-level DEBUG \
+            --allow-other \
+            --daemon
+
+            echo "mounted"
+            sleep 30  # Adjust sleep time as necessary to give rclone time to mount
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/EcoAcousticAI/
+            sudo chmod -R 777 /home/ubuntu/EcoAcousticAI/
+            ls -ld /home/ubuntu/EcoAcousticAI/
+
+            git config --global --add safe.directory /home/ubuntu/EcoAcousticAI
+            cd ./EcoAcousticAI/
+            git stash 
+            git pull -v origin main
+
+            python3 new_data.py
+            cat new_directories.txt
+
+      - name: Mount Manila Storage
+        run:  |
+          SSH_KEY=$HOME/.ssh/jetstream2_key
+          ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+
+          ACCESS_KEY="${{ secrets.ACCESS_KEY }}"
+          FILE_PATH="/etc/ceph/ceph.client.ecoacousticaccess.keyring"
+  
+          # Create the keyring file with the access key
+          echo "[client.ecoacousticaccess]" | sudo tee $FILE_PATH > /dev/null
+          echo "    key = $ACCESS_KEY" | sudo tee -a $FILE_PATH > /dev/null
+  
+          # Set the file permissions to be read and write for the owner only
+          sudo chmod 600 $FILE_PATH
+  
+          # Verify the permissions (optional)
+          ls -l $FILE_PATH
+
+            # Verify the entry is added (optional)
+            cat /etc/fstab
+            sudo mount -a
+            df -h | grep vol
+
+            cd /home/ubuntu/EcoAcousticAI/
+
+            chmod +x disk_space.sh
+            #./disk_space.sh
+            docker image prune -a -f
+            docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
+
+            cd buzzfindr/
+            docker build -t buzzfindr-image .
+
+            cd ../birdnetlib
+            docker build -t frog_bird .
+  run_frognet:
+    needs: unshelve-and-ready-instance
+    runs-on: ubuntu-latest
+    steps:
+      # Step 5: Mount the OSN bucket and process data in Docker
+      - name: Process data in Docker
+        run: |
+            SSH_KEY=$HOME/.ssh/jetstream2_key
+            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+            cd /home/ubuntu/EcoAcousticAI/
+        
+            pwd
+            
+            dos2unix new_directories.txt
+            sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
+            sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
+
+            echo "Contents of new_directories.txt:"
+            cat new_directories.txt
+            echo "----------------------"
+
+            #chmod +x run_buzzfindr.sh
+
+            chmod +x ./docker_runs/run_frognet.sh
+
+            #./run_buzzfindr.sh
+
+            echo "starting frognet model"
+            ./docker_runs/run_frognet.sh
+            
+
+            echo "done with frognet model..starting bat-detect"
+
+  run_batdetect_part1:
+    needs: unshelve-and-ready-instance
+    runs-on: ubuntu-latest
+    steps:
+       - name: Run Batdetect Part 1
+         run : |
+            SSH_KEY=$HOME/.ssh/jetstream2_key
+            ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+            cd /home/ubuntu/EcoAcousticAI/
+        
+            pwd
+            
+            dos2unix new_directories.txt
+            sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
+            sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
+
+            echo "Contents of new_directories.txt:"
+            cat new_directories.txt
+            echo "----------------------"
+
+            chmod +x ./docker_runs/run_batdetect_part1.sh
+
+            echo "starting bat-detect"
+
+            ./docker_runs/run_batdetect_part1.sh
+
+  run_batdetect_part2:
+    needs: unshelve-and-ready-instance
+    runs-on: ubuntu-latest
+    steps:
+       - name: Run Batdetect Part 1
+         run : |
+                SSH_KEY=$HOME/.ssh/jetstream2_key
+                ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+                cd /home/ubuntu/EcoAcousticAI/
+                pwd
+                
+                dos2unix new_directories.txt
+                sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
+                sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
+            
+                echo "Contents of new_directories.txt:"
+                cat new_directories.txt
+                echo "----------------------"
+            
+                chmod +x ./docker_runs/run_batdetect_part2.sh
+            
+                echo "starting bat-detect-part2"
+            
+                ./docker_runs/run_batdetect_part2.sh
+
+
+
+
