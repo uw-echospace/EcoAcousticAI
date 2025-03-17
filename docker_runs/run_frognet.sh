@@ -32,8 +32,6 @@ files=($(find "$directory" -type f))  # List of all files in the directory
      else
         echo "Skipping non-WAV file: $filename"
     fi
-    done
-    
   done
-  
+
 done < new_directories.txt

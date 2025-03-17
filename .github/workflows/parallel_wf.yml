@@ -140,6 +140,8 @@ jobs:
             
             git add osn_bucket_metadata/ubna01_wav_files_TEST.txt
             git commit -m "updated wav files"
+            git stash 
+            git pull
             git push
 
       - name: Mount Manila Storage
@@ -172,8 +174,8 @@ jobs:
             docker image prune -a -f
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
-            cd buzzfindr/
-            docker build -t buzzfindr-image .
+            #cd buzzfindr/
+            #docker build -t buzzfindr-image .
 
             cd ../birdnetlib
             docker build -t frog_bird .
@@ -206,15 +208,18 @@ jobs:
 
             #chmod +x run_buzzfindr.sh
 
-            chmod +x ./docker_runs/run_frognet.sh
+            sudo chmod +x ./docker_runs/run_frognet.sh
 
             #./run_buzzfindr.sh
 
             echo "starting frognet model"
-            ./docker_runs/run_frognet.sh
+            nohup bash ./docker_runs/run_frognet.sh > ./model_output.log 2>&1 &
+            EOF
+
+            #./docker_runs/run_frognet.sh
             
 
-            echo "done with frognet model..starting bat-detect"
+            #echo "done with frognet model..starting bat-detect"
 
   run_batdetect_part1:
     needs: unshelve-and-ready-instance
@@ -243,11 +248,12 @@ jobs:
             cat new_directories.txt
             echo "----------------------"
 
-            chmod +x ./docker_runs/run_batdetect_part1.sh
+            sudo chmod +x ./docker_runs/run_batdetect_part1.sh
 
             echo "starting bat-detect"
-
-            ./docker_runs/run_batdetect_part1.sh
+            nohup bash ./docker_runs/run_batdetect_part1.sh > ./model_output.log 2>&1 &
+            EOF
+            #./docker_runs/run_batdetect_part1.sh
 
 
 
