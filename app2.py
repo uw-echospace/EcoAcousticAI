@@ -446,7 +446,7 @@ elif page == "models":
         st.markdown(
             f"""
             <div class='model-container'>
-                <img class='model-logo' src='data:image/png;base64,{model['logo']}' alt='Logo for {model["name"]}' />
+                <img class='model-logo' src='data:image/png;base64,{encoded_logo}' alt='Logo for {model["name"]}' />
                 <div class='model-text'>
                     <b><a href="{model['url']}" target="_blank">{model['name']}</a></b><br>
                     {model['description']}
