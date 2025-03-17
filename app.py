@@ -634,10 +634,12 @@ elif page == "dashboard":
             
             
         # Only show PNG viewer for bat model folders
-        if is_bat_folder and os.path.exists(cumulative_activity_path):
-            if directories_4digit:
-                selected_4digit_dir = st.selectbox("📂 Select a Cumulative Activity Directory:", sorted(directories_4digit))
-                cumulative_activity_path = os.path.join(MANILA_STORAGE_PATH, selected_4digit_dir, "cumulative_activity")
+        
+        if directories_4digit:
+            selected_4digit_dir = st.selectbox("📂 Select a Cumulative Activity Directory:", sorted(directories_4digit))
+            cumulative_activity_path = os.path.join(MANILA_STORAGE_PATH, selected_4digit_dir, "cumulative_activity")
+            
+            if is_bat_folder and os.path.exists(cumulative_activity_path):
                 cumulative_files = [f for f in os.listdir(cumulative_activity_path) if f.endswith(".png")]
                 
                 if cumulative_files:
@@ -647,7 +649,7 @@ elif page == "dashboard":
                 else:
                     st.info("🖼️ No cumulative activity plots found in this directory.")
             elif not is_bat_folder:
-                pass  # Silent behavior for non-bat folders
+                st.info("🖼️ Select a bat model to view batdetect2 cumulative activity plots.")
             else:
                 st.info("🖼️ No cumulative activity plots found in this directory.")
         
