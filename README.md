@@ -29,6 +29,7 @@ See Acknowledgments section for adapted repository links
 
 ## Repository Structure
 
+```
 EcoAcousticAI/
 │
 ├── .github/
@@ -72,7 +73,7 @@ EcoAcousticAI/
 ├── run_docker_part2.sh
 ├── run_frognet.sh
 |
-
+```
 
 ## Pipeline Workflow
 
