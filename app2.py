@@ -552,19 +552,40 @@ elif page == "contact":
     # Custom CSS for justified images and reduced spacing
     st.markdown("""
         <style>
-            .justified-container {
-                display: flex;
-                align-items: flex-start;
-                gap: 10px; /* Controls spacing between image and text */
-                margin-bottom: 10px; /* Reduces space between members */
-            }
-            .justified-image {
-                width: 500px;
-                flex-shrink: 0; 
-            }
-            .bio-section {
-                margin-top: -10px; 
-            }
+            .team-container {
+            display: flex;
+            align-items: center;
+            gap: 15px; 
+            background-color: #ffffff; /* White background for clarity */
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .team-container:hover {
+            transform: scale(1.02); 
+        }
+        .team-image {
+            width: 500px;
+            height: 500px;
+            border-radius: 10px; 
+            object-fit: cover;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+        }
+        .team-text {
+            flex: 1;
+            font-family: 'Arial', sans-serif;
+            color: #000;
+        }
+        .team-title {
+            font-size: 1.5em;
+            color: #4CAF50;
+        }
+        .team-description {
+            font-size: 1em;
+            color: #333;
+        }
         </style>
     """, unsafe_allow_html=True)
     
@@ -587,17 +608,22 @@ elif page == "contact":
         }
     ]
     
-    # Display Members with Justified Pictures & Reduced Spacing
+    # Display Team Members
     for member in team_members:
-        st.markdown("---")  # Visual separator
-        col1, col2 = st.columns([1, 3])
-    
-        with col1:
-            st.image(member["image"], use_container_width=True)
-    
-        with col2:
-            st.markdown(f"### {member['name']}")
-            st.markdown(f'<div class="bio-section">{member["bio"]}</div>', unsafe_allow_html=True)
+        with open(member['image'], "rb") as file:
+            encoded_image = base64.b64encode(file.read()).decode()
+        st.markdown(
+            f"""
+            <div class='team-container'>
+                <img class='team-image' src='data:image/png;base64,{encoded_image}' alt='Photo of {member["name"]}' />
+                <div class='team-text'>
+                    <b class='team-title'>{member['name']}</b><br>
+                    <div class='team-description'>{member['bio']}</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     
     st.markdown("""
