@@ -187,6 +187,15 @@ def combine_dataframes(manila_path):
 
 # Create the heatmap
 def combined_activity_chart(activity_df):
+
+    # Check if activity_df is None or empty first
+    if activity_df is None:
+        #print("Warning: activity_df is None, cannot create heatmap")
+        return None
+    
+    if activity_df.empty:
+        #print("Warning: activity_df is empty, cannot create heatmap")
+        return None
     # Make a copy to avoid modifying the original dataframe
     copy_df = activity_df.copy()
 
