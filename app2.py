@@ -174,7 +174,9 @@ def display_summary_statistics(combined_df):
         return
 
      # Print Summary
-    st.write(f"### 📊 Summary Statistics for {selected_date}")
+    start_date = combined_df.index.date.min()  # Extracts the earliest date in the dataset
+    end_date = combined_df.index.date.max()
+    st.write(f"### 📊 Summary Statistics for {start_date} - {end_date}")
     
     if 'species' in combined_df.columns:
     # 1. Count of Unique Species Detected
