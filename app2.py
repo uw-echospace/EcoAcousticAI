@@ -55,17 +55,13 @@ def safe_read_csv(file_path):
             df.rename(columns={'start_time': 'start_time'}, inplace=True)
         elif 'tstart' in df.columns:
             df.rename(columns={'tstart': 'start_time'}, inplace=True)
+        elif 'Start Time' in df.columns:
+            df.rename(columns={'Start Time': 'start_time'}, inplace=True)
         else:
             # Skip files missing BOTH 'start_time' and 'tstart'
             return None
 
-        # For non-buzzfindr files, check for 'end_time'
-        if 'buzzfindr' not in file_path.lower() and 'end_time' not in df.columns:
-            return None  # Non-buzzfindr files still require 'end_time'
 
-        # Ensure 'class' column is present
-        if 'class' not in df.columns:
-            return None
 
         return df
         
@@ -191,7 +187,7 @@ def combined_activity_chart(activity_df):
     heatmap_data_no_zero = heatmap_data.replace(0, 0.1)  # Replace zeros with small value for log scale
     
     custom_viridis_spectrum = [
-        [0.0, '#2b0136'],    # Darkest Purple
+        [0.0, '#2b0136'],    # Darkest Purple (this is the only added color so we could see a zero-value more clearly)
         [0.05, '#440154'],   # Deep Purple
         [0.1, '#481567'],    # Violet
         [0.15, '#482677'],   # Violet transitioning to Blue
@@ -223,7 +219,7 @@ def combined_activity_chart(activity_df):
         y=heatmap_data.index,
         xgap=1,
         zmin=0,
-        #zmax=activity_df.max().max(),
+
         colorscale=custom_viridis_spectrum
     ))
 
