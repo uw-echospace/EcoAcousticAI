@@ -27,15 +27,15 @@ jobs:
       - name: Copy selected files and folders
         run: |
           mkdir -p BattyBirdNET-Analyzer
-          cp -r /tmp/battybirdnet_clone/checkpoints EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp -r /tmp/battybirdnet_clone/labels EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp -r /tmp/battybirdnet_clone/put-your-files-here EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp /tmp/battybirdnet_clone/audio.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp /tmp/battybirdnet_clone/bat_ident.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp /tmp/battybirdnet_clone/config.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp /tmp/battybirdnet_clone/model.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp /tmp/battybirdnet_clone/species.py EcoAcousticAI/BattyBirdNET-Analyzer/
-          cp /tmp/battybirdnet_clone/utils.py EcoAcousticAI/BattyBirdNET-Analyzer/
+          cp -r /tmp/battybirdnet_clone/checkpoints BattyBirdNET-Analyzer/
+          cp -r /tmp/battybirdnet_clone/labels BattyBirdNET-Analyzer/
+          cp -r /tmp/battybirdnet_clone/put-your-files-here BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/audio.py BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/bat_ident.py BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/config.py BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/model.py BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/species.py BattyBirdNET-Analyzer/
+          cp /tmp/battybirdnet_clone/utils.py BattyBirdNET-Analyzer/
 
       - name: Set Git user info
         run: |
