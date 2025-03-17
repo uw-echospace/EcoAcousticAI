@@ -66,8 +66,13 @@ def safe_read_csv(file_path):
         # Rename columns == 'buzz' to 'event'
         df.rename(columns={col: 'event' for col in df.columns if col.lower() == 'buzz'}, inplace=True)
 
-        # Handle duplicate columns by appending suffixes
-        df.columns = pd.Series(df.columns).apply(lambda x, c=df.columns: f"{x}_{list(c).index(x)+1}" if list(c).count(x) > 1 else x)
+        # Handle duplicate columns by adding a prefix to the second occurrence onward
+        cols = pd.Series(df.columns)
+        for idx, col in enumerate(cols):
+            if cols[:idx].eq(col).any():  # If this column name has appeared before
+                cols[idx] = f"{col}_dup"
+
+        df.columns = cols
         
         return df
         
