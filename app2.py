@@ -232,9 +232,15 @@ def combined_activity_chart(activity_df):
     if 'start_time' in activity_df.columns:
         activity_df = activity_df.reset_index(drop=False).set_index(['start_time', 'species'])
 
-    # Ensure 'species' is treated as a string
+    # Ensure 'species' is treated as a string to avoid numeric conversion
     if 'species' in activity_df.columns:
         activity_df['species'] = activity_df['species'].astype(str)
+
+    # Aggregate duplicate timestamps to ensure unique index combinations
+    activity_df = activity_df.groupby(['start_time', 'species']).agg({
+        'species_count': 'sum',
+        'heatmap_value': 'sum'
+    })
 
 
     # Now you can apply strftime
