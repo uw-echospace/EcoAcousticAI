@@ -413,31 +413,31 @@ elif page == "models":
         {
             "name": "BatDetect2",
             "url": "https://github.com/macaodha/batdetect2",
-            "logo": "./assets/batdetect2.png",
+            "logo": "assets/batdetect2.png",
             "description": "A deep learning-based bat call detection pipeline that automatically detects and classifies bat echolocation calls in high-frequency recordings. By pinpointing true bat call events, it improves the accuracy of downstream bat species identification in noisy field recordings."
         },
         {
             "name": "Batty-BirdNET-Analyzer",
             "url": "https://github.com/rdz-oss/BattyBirdNET-Analyzer",
-            "logo": "./assets/battybirdnet.png",
+            "logo": "assets/battybirdnet.png",
             "description": "A BirdNET-based classifier retrained on ultrasonic bat recordings (e.g. 256 kHz sampling) to identify bat species. It classifies bat call segments (as detected by BatDetect2) using BirdNET’s deep neural network architecture adapted for echolocation calls, enabling automated bat call classification."
         },
         {
             "name": "BirdNET-Analyzer",
             "url": "https://github.com/birdnet-team/BirdNET-Analyzer",
-            "logo": "./assets/birdnet.png",
+            "logo": "assets/birdnet.png",
             "description": "An open-source tool that recognizes and classifies bird vocalizations using deep neural networks. It processes audible frequency audio to identify bird species present by their calls, allowing simultaneous avian biodiversity monitoring within the pipeline."
         },
         {
             "name": "Custom Frog Model",
             "url": "https://github.com/uw-echospace/EcoAcousticAI/tree/main/birdnetlib/frognet_model",
-            "logo": "./assets/frognet.png",
+            "logo": "assets/frognet.png",
             "description": "A BirdNET-derived acoustic model trained specifically on Washington frog calls to enhance amphibian call identification in the Union Bay Seattle area. Using the BirdNET framework extended to include frog species, this model detects and classifies frog vocalizations, adding anuran amphibians to the multi-species analysis."
         },
         {
             "name": "Buzzfindr",
             "url": "https://github.com/joelwjameson/buzzfindr",
-            "logo": "./assets/buzzfindr.png",
+            "logo": "assets/buzzfindr.png",
             "description": "An automated detector for bat feeding buzzes – the rapid sequence of pulses bats emit during the final stage of insect prey capture. Buzzfindr flags these feeding buzz events in the recordings, providing behavioral insights into bat foraging activity and aiding habitat use analysis."
         }
     ]
