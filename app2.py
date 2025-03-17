@@ -193,47 +193,52 @@ def combined_activity_chart(activity_df):
     print("Columns passed to combined_activity_chart:", df.columns)
         
     # Check if we need to reset the index first
-    if 'start_time' not in df.columns and not df.index.name == 'start_time':
+    if 'start_time' not in copy_df.columns and not copy_df.index.name == 'start_time':
         # If start_time is part of a MultiIndex
-        if isinstance(df.index, pd.MultiIndex) and 'start_time' in df.index.names:
-            df = df.reset_index()
+        if isinstance(copy_df.index, pd.MultiIndex) and 'start_time' in copy_df.index.names:
+            copy_df = copy_df.reset_index()
         else:
             raise KeyError("The 'start_time' column is missing from activity_df and not found in index.")
     
     # Check for species column
-    if 'species' not in df.columns:
+    if 'species' not in copy_df.columns:
         raise KeyError("The 'species' column is missing from activity_df. Ensure it is created BEFORE calling this function.")
     
     # Ensure data types
-    if 'start_time' in df.columns:
-        df['start_time'] = pd.to_datetime(df['start_time'])
-    df['species'] = df['species'].astype(str)
+    if 'start_time' in copy_df.columns:
+        copy_df['start_time'] = pd.to_datetime(copy_df['start_time'])
+    copy_df['species'] = copy_df['species'].astype(str)
     
     # Extract time of day
-    if 'start_time' in df.columns:
-        df['time_of_day'] = df['start_time'].dt.strftime('%H:%M')
+    if 'start_time' in copy_df.columns:
+        copy_df['time_of_day'] = copy_df['start_time'].dt.strftime('%H:%M')
     else:
-        df['time_of_day'] = df.index.strftime('%H:%M')
+        copy_df['time_of_day'] = copy_df.index.strftime('%H:%M')
     
     # Ensure we have heatmap_value column
-    if 'heatmap_value' not in df.columns:
-        if 'species_count' in df.columns:
-            df['heatmap_value'] = df['species_count'].fillna(0)
+    if 'heatmap_value' not in copy_df.columns:
+        if 'species_count' in copy_df.columns:
+            copy_df['heatmap_value'] = copy_df['species_count'].fillna(0)
         else:
             raise KeyError("Neither 'heatmap_value' nor 'species_count' columns exist in the dataframe.")
     
     # Aggregate duplicate timestamps
-    pivot_data = df.groupby(['time_of_day', 'species']).agg({
+    pivot_data = copy_df.groupby(['time_of_day', 'species']).agg({
         'heatmap_value': 'sum'
     }).reset_index()
     
     # Create the heatmap data
-    heatmap_data = activity_df.pivot_table(
+    heatmap_data = pivot_data.pivot_table(
         index='time_of_day',
         columns='species',
         values='heatmap_value',
         fill_value=0 
     )
+
+    # Sort the time_of_day index to ensure chronological order
+    time_order = sorted([t for t in heatmap_data.index], 
+                        key=lambda x: datetime.strptime(x, '%H:%M'))
+    heatmap_data = heatmap_data.reindex(time_order)
 
     # Adjust data: Replace zero values with 0.1 for log scale while keeping the legend showing "0"
     #heatmap_data_no_zero = heatmap_data.replace(0, 0.05)  
@@ -261,7 +266,6 @@ def combined_activity_chart(activity_df):
         [0.95, '#DCE319'],   # Bright Yellow
         [1.0, '#FDE725']     # Light Yellow
     ]
-
 
 
     # Create the heatmap visualization
