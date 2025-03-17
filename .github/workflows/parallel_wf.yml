@@ -119,7 +119,7 @@ jobs:
             --log-level DEBUG \
             --allow-other \
             --daemon
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/ /tmp/osn_bucket/ubna_data_05 \
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_05/ /tmp/osn_bucket/ubna_data_05 \
             --vfs-cache-mode off \
             --log-level DEBUG \
             --allow-other \
@@ -217,7 +217,10 @@ jobs:
             EOF
 
             #./docker_runs/run_frognet.sh
-            
+            pgrep -f ./docker_runs/run_frognet.sh
+            ps aux | grep ./docker_runs/run_frognet.sh
+
+
 
             #echo "done with frognet model..starting bat-detect"
 

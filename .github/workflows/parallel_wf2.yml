@@ -55,6 +55,6 @@ jobs:
                 cat new_directories.txt
                 echo "----------------------"
             
-                chmod +x ./docker_runs/run_frognet_part2.sh
+                sudo chmod +x ./docker_runs/run_frognet_part2.sh
                 ./docker_runs/run_frognet_part2.sh
             

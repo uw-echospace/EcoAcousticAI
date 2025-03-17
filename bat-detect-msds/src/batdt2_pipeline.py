@@ -22,7 +22,7 @@ import sys
 sys.path.append(str(Path.cwd()))
 sys.path.append(str(Path.cwd() / "src/models/bat_call_detector/batdetect2/"))
 
-from cfg import get_config
+from src.cfg import get_config
 from pipeline import pipeline
 from utils.utils import gen_empty_df, convert_df_ravenpro
 
@@ -715,11 +715,13 @@ def plot_cumulative_activity(activity_df, data_params, group, save=True):
     plt.legend(loc=3, fontsize=(2*len(plot_dates)**0.5))
     plt.grid(which='both')
     plt.tight_layout()
-    cum_plots_dir = f'{Path(__file__).parent}/../output_dir/cumulative_plots'
+    cum_plots_dir = f'{Path(__file__).parent}/../output_dir/cumulative_plots/2023'
     if save:
-        plt.savefig(f'{cum_plots_dir}/cumulative_activity__{group}{data_params["site"].split()[0]}_{data_params["resample_tag"]}.png', 
+        plt.savefig(f'{cum_plots_dir}/cumulative_activity__2023_{group}{data_params["site"].split()[0]}_{data_params["resample_tag"]}.png', 
                     bbox_inches='tight')
-    plt.show()
+        file = f'{cum_plots_dir}/cumulative_activity__{group}{data_params["site"].split()[0]}_{data_params["resample_tag"]}.png'
+        print(file)
+    #plt.show()
 
 def delete_segments(necessary_paths):
     """

@@ -30,7 +30,7 @@ jobs:
               cat new_directories.txt
               echo "----------------------"
 
-              chmod +x ./docker_runs/run_batdetect_part3.sh
+              sudo chmod +x ./docker_runs/run_batdetect_part3.sh
               ./docker_runs/run_batdetect_part3.sh
 
             rm -f new_directories.txt

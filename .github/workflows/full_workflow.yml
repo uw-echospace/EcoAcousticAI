@@ -90,7 +90,7 @@ jobs:
             echo "after fusermount"
 
             # Step 3: Mount the FUSE filesystem with rclone using allow_other 
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/recover-20250127/UBNA_022/ /tmp/osn_bucket/ \
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/recover-20250127/UBNA_026/ /tmp/osn_bucket/ \
             --vfs-cache-mode off \
             --log-level DEBUG \
             --allow-other \

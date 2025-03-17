@@ -4,11 +4,11 @@ import json
 
 # Define the directory containing the filelist files and rclone mount directory
 metadata_dir = './osn_bucket_metadata/'
-#rclone_mount_dir = '/tmp/osn_bucket/'  # The directory where your rclone mount is located
-rclone_mount_dir = '/recordings_2023/'
+rclone_mount_dir = '/tmp/osn_bucket/ubna_data_01'  # The directory where your rclone mount is located
+#rclone_mount_dir = '/recordings_2023/'
 
 # Directories and corresponding filelist files
-directories = ['ubna_data_01', 'ubna_data_02']#, 'ubna_data_03', 'ubna_data_04']
+directories = ['ubna_data_01', 'ubna_data_02', 'ubna_data_03', 'ubna_data_04', 'ubna_data_05']
 filelist_files = ['ubna01_wav_files.txt', 'ubna02_wav_files.txt', 'ubna03_wav_files.txt', 'ubna04_wav_files.txt' 'ubna05_wav_files.txt']
 
 # Function to read file list from a file
@@ -16,13 +16,6 @@ def read_filelist(file_list_path):
     with open(file_list_path, "r") as f:
         return set(f.read().splitlines())
 
-# Function to get the list of files in the specified directory
-'''
-def get_files_from_rclone(directory):
-    return set(os.path.relpath(os.path.join(root, file), directory)
-               for root, _, files in os.walk(directory)
-               for file in files)
-'''
 
 def get_files_from_rclone(directory):
     current_files = set()

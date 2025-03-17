@@ -1,19 +1,30 @@
-# Build from Python 3.8 slim
+# Use a Python 3.9 slim base image
 FROM python:3.9-slim
 
-# Install required packages while keeping the image small
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg sox && rm -rf /var/lib/apt/lists/*
+# Install necessary dependencies for Micromamba
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    bzip2 \
+    ca-certificates \
+    libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install required Python packages
-RUN pip3 install numpy scipy librosa bottle resampy
+# Install Micromamba
+RUN wget https://github.com/mamba-org/mamba/releases/download/0.26.0/micromamba-linux-$(uname -m) -O /usr/local/bin/micromamba && \
+    chmod +x /usr/local/bin/micromamba
 
-# Install Tensforflow
-RUN pip3 install tensorflow 
+# Set environment variables for Micromamba
+ENV MAMBA_ROOT_PREFIX=/opt/micromamba
+ENV PATH=$MAMBA_ROOT_PREFIX/bin:$PATH
 
-# Import all scripts
+# Create and activate the environment using micromamba (with conda-forge channel)
+RUN micromamba create -y -n myenv python=3.9 numpy scipy librosa resampy ffmpeg sox tensorflow -c conda-forge
+
+# Activate the environment by default
+RUN echo "micromamba activate myenv" >> ~/.bashrc
+
+# Copy your Python scripts into the container
 COPY . ./
 
-# Add entry point to run the script
-#ENTRYPOINT [ "python3" ]
-#CMD [ "bat_ident.py" ]
-CMD ["python3", "bat_ident.py"]
+# Set the entrypoint to run your script using the Micromamba environment
+CMD ["bash", "-c", "source ~/.bashrc && python3 bat_ident.py"]
