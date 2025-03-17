@@ -236,8 +236,12 @@ def display_summary_statistics(combined_df):
 # Create the heatmap
 def combined_activity_chart(activity_df):
     # Extract Time of Day
-    # Reset MultiIndex and set 'start_time' as the index
-    activity_df = activity_df.reset_index().set_index('start_time')
+    # Ensure the index is properly set to 'start_time'
+    if 'start_time' in activity_df.columns:
+        activity_df = activity_df.reset_index(drop=False).set_index('start_time')
+
+    # Fix: Handle duplicate indices by grouping and summing counts
+    activity_df = activity_df.groupby(activity_df.index).sum()
     
     # Now you can apply strftime
     activity_df['time_of_day'] = activity_df.index.strftime('%H:%M')
