@@ -82,15 +82,44 @@ jobs:
             echo "no_check_bucket = true" >> ~/.config/rclone/rclone.conf
 
             cd /home/ubuntu/
-            mkdir -p /tmp/osn_bucket/
-            chmod 777 /tmp/osn_bucket/
+            mkdir -p /tmp/osn_bucket/ubna_data_01
+            mkdir -p /tmp/osn_bucket/ubna_data_02
+            mkdir -p /tmp/osn_bucket/ubna_data_03
+            mkdir -p /tmp/osn_bucket/ubna_data_04
+            mkdir -p /tmp/osn_bucket/ubna_data_05
+
+            chmod 777 /tmp/osn_bucket/ubna_data_01
+            chmod 777 /tmp/osn_bucket/ubna_data_02
+            chmod 777 /tmp/osn_bucket/ubna_data_03
+            chmod 777 /tmp/osn_bucket/ubna_data_04
+            chmod 777 /tmp/osn_bucket/ubna_data_05
 
             sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
 
             echo "after fusermount"
 
             # Step 3: Mount the FUSE filesystem with rclone using allow_other 
-            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/recover-20250127/UBNA_026/ /tmp/osn_bucket/ \
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_01/ /tmp/osn_bucket/ubna_data_01 \
+            --vfs-cache-mode off \
+            --log-level DEBUG \
+            --allow-other \
+            --daemon
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_02/ /tmp/osn_bucket/ubna_data_02 \
+            --vfs-cache-mode off \
+            --log-level DEBUG \
+            --allow-other \
+            --daemon
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_03/ /tmp/osn_bucket/ubna_data_03 \
+            --vfs-cache-mode off \
+            --log-level DEBUG \
+            --allow-other \
+            --daemon
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/ /tmp/osn_bucket/ubna_data_04 \
+            --vfs-cache-mode off \
+            --log-level DEBUG \
+            --allow-other \
+            --daemon
+            rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_04/ /tmp/osn_bucket/ubna_data_05 \
             --vfs-cache-mode off \
             --log-level DEBUG \
             --allow-other \
@@ -155,8 +184,8 @@ jobs:
           echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
           chmod 600 ~/.ssh/jetstream2_key
           ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
-          
-      - name: Process data in Docker
+
+      - name: Run Frognet Part 1
         run: |
             SSH_KEY=$HOME/.ssh/jetstream2_key
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
@@ -216,38 +245,6 @@ jobs:
             echo "starting bat-detect"
 
             ./docker_runs/run_batdetect_part1.sh
-
-  run_batdetect_part2:
-    needs: unshelve-and-ready-instance
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up SSH Key for Remote Access
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
-          chmod 600 ~/.ssh/jetstream2_key
-          ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
-
-      - name: Run Batdetect Part 1
-        run : |
-                SSH_KEY=$HOME/.ssh/jetstream2_key
-                ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
-                cd /home/ubuntu/EcoAcousticAI/
-                pwd
-                
-                dos2unix new_directories.txt
-                sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
-                sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
-            
-                echo "Contents of new_directories.txt:"
-                cat new_directories.txt
-                echo "----------------------"
-            
-                chmod +x ./docker_runs/run_batdetect_part2.sh
-            
-                echo "starting bat-detect-part2"
-            
-                ./docker_runs/run_batdetect_part2.sh
 
 
 

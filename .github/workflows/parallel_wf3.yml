@@ -2,13 +2,13 @@ name: Model Run Part 3 (Resume)
 
 on:
   workflow_run:
-    workflows: ["Model Run Part 2 (Resume)"]  # Name of the first workflow
+    workflows: ["Parallel Part 2"]  # Name of the first workflow
     types:
       - completed
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  resume-docker:
+  bat_detect_part3:
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -30,16 +30,15 @@ jobs:
               cat new_directories.txt
               echo "----------------------"
 
-              chmod +x run_docker_part3.sh
-              ./run_docker_part3.sh
+              chmod +x ./docker_runs/run_batdetect_part3.sh
+              ./docker_runs/run_batdetect_part3.sh
 
-            # add code to 
             rm -f new_directories.txt
-            sudo umount /tmp/osn_bucket/
+            #sudo umount /tmp/osn_bucket/
 
   shelve-instance:
     runs-on: ubuntu-latest
-    needs: resume-docker  # <-- This makes sure it runs ONLY after the first job completes
+    needs: bat_detect_part3  # <-- This makes sure it runs ONLY after the first job completes
     if: always()
     steps:
         - name: Install OpenStack CLI
