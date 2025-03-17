@@ -16,9 +16,6 @@ third_files=$(( total_files / 3 ))  # Size of one third
 # Split the files into three thirds
 first_third_end=$(( third_files - 1 ))  #
 
-  # Calculate the midpoint to split the list into two halves
-  #half_files=$(( ${#files[@]} / 2 ))  # Get the index for the first half
-
   # Iterate through the first half of the files
   for ((i=0; i<=first_third_end; i++)); do
     file="${files[$i]}"

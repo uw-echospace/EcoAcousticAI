@@ -35,3 +35,4 @@ files=($(find "$directory" -type f))  # List of all files in the directory
     done
     
   done
+done < new_directories.txt
