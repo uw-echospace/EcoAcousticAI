@@ -2,8 +2,8 @@ name: Parallel Birdnet and Batdetect
 
 on:
   schedule:
-    - cron: '0 16 * * 1'  # 8 AM PT (16:00 UTC) every Monday - Unshelve instance
-    - cron: '0 2 * * 2'   # 6 PM PT (02:00 UTC Tuesday) - Shelve instance
+    - cron: '0 0 * * 0'  # Midnight UTC on Sunday
+    #- cron: '0 2 * * 2'   # 6 PM PT (02:00 UTC Tuesday) - Shelve instance
   workflow_dispatch:  # Allows manual trigger
 
 jobs:

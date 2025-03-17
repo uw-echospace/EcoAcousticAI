@@ -1,11 +1,21 @@
-directory="/tmp/osn_bucket/"
+#!/bin/bash
+
+# Loop through each directory in the array
+while IFS= read -r directory; do
+  echo "Running Docker on directory:" $directory
+
+  if [ -z "$(ls -A "$directory")" ]; then
+      echo "Skipping empty directory."
+      continue
+  fi
+
 files=($(find "$directory" -type f))  # List of all files in the directory
 
   # Calculate the midpoint to split the list into two halves
   half_files=$(( ${#files[@]} / 2 ))  # Get the index for the first half
 
   # Iterate through the first half of the files
-   for ((i=$half_files; i<${#files[@]}; i++)); do
+  for ((i=$half_files; i<${#files[@]}; i++)); do
     file="${files[$i]}"
     filename=$(basename "$file")  # Get the filename
 
@@ -23,3 +33,5 @@ files=($(find "$directory" -type f))  # List of all files in the directory
         echo "Skipping non-WAV file: $filename"
     fi
     done
+    
+  done
