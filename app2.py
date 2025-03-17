@@ -31,8 +31,10 @@ def extract_datetime_from_filename(filename):
                 break  # Stop once both date and time are found
 
         # Parse date and time
-        file_datetime = datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S")
-        return file_datetime
+        if date_str and time_str:
+            return datetime.strptime(f"{date_str} {time_str}", "%Y%m%d %H%M%S")
+        
+        return None  # Fallback for unexpected cases
  
     except (IndexError, ValueError):
         st.error("Filename format incorrect. Expected format: *_YYYYMMDD_HHMMSS.csv")
@@ -61,10 +63,9 @@ def safe_read_csv(file_path):
 
         # Rename columns containing 'scientific' or == 'class' to 'species'
         df.rename(columns={col: 'species' for col in df.columns if 'scientific' in col.lower() or col.lower() == 'class'}, inplace=True)
+        # Rename columns == 'buzz' to 'event'
+        df.rename(columns={col: 'event' for col in df.columns if col.lower() == 'buzz'}, inplace=True)
         
-        if 'buzz' in df.columns:
-            df.rename(columns={'buzz': 'event'}, inplace=True)
-            
         return df
         
     except pd.errors.EmptyDataError:
@@ -128,6 +129,15 @@ def combine_dataframes(manila_path):
                 })
             )
 
+            # Replace remaining invalid or empty 'class' values with NaN
+            activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
+    
+            # Add a new column for plotting, e.g., filling missing intervals with zero values
+            activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
+    
+            # Final cleanup for invalid or empty rows
+            activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
+
         if 'event' in combined_df.columns:
             # Resample to 10-minute intervals
             activity_df = (
@@ -141,20 +151,8 @@ def combine_dataframes(manila_path):
                 })
             )
 
-        if 'species' in activity_df.columns:
             # Replace remaining invalid or empty 'class' values with NaN
-            activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
-    
-            # Add a new column for plotting, e.g., filling missing intervals with zero values
-            activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
-    
-            # Final cleanup for invalid or empty rows
-            activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
-
-
-        if 'event' in activity_df.columns:
-            # Replace remaining invalid or empty 'class' values with NaN
-            activity_df['event'] = activity_df['class'].replace({0: None, '0': None, 'No Data': None})
+            activity_df['event'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
     
             # Add a new column for plotting, e.g., filling missing intervals with zero values
             activity_df['heatmap_value'] = activity_df['event_count'].fillna(0)
@@ -517,11 +515,20 @@ elif page == "dashboard":
                                 text_content = f.read()
                                 st.text_area("📄 File Contents", text_content, height=300)
 
-                    display_summary_statistics(combined_df)
-                    st.write("### Aggregated Activity Table")
-                    st.dataframe(activity_df)
-                    st.write("### EcoAcoustic Activity Heatmap")
-                    #combined_activity_chart(activity_df)
+                    
+                    # Display summary statistics only if data exists
+                    if not combined_df.empty:
+                        display_summary_statistics(combined_df)
+
+                    # Display tables and charts only if they exist
+                    if not activity_df.empty:
+                        st.write("### Aggregated Activity Table")
+                        st.dataframe(activity_df)
+
+                        st.write("### EcoAcoustic Activity Heatmap")
+                        #combined_activity_chart(activity_df)
+                    else:
+                        st.info("No aggregated activity data available.")
                 else:
                     st.info("📂 No data files found in this directory.")
 
