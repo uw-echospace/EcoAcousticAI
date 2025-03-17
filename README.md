@@ -96,6 +96,24 @@ EcoAcousticAI/
     - One stop shop for summaries of model results
 
 
+## Github Actions
+
+```
+.github/
+│   └── workflows/
+│       ├── full_workflow.yml
+│       ├── move_manila_files.yml
+│       ├── sync_battybirdnet.yml
+│       ├── workflow_part2.yml
+│       ├── workflow_part3.yml
+
+```
+
+Within ```.github/workflows/```  are 5 Github actions that automate our pipeline
+
+More information can be found in [Workflows Documentation](.github/workflows/README.md)
+
+
 ## Setup Streamlit App
 
 ### Steps to Run `app2.py` from GitHub Repo
