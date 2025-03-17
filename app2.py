@@ -130,7 +130,7 @@ def combine_dataframes(manila_path):
                 'species': 'first',  # Ensures each row is unique for each species
                 'species_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
-            }).reset_index(drop=True)
+            })
             
             # Add total_count and unique_species_count for each time frame
             activity_df['total_count'] = activity_df.groupby('start_time')['species_count'].transform('sum')
@@ -157,7 +157,7 @@ def combine_dataframes(manila_path):
                 'event': 'first',  # Ensures each row is unique for each species
                 'event_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
-            }).reset_index(drop=True)
+            })
 
             # Add total_count and unique_species_count for each time frame
             activity_df['total_count'] = activity_df.groupby('start_time')['event_count'].transform('sum')
