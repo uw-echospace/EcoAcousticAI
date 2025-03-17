@@ -43,7 +43,7 @@
 #     fi
     
 #   done
-directory = /tmp/osn_bucket/
+directory="/tmp/osn_bucket/"
 files=($(find "$directory" -type f))  # List of all files in the directory
 
   # Calculate the midpoint to split the list into two halves
