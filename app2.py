@@ -244,7 +244,7 @@ def combined_activity_chart(activity_df):
 
 
     # Now you can apply strftime
-    activity_df['time_of_day'] = activity_df.index.strftime('%H:%M')
+    activity_df['time_of_day'] = activity_df.index.get_level_values('start_time').strftime('%H:%M')
 
     # Ensure full 24-hour coverage
     full_time_range = pd.date_range('00:00', '23:59', freq='1min').strftime('%H:%M')
