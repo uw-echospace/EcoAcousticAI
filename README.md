@@ -27,6 +27,52 @@ The Union Bay Natural Area (UBNA) is an ecologically significant urban wildlife 
 
 See Acknowledgments section for adapted repository links
 
+## Repository Structure
+
+EcoAcousticAI/
+│
+├── .github/
+│   └── workflows/
+│       ├── full_workflow.yml
+│       ├── move_manila_files.yml
+│       ├── sync_battybirdnet.yml
+│       ├── workflow_part2.yml
+│       ├── workflow_part3.yml
+│
+├── assets/                     # Static images, logos, or visual elements
+│
+│
+├── bat-detect-msds/            # Bat-detect model files
+│
+├── birdnetlib/                 # BirdNET library for species detection
+│
+├── BattyBirdNET-Analyzer/      # Adapted BirdNET model specific for bat calls
+│
+├── buzzfindr/                  # BuzzFindr files for feeding behavior detection
+│
+├── osn_bucket_metadata/        # Metadata for OSN bucket contents
+│
+├── .gitignore
+├── .gitmodules
+├── LICENSE
+├── README.md
+│
+├── app2.py                     # Streamlit app files for visualizations
+│
+├── change_owner.sh
+├── disk_space.sh
+├── move_manila_files.py        # Script for organizing manila file structure
+├── new_data.py
+│
+├── requirements.txt
+│
+├── run_buzzfindr.py
+├── run_buzzfindr.sh
+├── run_docker.sh
+├── run_docker_part2.sh
+├── run_frognet.sh
+|
+
 
 ## Pipeline Workflow
 
@@ -124,11 +170,11 @@ Further developments include enhancing model adaptability, pipeline scalability,
 ## Acknowledgments
 
 We extend a special thank you to our sponsors, Wu-Jung Lee and Aditya Krishna, for their invaluable mentorship. 
-[1] Kahl, S., et al. BirdNET-Analyzer. GitHub. https://github.com/kahst/BirdNET-Analyzer.
-[2] Zinke, R., et al. Batty-BirdNET-Analyzer. GitHub. https://github.com/rdz-oss/BattyBirdNET-Analyzer.
-[3] Mac Aodha, O., et al. BatDetect2. GitHub. https://github.com/macaodha/batdetect2.
-[4] Jameson, J. (n.d.). Buzzfindr. GitHub. https://github.com/joelwjameson/buzzfindr 
-[5] Code Author: Aditya Krishna, UW Echospace
+- [1] Kahl, S., et al. BirdNET-Analyzer. GitHub. https://github.com/kahst/BirdNET-Analyzer.
+- [2] Zinke, R., et al. Batty-BirdNET-Analyzer. GitHub. https://github.com/rdz-oss/BattyBirdNET-Analyzer.
+- [3] Mac Aodha, O., et al. BatDetect2. GitHub. https://github.com/macaodha/batdetect2.
+- [4] Jameson, J. (n.d.). Buzzfindr. GitHub. https://github.com/joelwjameson/buzzfindr 
+- [5] Code Author: Aditya Krishna, UW Echospace
 
 
 
