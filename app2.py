@@ -126,18 +126,22 @@ def combine_dataframes(manila_path):
 
         if 'species' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = combined_df.resample('10min').apply(lambda group: pd.Series({
-                'species_count': group['species'].nunique(),  # Ensures this is a DataFrame column
-                'species': ', '.join(group['species'].unique()),  # Ensures this is a DataFrame column
-                'confidence': group['confidence'].mean() if 'confidence' in group.columns else None
-            }))
+            activity_df = combined_df.groupby(['species', pd.Grouper(key='start_time', freq='10min')]).agg({
+                'species': 'first',  # Ensures each row is unique for each species
+                'species_count': 'count',  # Each row now reflects species count
+                'confidence': 'mean' if 'confidence' in combined_df.columns else None
+            }).reset_index()
+            
+            # Add total_count and unique_species_count for each time frame
+            activity_df['total_count'] = activity_df.groupby('start_time')['species_count'].transform('sum')
+            activity_df['unique_species_count'] = activity_df.groupby('start_time')['species'].transform('nunique')
             
             # Replace remaining invalid or empty 'class' values with NaN
             if not activity_df.empty and 'species' in activity_df.columns:
                 activity_df['species'] = activity_df['species'].replace({0: None, '0': None, 'No Data': None})
     
                 # Add a new column for plotting, e.g., filling missing intervals with zero values
-                activity_df['heatmap_value'] = activity_df['species_count'].fillna(0)
+                activity_df['heatmap_value'] = activity_df['total_activity'].fillna(0)
     
                 # Final cleanup for invalid or empty rows
                 activity_df = activity_df.dropna(subset=['species', 'heatmap_value'], how='all')
@@ -149,11 +153,15 @@ def combine_dataframes(manila_path):
 
         elif 'event' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = combined_df.resample('10min').apply(lambda group: pd.Series({
-                'event_count': group['event'].nunique(),  # Ensures this is a DataFrame column
-                'event': ', '.join(group['event'].unique()),  # Ensures this is a DataFrame column
-                'confidence': group['confidence'].mean() if 'confidence' in group.columns else None
-            }))
+            activity_df = combined_df.groupby(['event', pd.Grouper(key='start_time', freq='10min')]).agg({
+                'event': 'first',  # Ensures each row is unique for each species
+                'event_count': 'count',  # Each row now reflects species count
+                'confidence': 'mean' if 'confidence' in combined_df.columns else None
+            }).reset_index()
+
+            # Add total_count and unique_species_count for each time frame
+            activity_df['total_count'] = activity_df.groupby('start_time')['event_count'].transform('sum')
+            activity_df['unique_event_count'] = activity_df.groupby('start_time')['event'].transform('nunique')
 
             # Replace remaining invalid or empty 'class' values with NaN
             if not activity_df.empty and 'event' in activity_df.columns:
