@@ -126,7 +126,7 @@ def combine_dataframes(manila_path):
 
         if 'species' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = combined_df.groupby(['species', pd.Grouper(key='start_time', freq='10min')]).agg({
+            activity_df = combined_df.groupby(['species', pd.Grouper(freq='10min')]).agg({
                 'species': 'first',  # Ensures each row is unique for each species
                 'species_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
@@ -153,7 +153,7 @@ def combine_dataframes(manila_path):
 
         elif 'event' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = combined_df.groupby(['event', pd.Grouper(key='start_time', freq='10min')]).agg({
+            activity_df = combined_df.groupby(['event', pd.Grouper(freq='10min')]).agg({
                 'event': 'first',  # Ensures each row is unique for each species
                 'event_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
