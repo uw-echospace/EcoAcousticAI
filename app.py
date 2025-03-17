@@ -648,8 +648,8 @@ elif page == "dashboard":
                     st.info("🖼️ No cumulative activity plots found in this directory.")
             elif not is_bat_folder:
                 pass  # Silent behavior for non-bat folders
-        else:
-            st.info("🖼️ No cumulative activity plots found in this directory.")
+            else:
+                st.info("🖼️ No cumulative activity plots found in this directory.")
         
         else:
             st.warning("⚠️ No directories found in Manila storage.")
