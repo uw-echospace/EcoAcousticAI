@@ -190,11 +190,9 @@ def combined_activity_chart(activity_df):
 
     # Check if activity_df is None or empty first
     if activity_df is None:
-        #print("Warning: activity_df is None, cannot create heatmap")
         return None
     
     if activity_df.empty:
-        #print("Warning: activity_df is empty, cannot create heatmap")
         return None
     # Make a copy to avoid modifying the original dataframe
     copy_df = activity_df.copy()
@@ -209,71 +207,47 @@ def combined_activity_chart(activity_df):
         else:
             raise KeyError("The 'start_time' column is missing from activity_df and not found in index.")
     
-    # Check for species column
+    # Process data differently based on column presence
     if 'species' in copy_df.columns:
-    
-        # Ensure data types
-        if 'start_time' in copy_df.columns:
-            copy_df['start_time'] = pd.to_datetime(copy_df['start_time'])
-        copy_df['species'] = copy_df['species'].astype(str)
-        
-        # Extract time of day
-        if 'start_time' in copy_df.columns:
-            copy_df['time_of_day'] = copy_df['start_time'].dt.strftime('%H:%M')
-        else:
-            copy_df['time_of_day'] = copy_df.index.strftime('%H:%M')
-        
-        # Ensure we have heatmap_value column
-        if 'heatmap_value' not in copy_df.columns:
-            if 'species_count' in copy_df.columns:
-                copy_df['heatmap_value'] = copy_df['species_count'].fillna(0)
-            else:
-                raise KeyError("Neither 'heatmap_value' nor 'species_count' columns exist in the dataframe.")
-        
-        # Aggregate duplicate timestamps
-        pivot_data = copy_df.groupby(['time_of_day', 'species']).agg({
-            'heatmap_value': 'sum'
-        }).reset_index()
-        
-        # Create the heatmap data
-        heatmap_data = pivot_data.pivot_table(
-            index='time_of_day',
-            columns='species',
-            values='heatmap_value',
-            fill_value=0 
-        )
-
+        column_category = 'species'
+        category_title = 'Species Class'
     elif 'event' in copy_df.columns:
-        # Ensure data types
-        if 'start_time' in copy_df.columns:
-            copy_df['start_time'] = pd.to_datetime(copy_df['start_time'])
-        copy_df['event'] = copy_df['event'].astype(str)
-        
-        # Extract time of day
-        if 'start_time' in copy_df.columns:
-            copy_df['time_of_day'] = copy_df['start_time'].dt.strftime('%H:%M')
+        column_category = 'event'
+        category_title = 'Event'
+    else:
+        raise KeyError("Neither 'species' nor 'event' columns exist in the dataframe.")
+    
+    # Ensure data types
+    if 'start_time' in copy_df.columns:
+        copy_df['start_time'] = pd.to_datetime(copy_df['start_time'])
+    copy_df[column_category] = copy_df[column_category].astype(str)
+    
+    # Extract time of day
+    if 'start_time' in copy_df.columns:
+        copy_df['time_of_day'] = copy_df['start_time'].dt.strftime('%H:%M')
+    else:
+        copy_df['time_of_day'] = copy_df.index.strftime('%H:%M')
+    
+    # Ensure we have heatmap_value column
+    if 'heatmap_value' not in copy_df.columns:
+        value_col = f"{column_category}_count"
+        if value_col in copy_df.columns:
+            copy_df['heatmap_value'] = copy_df[value_col].fillna(0)
         else:
-            copy_df['time_of_day'] = copy_df.index.strftime('%H:%M')
-        
-        # Ensure we have heatmap_value column
-        if 'heatmap_value' not in copy_df.columns:
-            if 'event_count' in copy_df.columns:
-                copy_df['heatmap_value'] = copy_df['event_count'].fillna(0)
-            else:
-                raise KeyError("Neither 'heatmap_value' nor 'event_count' columns exist in the dataframe.")
-        
-        # Aggregate duplicate timestamps
-        pivot_data = copy_df.groupby(['time_of_day', 'event']).agg({
-            'heatmap_value': 'sum'
-        }).reset_index()
-        
-        # Create the heatmap data
-        heatmap_data = pivot_data.pivot_table(
-            index='time_of_day',
-            columns='event',
-            values='heatmap_value',
-            fill_value=0 
-        )
+            raise KeyError(f"Neither 'heatmap_value' nor '{value_col}' columns exist in the dataframe.")
+    
+    # Aggregate duplicate timestamps
+    pivot_data = copy_df.groupby(['time_of_day', column_category]).agg({
+        'heatmap_value': 'sum'
+    }).reset_index()
+    
+    # Create the heatmap data
+    heatmap_data = pivot_data.pivot_table(
+        index='time_of_day',
+        columns=column_category,
+        values='heatmap_value',
+        fill_value=0 
+    )
 
     # Generate a complete list of time slots at 10-minute intervals (00:00 to 23:50)
     all_times = []
@@ -291,12 +265,9 @@ def combined_activity_chart(activity_df):
         for minute in range(0, 60, 30):
             tick_values.append(f"{hour:02d}:{minute:02d}")
             tick_text.append(f"{hour:02d}:{minute:02d}")
-
-    # Adjust data: Replace zero values with 0.1 for log scale while keeping the legend showing "0"
-    #heatmap_data_no_zero = heatmap_data.replace(0, 0.05)  
     
     custom_viridis_spectrum = [
-        [0.0, '#2b0136'],    # Darkest Purple (this is the only added color so we could see a zero-value more clearly)
+        [0.0, '#2b0136'],    # Darkest Purple
         [0.05, '#440154'],   # Deep Purple
         [0.1, '#481567'],    # Violet
         [0.15, '#482677'],   # Violet transitioning to Blue
@@ -319,7 +290,6 @@ def combined_activity_chart(activity_df):
         [1.0, '#FDE725']     # Light Yellow
     ]
 
-
     # Create the heatmap visualization
     fig = go.Figure(data=go.Heatmap(
         z=heatmap_data.values,
@@ -327,36 +297,28 @@ def combined_activity_chart(activity_df):
         y=heatmap_data.index,
         xgap=1,
         zmin=0,
-
         colorscale=custom_viridis_spectrum
     ))
 
-    # Check for species column
-    if 'species' in copy_df.columns:
-        fig.update_layout(
-            title={
-                'text': 'UBNA Combined Activity Dashboard<br><span style="font-size:12px; color:grey;">If the downloaded PNG is blank, click the home icon to reset axes.</span>',
-            },
-            xaxis_title='Species Class',
-            yaxis_title='Time of Day (24-hour format)',
-            yaxis=dict(autorange='reversed'), # Flip Y-axis so 00:00 is on top
-            coloraxis_colorbar=dict(title="Detections"),
-            height=1200,
-            width=500
-        )
-
-    elif 'event' in copy_df.columns:
-        fig.update_layout(
-            title={
-                'text': 'UBNA Combined Activity Dashboard<br><span style="font-size:12px; color:grey;">If the downloaded PNG is blank, click the home icon to reset axes.</span>',
-            },
-            xaxis_title='Event',
-            yaxis_title='Time of Day (24-hour format)',
-            yaxis=dict(autorange='reversed'), # Flip Y-axis so 00:00 is on top
-            coloraxis_colorbar=dict(title="Detections"),
-            height=1200,
-            width=500
-        )
+    # Calculate dynamic width based on number of categories
+    num_categories = len(heatmap_data.columns)
+    # Base width for time axis + minimum width per category + some padding
+    dynamic_width = max(350, min(500, 200 + (num_categories * 80)))
+    
+    # Update layout with dynamic width
+    fig.update_layout(
+        title={
+            'text': 'UBNA Combined Activity Dashboard<br><span style="font-size:12px; color:grey;">If the downloaded PNG is blank, click the home icon to reset axes.</span>',
+        },
+        xaxis_title=category_title,
+        yaxis_title='Time of Day (24-hour format)',
+        yaxis=dict(autorange='reversed'),  # Flip Y-axis so 00:00 is on top
+        coloraxis_colorbar=dict(title="Detections"),
+        height=1200,
+        width=dynamic_width,  # Use dynamic width based on number of categories
+        margin=dict(l=50, r=50, b=100, t=100, pad=4)
+    )
+    
     st.plotly_chart(fig, use_container_width=True)
 
 
