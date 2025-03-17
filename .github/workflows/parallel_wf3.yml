@@ -1,4 +1,4 @@
-name: Model Run Part 3 (Resume)
+name: Parallel Part 3
 
 on:
   workflow_run:

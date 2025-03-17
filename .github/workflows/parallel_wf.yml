@@ -136,7 +136,7 @@ jobs:
             git stash 
             git pull -v origin main
 
-            python3 new_data.py
+            python3 new_data1.py
             cat new_directories.txt
 
       - name: Mount Manila Storage
