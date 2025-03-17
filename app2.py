@@ -131,6 +131,10 @@ def combine_dataframes(manila_path):
                 'species_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
             })
+
+            # Fix the MultiIndex issue by resetting the index and setting 'start_time' as the index
+            activity_df = activity_df.reset_index(drop=False).set_index('start_time')
+
             print(activity_df.index)
             print(activity_df.columns)
             # Add total_count and unique_species_count for each time frame
@@ -159,6 +163,9 @@ def combine_dataframes(manila_path):
                 'event_count': 'count',  # Each row now reflects species count
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
             })
+            # Fix the MultiIndex issue by resetting the index and setting 'start_time' as the index
+            activity_df = activity_df.reset_index(drop=False).set_index('start_time')
+            
             print(activity_df.index)
             print(activity_df.columns)
             # Add total_count and unique_species_count for each time frame
