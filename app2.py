@@ -126,16 +126,11 @@ def combine_dataframes(manila_path):
 
         if 'species' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = pd.DataFrame(
-                combined_df[['species_count', 'species', 'confidence']]
-                .drop_duplicates()
-                .resample('10min')  # Resample to 10min intervals
-                .agg({
-                    'species_count': 'sum',  # Sum species count per 10-minute interval
-                    'species': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common valid species
-                    'confidence': 'mean'  # Average confidence for the interval
-                })
-            )
+            activity_df = combined_df.resample('10min').apply(lambda group: pd.Series({
+                'species_count': group['species'].nunique(),  # Ensures this is a DataFrame column
+                'species': ', '.join(group['species'].unique()),  # Ensures this is a DataFrame column
+                'confidence': group['confidence'].mean() if 'confidence' in group.columns else None
+            }))
             
             # Replace remaining invalid or empty 'class' values with NaN
             if not activity_df.empty and 'species' in activity_df.columns:
@@ -154,16 +149,11 @@ def combine_dataframes(manila_path):
 
         elif 'event' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = pd.DataFrame(
-                combined_df[['event_count', 'event', 'confidence']]
-                .drop_duplicates()
-                .resample('10min')  # Resample to 10min intervals
-                .agg({
-                    'event_count': 'sum',  # Sum species count per 10-minute interval
-                    'event': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # Most common valid species
-                    'confidence': 'mean'  # Average confidence for the interval
-                })
-            )
+            activity_df = combined_df.resample('10min').apply(lambda group: pd.Series({
+                'event_count': group['event'].nunique(),  # Ensures this is a DataFrame column
+                'event': ', '.join(group['event'].unique()),  # Ensures this is a DataFrame column
+                'confidence': group['confidence'].mean() if 'confidence' in group.columns else None
+            }))
 
             # Replace remaining invalid or empty 'class' values with NaN
             if not activity_df.empty and 'event' in activity_df.columns:
