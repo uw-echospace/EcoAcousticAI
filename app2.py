@@ -377,8 +377,8 @@ elif page == "models":
                 transform: scale(1.02); /* Slight zoom on hover */
             }
             .model-logo {
-                width: 70px; /* Increased size for better clarity */
-                height: 70px;
+                width: 200px; /* Increased size for better clarity */
+                height: 200px;
                 border-radius: 50%;
                 object-fit: contain;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
