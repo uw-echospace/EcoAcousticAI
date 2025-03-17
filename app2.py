@@ -385,7 +385,8 @@ elif page == "models":
             }
             .model-text {
                 flex: 1;
-                font-family: 'Arial', sans-serif; /* More modern font */
+                font-family: 'Arial', sans-serif
+                color: #000 !important;
             }
             .model-title {
                 font-size: 1.2em;
