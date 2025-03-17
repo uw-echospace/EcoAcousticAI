@@ -275,10 +275,22 @@ def combined_activity_chart(activity_df):
             fill_value=0 
         )
 
-    # Sort the time_of_day index to ensure chronological order
-    time_order = sorted([t for t in heatmap_data.index], 
-                        key=lambda x: datetime.strptime(x, '%H:%M'))
-    heatmap_data = heatmap_data.reindex(time_order)
+    # Generate a complete list of time slots at 10-minute intervals (00:00 to 23:50)
+    all_times = []
+    for hour in range(24):
+        for minute in range(0, 60, 10):
+            all_times.append(f"{hour:02d}:{minute:02d}")
+    
+    # Reindex to ensure all times are included, even those without data
+    heatmap_data = heatmap_data.reindex(all_times, fill_value=0)
+
+    # Create tick values for every 30 minutes
+    tick_values = []
+    tick_text = []
+    for hour in range(24):
+        for minute in range(0, 60, 30):
+            tick_values.append(f"{hour:02d}:{minute:02d}")
+            tick_text.append(f"{hour:02d}:{minute:02d}")
 
     # Adjust data: Replace zero values with 0.1 for log scale while keeping the legend showing "0"
     #heatmap_data_no_zero = heatmap_data.replace(0, 0.05)  
