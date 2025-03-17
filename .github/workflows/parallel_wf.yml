@@ -177,7 +177,7 @@ jobs:
             #cd buzzfindr/
             #docker build -t buzzfindr-image .
 
-            cd ../birdnetlib
+            cd /home/ubuntu/EcoAcousticAI/birdnetlib
             docker build -t frog_bird .
   run_frognet:
     needs: unshelve-and-ready-instance
