@@ -118,7 +118,7 @@ def combine_dataframes(manila_path):
 
         if 'species' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = (
+            activity_df = pd.DataFrame(
                 combined_df[['species_count', 'species', 'confidence']]
                 .drop_duplicates()
                 .resample('10min')  # Resample to 10min intervals
@@ -141,7 +141,7 @@ def combine_dataframes(manila_path):
 
         if 'event' in combined_df.columns:
             # Resample to 10-minute intervals
-            activity_df = (
+            activity_df = pd.DataFrame(
                 combined_df[['species_count', 'species', 'confidence']]
                 .drop_duplicates()
                 .resample('10min')  # Resample to 10min intervals
