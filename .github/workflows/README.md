@@ -64,7 +64,7 @@ This workflow is designed to **resume model execution** following the completion
 
 This workflow ensures seamless continuation of the data pipeline by automatically handling the next steps after the initial model run which is needed since Github Actions can only run for 6 hours. Some models such as batdetect2 can take longer than 6 hours to run depending on how many files are ran at once.
 
-## Model Run Part 3 (Resume)**
+## ** Model Run Part 3 (Resume)**
 
 This workflow handles the **final stage** of the model pipeline, resuming processing from Part 2 and shelving the Jetstream2 instance when completed. It can also be triggered manually via `workflow_dispatch`.
 
@@ -106,7 +106,7 @@ This workflow handles the **final stage** of the model pipeline, resuming proces
 This workflow is the last of the main pipeline and ensures the instance is properly shelved to conserve resources.
 
 
-## Workflow Summary: **Organize Manila Files**
+## **Organize Manila Files**
 
 This workflow is designed to **clean up and organize output files** in the Manila storage system. It is independent of the main pipeline but runs on a regular schedule to maintain file structure and improve storage management.
 
