@@ -9,6 +9,11 @@ from datetime import datetime, timedelta
 
 st.set_page_config(layout="wide")
 
+# Function to resize images
+def resize_image(image_path, target_size):
+    img = Image.open(image_path)
+    return img.resize(target_size)
+    
 # Function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
     """Extracts datetime from a filename in format: '*_20210603_034102.csv'"""
@@ -400,7 +405,7 @@ elif page == "models":
         col1, col2 = st.columns([1, 5])
         
         with col1:
-            st.image(model['logo'], use_container_width=True)
+            st.image(resize_image(model["logo"],target_size=(300, 300)), use_container_width=False)
             
         with col2:
             st.markdown(f"### [{model['name']}]({model['url']})")
