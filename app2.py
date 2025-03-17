@@ -133,7 +133,7 @@ def combine_dataframes(manila_path):
             })
 
             # Fix the MultiIndex issue by resetting the index and setting 'start_time' as the index
-            activity_df = activity_df.reset_index(drop=False).set_index('start_time')
+            activity_df = activity_df.reset_index(drop=True).set_index('start_time')
 
             print(activity_df.index)
             print(activity_df.columns)
@@ -164,7 +164,7 @@ def combine_dataframes(manila_path):
                 'confidence': 'mean' if 'confidence' in combined_df.columns else None
             })
             # Fix the MultiIndex issue by resetting the index and setting 'start_time' as the index
-            activity_df = activity_df.reset_index(drop=False).set_index('start_time')
+            activity_df = activity_df.reset_index(drop=True).set_index('start_time')
             
             print(activity_df.index)
             print(activity_df.columns)
