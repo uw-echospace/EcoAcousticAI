@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Loop through each directory in the array
+# # Loop through each directory in the array
 # while IFS= read -r directory; do
 #   echo "Running Docker on directory:" $directory
 
@@ -8,8 +8,15 @@
 #       echo "Skipping empty directory."
 #       continue
 #   fi
-# # Get a list of all files in the directory
-#   files=($(find "$directory" -type f))  # List of all files in the directory
+
+#   # Run Docker for each directory
+#     docker run --rm \
+#         --mount type=bind,source=$directory,target=/app/frog_audio/ \
+#         --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/results/frogs/ \
+#         frognet:latest
+
+# done < new_directories.txt
+#files=($(find "$directory" -type f))  # List of all files in the directory
 
 #   # Calculate the midpoint to split the list into two halves
 #   half_files=$(( ${#files[@]} / 2 ))  # Get the index for the first half
@@ -36,10 +43,7 @@
 #     fi
     
 #   done
-
-# done < new_directories.txt
-
-directory="/tmp/osn_bucket/"
+directory = /tmp/osn_bucket/
 files=($(find "$directory" -type f))  # List of all files in the directory
 
   # Calculate the midpoint to split the list into two halves
@@ -55,15 +59,12 @@ files=($(find "$directory" -type f))  # List of all files in the directory
         echo "Running Docker for file: $filename"
 
 
-        # Run the second Docker command for bat-detect-msds processing
-        docker run --rm \
-            --mount type=bind,source=$directory,target=/app/recordings_2023/ \
-            --mount type=bind,source=/mnt/ecoacoustic-storage,target=/app/output_dir/ \
-            bat-detect-msds:latest python3 /app/bat-detect-msds/src/batdt2_pipeline.py \
-            --input_audio="/app/recordings_2023/$filename" \
-            --output_directory="/app/output_dir/" --run_model --csv
-    else
+       docker run --rm \
+              --mount type=bind,source=/tmp/osn_bucket/,target=/app/audio/ \
+              --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/results/frogs/ \
+              --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/results/birdnet_wa_all/ \
+              frog_bird:latest
+     else
         echo "Skipping non-WAV file: $filename"
     fi
-    
-  done
+    done
