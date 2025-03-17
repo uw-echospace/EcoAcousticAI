@@ -26,6 +26,7 @@ def get_files_from_rclone(directory):
         for file in files:
             full_path = os.path.join(root, file)
             cleaned_path = full_path.replace(dir_path, '')  # Clean path to make it relative to the mounted directory
+            print('cleaned_path')
             current_files.add(cleaned_path)
     
     return current_files
