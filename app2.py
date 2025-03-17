@@ -355,31 +355,48 @@ if page == "home":
 elif page == "models":
 
 
-    st.title("🌿 EcoAcoustic Pipeline Model Integration ")
+    st.title("🌿 EcoAcoustic Pipeline Model Integration")
 
+    # Improved CSS for better responsiveness and design
     st.markdown("""
-    <style>
-        .model-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;  /* Space between logo and text */
-            background-color: #f0f9f0;  /* Light green for eco theme */
-            border: 2px solid #4CAF50;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        .model-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: contain;
-        }
-        .model-text {
-            flex: 1;
-        }
-    </style>
+        <style>
+            .model-container {
+                display: flex;
+                align-items: center;
+                gap: 15px; /* Space between logo and text */
+                background-color: #f0f9f0; /* Light green for eco theme */
+                border: 2px solid #4CAF50;
+                border-radius: 10px;
+                padding: 15px;
+                margin-bottom: 15px;
+                transition: transform 0.2s; /* Hover effect */
+            }
+            .model-container:hover {
+                transform: scale(1.02); /* Slight zoom on hover */
+            }
+            .model-logo {
+                width: 70px; /* Increased size for better clarity */
+                height: 70px;
+                border-radius: 50%;
+                object-fit: contain;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
+            }
+            .model-text {
+                flex: 1;
+                font-family: 'Arial', sans-serif; /* More modern font */
+            }
+            .model-title {
+                font-size: 1.2em;
+                color: #4CAF50;
+            }
+            .model-description {
+                font-size: 0.95em;
+                color: #333;
+            }
+        </style>
     """, unsafe_allow_html=True)
+    
+
     
     st.markdown("""
     The EcoAcoustic pipeline integrates multiple specialized models to detect and identify multiple species (bats, birds, frogs) from audio recordings. Our pipeline includes the following models:    
@@ -419,15 +436,15 @@ elif page == "models":
         }
     ]
 
-    # Display each model entry
+    # Display each model entry with better structure
     for model in models:
         st.markdown(
             f"""
             <div class='model-container'>
-                <img class='model-logo' src='{model['logo']}' />
+                <img class='model-logo' src='{model['logo']}' alt='Logo for {model['name']}' />
                 <div class='model-text'>
-                    <b> <a href="{model['url']}" target="_blank">{model['name']}</a> </b><br>
-                    {model['description']}
+                    <div class='model-title'><b><a href="{model['url']}" target="_blank">{model['name']}</a></b></div>
+                    <div class='model-description'>{model['description']}</div>
                 </div>
             </div>
             """,
