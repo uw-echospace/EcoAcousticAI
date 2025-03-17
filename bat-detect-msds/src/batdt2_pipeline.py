@@ -22,7 +22,7 @@ import sys
 sys.path.append(str(Path.cwd()))
 sys.path.append(str(Path.cwd() / "src/models/bat_call_detector/batdetect2/"))
 
-from scfg import get_config
+from cfg import get_config
 from pipeline import pipeline
 from utils.utils import gen_empty_df, convert_df_ravenpro
 

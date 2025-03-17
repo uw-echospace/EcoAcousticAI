@@ -218,6 +218,8 @@ jobs:
 
             #./docker_runs/run_frognet.sh
 
+
+
             #echo "done with frognet model..starting bat-detect"
 
   run_batdetect_part1:
