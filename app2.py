@@ -567,8 +567,8 @@ elif page == "contact":
             transform: scale(1.02); 
         }
         .team-image {
-            width: 500px;
-            height: 500px;
+            width: 350px;
+            height: 350px;
             border-radius: 10px; 
             object-fit: cover;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
