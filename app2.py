@@ -625,12 +625,32 @@ elif page == "contact":
             unsafe_allow_html=True
         )
 
+    st.write("")
+    
+    # Sponsors Acknowledgment
+    st.markdown("## Sponsors:")
     
     st.markdown("""
-
-    \n\t *placeholder for sponser acknowledgment*
+    We extend a special thank you to our sponsors, Wu-Jung Lee and Aditya Krishna, for their invaluable mentorship. Their countless hours of guidance on the complexities of audio signal processing helped us overcome challenges and discover the best solutions every step of the way.
+    
+    We also acknowledge UW-Echospace for their support and collaboration. Their commitment to advancing acoustic research has been instrumental in the development and success of our project.
     """)
-    st.write("\n\n\n\n\n\n For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.")
+    
+    st.write("")
+    
+    # References Section
+    st.markdown("## References")
+    st.markdown("""
+    [1] Kahl, S., et al. BirdNET-Analyzer. GitHub. https://github.com/kahst/BirdNET-Analyzer.  
+    [2] Zinke, R., et al. Batty-BirdNET-Analyzer. GitHub. https://github.com/rdz-oss/BattyBirdNET-Analyzer.  
+    [3] Mac Aodha, O., et al. BatDetect2. GitHub. https://github.com/macaodha/batdetect2.  
+    [4] Jameson, J. (n.d.). Buzzfindr. GitHub. https://github.com/joelwjameson/buzzfindr.  
+    [5] Code Author of Batdetect2 Activity Pictures: Aditya Krishna, UW Echospace.
+    """)
+    
+    st.write("")
+    
+    st.write(" *For questions, feedback, or to report issues, please visit our [**GitHub Issues page**](https://github.com/uw-echospace/EcoAcousticAI/issues) to connect with the team directly.* ")
 
 else:
     st.write("Page not found. Please use the navigation links above.")
