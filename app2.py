@@ -10,10 +10,6 @@ from datetime import datetime, timedelta
 
 st.set_page_config(layout="wide")
 
-def encode_image(file_path):
-    """Encodes an image file to base64 format."""
-    with open(file_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode("utf-8")
 
 # Function to extract datetime from filename - Added for activity plot
 def extract_datetime_from_filename(filename):
@@ -444,6 +440,8 @@ elif page == "models":
 
     # Render models using base64 encoded images
     for model in models:
+        with open(model['logo'], "rb") as file:
+            encoded_logo = base64.b64encode(file.read()).decode()
         st.markdown(
             f"""
             <div class='model-container'>
