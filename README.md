@@ -49,6 +49,8 @@ EcoAcousticAI/
 │
 ├── buzzfindr/                  # BuzzFindr files for feeding behavior detection
 │
+├── docker_runs/                # Bash scripts to run docker containers for each model
+│
 ├── osn_bucket_metadata/        # Metadata for OSN bucket contents
 │
 ├── .gitignore
@@ -58,19 +60,11 @@ EcoAcousticAI/
 │
 ├── app.py                     # Streamlit app files for visualizations
 │
-├── change_owner.sh
-├── disk_space.sh
 ├── move_manila_files.py        # Script for organizing manila file structure
-├── new_data.py
+├── new_data1.py                # Script to detect whether new data has been added to OSN Bucket
 │
 ├── requirements.txt
 │
-├── run_buzzfindr.py
-├── run_buzzfindr.sh
-├── run_docker.sh
-├── run_docker_part2.sh
-├── run_frognet.sh
-|
 ```
 
 ## Pipeline Workflow

@@ -1,15 +1,16 @@
-name: Parallel Birdnet and Batdetect
+name: Parallel Model Run
 
 on:
   schedule:
     - cron: '0 0 * * 0'  # Midnight UTC on Sunday
-    #- cron: '0 2 * * 2'   # 6 PM PT (02:00 UTC Tuesday) - Shelve instance
+    - cron: '0 20 * * 0'  # 8:00 PM UTC on Sunday (20 hours after midnight)
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
   unshelve-and-ready-instance:
     runs-on: ubuntu-latest
-    if: github.event.schedule == '0 16 * * 1' || github.event_name == 'workflow_dispatch'
+    # runs by manual dispatch or midnight Sunday
+    if: github.event.schedule == '0 0 * * 0' || github.event_name == 'workflow_dispatch'  
     steps:
       - name: Install OpenStack CLI
         run: sudo apt update && sudo apt install -y python3-openstackclient
@@ -67,12 +68,15 @@ jobs:
     
       - name: Mount OSN and Check for New Data
         run: |
+            # ssh into instance and install system depencies to mount rclone
             SSH_KEY=$HOME/.ssh/jetstream2_key
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
             sudo apt-get update
             sudo apt-get install -y rclone
             sudo apt install git
             mkdir -p ~/.config/rclone
+
+            # create rclone configuration file 
             echo "[osn_sdsc_ubna]" > ~/.config/rclone/rclone.conf
             echo "type = s3" >> ~/.config/rclone/rclone.conf
             echo "provider = Ceph" >> ~/.config/rclone/rclone.conf
@@ -82,6 +86,8 @@ jobs:
             echo "no_check_bucket = true" >> ~/.config/rclone/rclone.conf
 
             cd /home/ubuntu/
+
+            # make directories for each SD card to mount to osn bucket
             mkdir -p /tmp/osn_bucket/ubna_data_01
             mkdir -p /tmp/osn_bucket/ubna_data_02
             mkdir -p /tmp/osn_bucket/ubna_data_03
@@ -94,11 +100,12 @@ jobs:
             chmod 777 /tmp/osn_bucket/ubna_data_04
             chmod 777 /tmp/osn_bucket/ubna_data_05
 
+            # allows mount from rclone
             sudo sed -i '/^#user_allow_other/s/^#//g' /etc/fuse.conf
 
             echo "after fusermount"
 
-            # Step 3: Mount the FUSE filesystem with rclone using allow_other 
+            # Mount the filesystem for each SD card with rclone using allow_other 
             rclone mount osn_sdsc_ubna:bio230143-bucket01/ubna_data_01/ /tmp/osn_bucket/ubna_data_01 \
             --vfs-cache-mode off \
             --log-level DEBUG \
@@ -130,13 +137,16 @@ jobs:
             sudo chown -R ubuntu:ubuntu /home/ubuntu/EcoAcousticAI/
             sudo chmod -R 777 /home/ubuntu/EcoAcousticAI/
 
+            # pull EcoAcousticAI repo to instance
             git config --global --add safe.directory /home/ubuntu/EcoAcousticAI
             cd ./EcoAcousticAI/
             git stash 
             git pull -v origin main
 
+            # script to check if new data has been added to OSN bucket
             python3 new_data1.py
             
+            # push updated filelist to remote repository
             git add osn_bucket_metadata/ubna01_wav_files_TEST.txt
             git commit -m "updated wav files"
             git stash 
@@ -158,26 +168,33 @@ jobs:
           # Set the file permissions to be read and write for the owner only
           sudo chmod 600 $FILE_PATH
   
-          # Verify the permissions (optional)
+          # Verify the permissions 
           ls -l $FILE_PATH
 
-            # Verify the entry is added (optional)
+            # Verify the entry is added
             cat /etc/fstab
             sudo mount -a
+
+            # check mount is active
             df -h | grep vol
 
             cd /home/ubuntu/EcoAcousticAI/
 
+            # clean up disk space my remocing dangling docker images
             docker image prune -a -f
+
+            # build bat-detect-msds model
             docker build -t bat-detect-msds -f ./bat-detect-msds/Dockerfile .
 
+            # build buzzfindr image
             #cd buzzfindr/
             #docker build -t buzzfindr-image .
 
+            # build birdnetlib image (contains both birdnet and frognet)
             cd /home/ubuntu/EcoAcousticAI/birdnetlib
             docker build -t frog_bird .
   run_frognet:
-    needs: unshelve-and-ready-instance
+    needs: unshelve-and-ready-instance  # only relies on setting up instance, allowing step to run in parallel with batdetect
     runs-on: ubuntu-latest
     steps:
       - name: Set up SSH Key for Remote Access
@@ -201,18 +218,18 @@ jobs:
             echo "----------------------"
 
             #chmod +x run_buzzfindr.sh
+            #./run_buzzfindr.sh
 
             sudo chmod +x ./docker_runs/run_frognet.sh
 
-            #./run_buzzfindr.sh
-
+            # run frognet and birdnet model in detached session from terminal
             echo "starting frognet model"
             nohup bash ./docker_runs/run_frognet.sh > ./model_output_frognet.log 2>&1 &
             EOF
 
 
-  run_batdetect_part1:
-    needs: unshelve-and-ready-instance
+  run_batdetect:
+    needs: unshelve-and-ready-instance # allows batdetect to run in parallel with frognet and birdnet
     runs-on: ubuntu-latest
     steps:
       - name: Set up SSH Key for Remote Access
@@ -228,8 +245,6 @@ jobs:
             ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
             cd /home/ubuntu/EcoAcousticAI/
         
-            pwd
-        
             sed -i '/^\s*$/d' new_directories.txt  # Remove empty lines
             sed -i 's/^[ \t]*//;s/[ \t]*$//' new_directories.txt  # Trim leading/trailing spaces
 
@@ -239,10 +254,60 @@ jobs:
 
             sudo chmod +x ./docker_runs/run_batdetect.sh
 
+            # run and bat-detect model in detached session from terminal
             echo "starting bat-detect"
             nohup bash ./docker_runs/run_batdetect.sh > ./model_output_batdetect.log 2>&1 &
             EOF
 
-
+  Shelve-instance:
+    runs-on: ubuntu-latest
+    if: ${{ failure() || github.event.schedule == '0 20 * * 0' || github.event_name == 'workflow_dispatch' }}
+    steps:
+        - name: Set up SSH Key for Remote Access
+          run: |
+                 mkdir -p ~/.ssh
+                 echo "${{ secrets.JETSTREAM2_SSH_KEY }}" > ~/.ssh/jetstream2_key
+                 chmod 600 ~/.ssh/jetstream2_key
+                 ssh-keyscan -H "149.165.170.20" >> ~/.ssh/known_hosts
+  
+        - name: Remove New Directories
+          run: |
+              SSH_KEY=$HOME/.ssh/jetstream2_key
+              ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@149.165.170.20 << EOF
+              
+              # unmount directories
+              sudo umount /tmp/osn_bucket/ubna_data_01
+              sudo umount /tmp/osn_bucket/ubna_data_02
+              sudo umount /tmp/osn_bucket/ubna_data_03
+              sudo umount /tmp/osn_bucket/ubna_data_04
+              sudo umount /tmp/osn_bucket/ubna_data_04
+  
+        - name: Install OpenStack CLI
+          run: sudo apt update && sudo apt install -y python3-openstackclient
+        - name: Authenticate with OpenStack
+          run: |
+              mkdir -p ~/.config/openstack
+                        echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
+                        chmod 600 ~/.config/openstack/clouds.yaml
+                        openstack --os-cloud=BIO230143_IU server list  # Debug check
+        
+        - name: Shelve Instance
+          run: |
+                INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
+                STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+      
+                echo "Checking if instance is ready to be shelved..."
+                while [[ "$STATUS" == "BUILD" || "$STATUS" == "REBOOT" || "$STATUS" == "UNSHELVING" ]]; do
+                  echo "Instance is still transitioning. Waiting 60 seconds..."
+                  sleep 60
+                  STATUS=$(openstack --os-cloud=BIO230143_IU server show $INSTANCE_ID -f value -c status)
+                done
+      
+                if [[ "$STATUS" == "ACTIVE" ]]; then
+                  echo "Shelving instance now..."
+                  openstack --os-cloud=BIO230143_IU server shelve $INSTANCE_ID
+                else
+                  echo "Instance is not in a valid state for shelving. Current status: $STATUS"
+                fi  
 
 
