@@ -147,7 +147,6 @@ jobs:
             python3 new_data1.py || exit 1 
             
             # push updated filelist to remote repository
-            git add osn_bucket_metadata/ubna01_wav_files_TEST.txt
 
             git add osn_bucket_metadata/ubna01_wav_files.txt
             git add osn_bucket_metadata/ubna02_wav_files.txt
