@@ -6,8 +6,8 @@ This workflow automates instance management and data processing in the **EcoAcou
 
 ### **Schedule and Trigger Conditions**
 - **Scheduled Automation:**  
-  - **Unshelve instance** on **Sunday at 12 AM PT**  
-  - **Shelve instance** on **Sunday at 8 PM PT**  
+  - **Unshelve instance** on **Sunday at 12 AM UTC**  
+  - **Shelve instance** on **Sunday at 8 PM UTC**  
 - **Manual Trigger:** Supports manual execution through `workflow_dispatch`.
 
 ### **Key Steps**

@@ -9,7 +9,8 @@ while IFS= read -r directory; do
       continue
   fi
 
-  # Run Docker for each directory
+  # Run Docker for each directory mounted to directory inside docker container
+  # mount manila storage directory to model output directory
     docker run --rm \
         --mount type=bind,source=$directory,target=/app/recordings_buzz/ \
         --mount type=bind,source=/mnt/ecoacoustic-storage/,target=/app/output_buzz/ \

@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     # runs by manual dispatch or midnight Sunday
     if: github.event.schedule == '0 0 * * 0' || github.event_name == 'workflow_dispatch'  
-    #continue-on-error: false
     steps:
       - name: Install OpenStack CLI
         run: sudo apt update && sudo apt install -y python3-openstackclient
