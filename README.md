@@ -34,11 +34,9 @@ EcoAcousticAI/
 │
 ├── .github/
 │   └── workflows/
-│       ├── full_workflow.yml
+│       ├── parallel_wf.yml
 │       ├── move_manila_files.yml
-│       ├── sync_battybirdnet.yml
-│       ├── workflow_part2.yml
-│       ├── workflow_part3.yml
+│       ├── sync_battybirdnet.yml      
 │
 ├── assets/                     # Static images, logos, or visual elements
 │
@@ -77,14 +75,15 @@ EcoAcousticAI/
 
 ## Pipeline Workflow
 
-1. Link OSN data bucket to GitHub workflow
+1. Trigger pipeline by activating Jetstream instance
+    - Can be scheduled trigger or manually activated instance  
     - Utilizes Openstack CLI for authentication to Jetstream2
-    - OSN Bucket is linked to Github repository
 
-2. Trigger pipeline by activating Jetstream instance
-    - Can be scheduled trigger or manually activated instance
+2. Link OSN data bucket to GitHub workflow
+    - OSN Bucket is linked to Github repository 
+    - Run Script to check for new data in OSN bucket
 
-3. Run model inference in Docker containers across the integrated models split up across workflows
+3. Run model inference in Docker containers across the integrated models  
     - Docker containers provide separate environments for each model
 
 4. Mount model output directory to Manila storage on the Jetstream instance 
@@ -101,15 +100,14 @@ EcoAcousticAI/
 ```
 .github/
 │   └── workflows/
-│       ├── full_workflow.yml
+│       ├── parallel_wf.yml
 │       ├── move_manila_files.yml
 │       ├── sync_battybirdnet.yml
-│       ├── workflow_part2.yml
-│       ├── workflow_part3.yml
+
 
 ```
 
-Within ```.github/workflows/```  are 5 Github actions that automate our pipeline
+Within ```.github/workflows/```  are 3 Github actions that automate our pipeline
 
 More information can be found in [Workflows Documentation](.github/workflows/README.md)
 
