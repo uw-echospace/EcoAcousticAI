@@ -40,7 +40,9 @@ This workflow automates instance management and data processing in the **EcoAcou
    - Build docker images for each model. The birdnet and frognet models are contained in one docker image because they both stem from the same birdNET model and share underlying code in the repository. 
 
 9. **Run Models in Docker**  
-   There are separate jobs within the workflow to run each model in its docker container in parallel:
+   There are separate jobs within the workflow to run each model in its docker container in parallel.  
+   The bash scripts to run the models are located in the `docker_runs` directory. These scripts are called from within this workflow using `nohup`. This allows the script to detach from the terminal and run separately, so if the github actions workflow times out, the model run script will persist until the instance is shelved.  
+   The integrated models are listed below:
    - **BuzzFindr** — Identifies rapid sequences in bat echolocation indicative of feeding behavior.
    - **BirdNet** - Detects bird vocalizations using deep learning model.  
    - **FrogNet** — Adapts BirdNET to detect frog vocalizations.
