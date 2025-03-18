@@ -108,7 +108,7 @@ More information can be found in [Workflows Documentation](.github/workflows/REA
 
 ## Setup Streamlit App
 
-### Steps to Run `app2.py` from GitHub Repo
+### Steps to Run `app.py` from GitHub Repo
 
 ### 1. Activate Streamlit Instance
 Activate your Streamlit instance (it might still appear as "Jacob-instance") on Jetstream2.
@@ -138,7 +138,7 @@ cd EcoAcousticAI
 Start the Streamlit app with the following command:
 
 ```bash
-streamlit run app2.py --server.port 8501 --server.address 0.0.0.0
+streamlit run app.py --server.port 8501 --server.address 0.0.0.0
 ```
 
 ### 6. Access the App in Your Browser
