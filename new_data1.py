@@ -2,6 +2,21 @@ import os
 import sys
 import json
 
+'''
+Methodology:
+The osn_bucket_metadata directory contains files with the relative file paths
+for each directory in each SD card (ubna01, ubna02...). These file paths are the files
+that have already been 'seen' and represent the current state of the data.
+For each SD card, this script compares the files in the metadata with those 
+currently existing in the OSN bucket which have been mounted to /tmp/osn_bucket.
+If there are files in the OSN_bucket that are not present in the metadata file,
+the absolute path of directory containing the new data is written to new_directories.txt.
+Each directory in new_directories.txt is later used as input for the models.
+The newly detected files are updated in the metadata files as they have now been seen and 
+no longer new. 
+If no new data isdetected, the model errors out sys.exit(1).
+'''
+
 # Define the directory containing the filelist files and rclone mount directory
 metadata_dir = './osn_bucket_metadata/'
 rclone_mount_dir = '/tmp/osn_bucket/'  # The directory where your rclone mount is located
@@ -10,13 +25,33 @@ rclone_mount_dir = '/tmp/osn_bucket/'  # The directory where your rclone mount i
 directories = ['ubna_data_01', 'ubna_data_02', 'ubna_data_03', 'ubna_data_04', 'ubna_data_05']
 filelist_files = ['ubna01_wav_files_TEST.txt', 'ubna02_wav_files.txt', 'ubna03_wav_files.txt', 'ubna04_wav_files.txt', 'ubna05_wav_files.txt']
 
-# Function to read file list from a file
+# Function to read metadata file from a path
 def read_filelist(file_list_path):
+    '''
+    Parameters
+    ------------
+    file_list_path : str
+        - The path to the metadata file containing existing files in OSN bucket
+
+    Returns
+    ------------
+    set of existing files that have been seen
+    '''
     with open(file_list_path, "r") as f:
         return set(f.read().splitlines())
 
 
 def get_files_from_rclone(directory):
+    '''
+    Parameters
+    ------------
+    directory : str
+        - The SD card directory to get a set of the current files in the OSN bucket
+
+    Returns
+    ------------
+    set of current files in OSN Bucket
+    '''
     current_files = set()
     
     directory_path = os.path.join(rclone_mount_dir, directory)
@@ -32,6 +67,16 @@ def get_files_from_rclone(directory):
 
 # Function to check for new files in each directory
 def check_for_new_files():
+    '''
+    Function to check for files that exist in OSN bucket but not in list of seen files. 
+    Parameters
+    ------------
+    None
+
+    Returns
+    ------------
+    list of new files
+    '''
     new_files = []
 
     # Iterate over each directory and corresponding filelist

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Run the first script
+# Run the birdnet model script 
 python3 /app/predict_birdnet_all.py
 
 
-# Run the second script
+# Run the frognet model script
 python3 /app/predict_frog_species.py

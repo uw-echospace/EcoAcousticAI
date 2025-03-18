@@ -50,5 +50,3 @@ RUN mkdir -p /app/accepted_files/
 # Set the R script entry point
 CMD ["Rscript", "buzzfindr_script.R"]
 
-# Expose port 8787 if you're using RStudio Server or any other service that requires it
-EXPOSE 8787

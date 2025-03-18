@@ -14,15 +14,17 @@ RUN apt-get update && apt-get install -y \
 
 # Set work directory
 WORKDIR /app
+
+# copy contents of current direcotry (birdnetlib) to /app
 COPY . .
 
+# create direcotry to mount input audio 
 RUN mkdir -p /app/audio/
 
+# install requirements 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose necessary ports if applicable (e.g., API, web server)
-# EXPOSE 8000
+# execute permission for entrypoint script
 RUN chmod +x run_both_models.sh
 
-#CMD ["python3", "run_both_models.sh"]
 ENTRYPOINT ["/app/run_both_models.sh"]

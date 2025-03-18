@@ -16,16 +16,14 @@ RUN apt-get update && apt-get install -y libimage-exiftool-perl
 
 # Set work directory
 WORKDIR /app
+
+# copy contents of current directory to /app in the container
 COPY . .
 
-RUN ls -l /app/bat-detect-msds/src/models/bat_call_detector/batdetect2/
-
+# install requirements and build dependencies
 RUN pip install --no-cache-dir -r /app/bat-detect-msds/requirements.txt
 
-# Expose necessary ports if applicable (e.g., API, web server)
-# EXPOSE 8000
 
-# Run the bat-detect MSDS script (or entry point) when the container starts\
-
+# Run the bat-detect MSDS script (or entry point) when the container starts
 CMD ["python3", "src/batdt2_pipeline.py"]
 

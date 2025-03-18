@@ -266,6 +266,13 @@ jobs:
     steps:
       - name: Install OpenStack CLI
         run: sudo apt update && sudo apt install -y python3-openstackclient
+      - name: Authenticate with OpenStack
+        run: |
+          mkdir -p ~/.config/openstack
+          echo "${{ secrets.CLOUDS_YAML }}" > ~/.config/openstack/clouds.yaml
+          chmod 600 ~/.config/openstack/clouds.yaml
+          openstack --os-cloud=BIO230143_IU server list  # Debug check
+          
       - name: Unshelve the Instance
         run: |
           INSTANCE_ID="2e41f703-6464-499f-8faf-6412fcfcd8cc"
