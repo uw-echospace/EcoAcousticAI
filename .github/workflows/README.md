@@ -1,16 +1,17 @@
 # Github Actions Workflows
 
-## Part 1 of the Workflow 
+## Parallel Model Run (parallel_wf.yml)
 
-This workflow automates instance management and data processing in the **EcoAcousticAI** pipeline. It performs the following key actions:
+This workflow automates instance management and data processing in the **EcoAcousticAI** pipeline. It contains two jobs performing the following key actions:
 
 ### **Schedule and Trigger Conditions**
 - **Scheduled Automation:**  
-  - **Unshelve instance** on **Monday at 8 AM PT**  
-  - **Shelve instance** on **Tuesday at 6 PM PT**  
+  - **Unshelve instance** on **Sunday at 12 AM PT**  
+  - **Shelve instance** on **Sunday at 8 PM PT**  
 - **Manual Trigger:** Supports manual execution through `workflow_dispatch`.
 
 ### **Key Steps**
+### Job 1: Unshelve and Ready Instance
 1. **Install OpenStack CLI**  
    - Installs the OpenStack CLI to manage Jetstream2 instances.
 
@@ -28,82 +29,34 @@ This workflow automates instance management and data processing in the **EcoAcou
    - Configures a secure SSH key to connect remotely.
 
 6. **Mount OSN Storage**  
-   - Mounts the OSN bucket using `rclone` for data synchronization.
+   - Mounts the OSN bucket using `rclone` for data synchronization.  
 
-7. **Mount Manila Storage**  
+7. **Run Script to Detect New Data in OSN Bucket**
+   - Runs `new_data1.py` to detect whether any new files have been added to the OSN Bucket.
+   - If no new data has been added, the job errors out through `sys.exit(1)` and triggers the shleve-instance job located in the same workflow. However, if new data is detected, the following steps occur.
+
+8. **Mount Manila Storage**  
    - Connects persistent storage in Manila to manage result files.
+   - Build docker images for each model. The birdnet and frognet models are contained in one docker image because they both stem from the same birdNET model and share underlying code in the repository. 
 
-8. **Run Models in Docker**  
-   The workflow executes the following models:
+9. **Run Models in Docker**  
+   There are separate jobs within the workflow to run each model in its docker container in parallel:
    - **BuzzFindr** — Identifies rapid sequences in bat echolocation indicative of feeding behavior.
+   - **BirdNet** - Detects bird vocalizations using deep learning model.  
    - **FrogNet** — Adapts BirdNET to detect frog vocalizations.
-   - **BatDetect** — Uses a deep neural network to classify bat echolocation.
+   - **BatDetect** — Uses a deep neural network to classify bat echolocation.  
 
-This automated process ensures efficient model execution, storage management, and consistent updates to the data pipeline. 
-
-## **Model Run Part 2 (Resume)**
-
-This workflow is designed to **resume model execution** following the completion of the **Model Run to Manila Mount** workflow. It can also be triggered manually via `workflow_dispatch`.
-
-### **Trigger Conditions**
-- **Automatic Trigger:** Runs immediately after the **Model Run to Manila Mount** workflow is completed.
-- **Manual Trigger:** Can be initiated manually if needed.
-
-### **Key Steps**
-1. **Set up SSH Key for Remote Access**  
-   - Configures an SSH key to securely connect to the Jetstream2 instance.
-
-2. **Resume Model Run**  
-   - Establishes an SSH connection to the instance.  
-   - Navigates to the `EcoAcousticAI` directory.  
-   - Displays the contents of `new_directories.txt` to confirm new data paths.  
-   - Executes the script:
-   - **`run_docker_part2.sh`** — Continues bat detection and related model processes.
-
----
-
-This workflow ensures seamless continuation of the data pipeline by automatically handling the next steps after the initial model run which is needed since Github Actions can only run for 6 hours. Some models such as batdetect2 can take longer than 6 hours to run depending on how many files are ran at once.
-
-## **Model Run Part 3 (Resume)**
-
-This workflow handles the **final stage** of the model pipeline, resuming processing from Part 2 and shelving the Jetstream2 instance when completed. It can also be triggered manually via `workflow_dispatch`.
-
-### **Trigger Conditions**
-- **Automatic Trigger:** Runs immediately after the **Model Run Part 2 (Resume)** workflow is completed.
-- **Manual Trigger:** Can be initiated manually if needed.
-
----
-
-### **Key Steps**
-1. **Set up SSH Key for Remote Access**  
-   - Configures an SSH key for secure access to the Jetstream2 instance.
-
-2. **Resume Model Run**  
-   - Establishes an SSH connection to the instance.  
-   - Navigates to the `EcoAcousticAI` directory.  
-   - Displays the contents of `new_directories.txt` to confirm new data paths.  
-   - Executes the script:
-   - **`run_docker_part3.sh`** — Completes bat detection and final model processing.  
-   - **Removes** `new_directories.txt` to clean up the workspace.  
-   - **Unmounts** `/tmp/osn_bucket/` to safely detach the mounted storage.
-
----
-
-### **Shelve the Instance**
-3. **Install OpenStack CLI**  
-   - Installs the OpenStack client to manage the Jetstream2 instance.
-
-4. **Authenticate with OpenStack**  
+### Job 2: Shelve the Instance
+   - Scheduled to start 20 hours after the unshelve instance job starts to give models adequate time to run. OR it is triggered if the first job fails (whether the pipeline broke or no new data was detected).
+   - Install the OpenStack client to manage the Jetstream2 instance.
    - Uses credentials stored in GitHub Secrets to authenticate.
-
-5. **Shelve the Instance**  
    - Monitors the instance status to ensure it’s no longer in a **transitioning state** (e.g., `BUILD`, `REBOOT`, `UNSHELVING`).  
    - If the instance is in `ACTIVE` status, it proceeds to shelve it.  
    - If the instance is **not ready** for shelving, it provides a status update.
 
 ---
 
-This workflow is the last of the main pipeline and ensures the instance is properly shelved to conserve resources.
+This automated process ensures efficient model execution, storage management, and consistent updates to the data pipeline and ensures the instance is properly shelved to conserve resources.
 
 
 ## **Organize Manila Files**
