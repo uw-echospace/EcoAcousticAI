@@ -23,7 +23,7 @@ rclone_mount_dir = '/tmp/osn_bucket/'  # The directory where your rclone mount i
 
 # Directories and corresponding filelist files
 directories = ['ubna_data_01', 'ubna_data_02', 'ubna_data_03', 'ubna_data_04', 'ubna_data_05']
-filelist_files = ['ubna01_wav_files_TEST.txt', 'ubna02_wav_files.txt', 'ubna03_wav_files.txt', 'ubna04_wav_files.txt', 'ubna05_wav_files.txt']
+filelist_files = ['ubna02_wav_files.txt', 'ubna03_wav_files.txt', 'ubna04_wav_files.txt', 'ubna05_wav_files.txt']
 
 # Function to read metadata file from a path
 def read_filelist(file_list_path):
