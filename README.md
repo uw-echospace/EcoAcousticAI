@@ -137,7 +137,7 @@ source /home/ubuntu/streamlit-venv/bin/activate
 Change to the `EcoAcousticAI` directory:
 
 ```bash
-cd EcoAcousticAI
+cd /home/ubuntu/EcoAcousticAI
 ```
 
 ### 5. Run the Streamlit App
