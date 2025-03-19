@@ -119,6 +119,12 @@ In terminal, run:
 ```bash
 ssh ubuntu@149.165.174.37
 ```
+Additionally, you can login via the [exosphere gui application](https://jetstream2.exosphere.app/)
+
+```bash
+ssh exouser@149.165.174.37
+```
+*The passphrase can be copied directly from the exophere user interface.*
 
 ### 3. Activate Virtual Environment
 Run the following command to activate the virtual environment:
