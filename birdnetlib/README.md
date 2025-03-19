@@ -1,6 +1,9 @@
-# FrogNet
+# BirdNET-Analyzer and Custom FrogNET model
 
-FrogNet is a custom neural network model designed to [briefly describe the primary function or goal of your model, e.g., "classify different species of frogs based on image inputs"].
+- This folder contains scripts to run the [BirdNET-Analyzer model](https://github.com/birdnet-team/BirdNET-Analyzer.git) and a re-trained FrogNET model. FrogNET utilizes the BirdNET framework to create a custom neural network model designed to classify different species of frogs based on audio inputs. In order to run these scripts you don't need to clone the BirdNET-Analyzer repository. Rather they have made a python library called birdnetlib. These scripts use this method to analyze preditions for birds, frogs, rodents, and more in King County. 
+
+
+- Below describes the data collection, preprocessing, and retraining of the [BirdNET-Analyzer model](https://github.com/birdnet-team/BirdNET-Analyzer.git).
 
 ## Table of Contents
 
@@ -29,7 +32,7 @@ Data can be collected from the following sources for frogs:
 
 ## Installation
 
-To install FrogNet, follow these steps:
+To train your own BirdNET model, follow these steps:
 
 1. **Clone the Birdnet-Analyzer repository**:
 
@@ -61,8 +64,6 @@ To install FrogNet, follow these steps:
 
 ## Usage
 
-Here's how to train you Custom Model:
-
 1. **Run the gui module**:
 
     ```python
@@ -80,6 +81,8 @@ Here's how to train you Custom Model:
 6.  **Run Predictions using your custom model using the multi-file tab**
 
 
+____ 
+Instructions to run 
 
 For more detailed examples and advanced configurations working with birdnet-analyzer, refer to the [github repository]() or the [documentation](link_to_documentation).
 
