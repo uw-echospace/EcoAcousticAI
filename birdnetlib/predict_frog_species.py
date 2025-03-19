@@ -109,6 +109,12 @@ for audio_file in sorted(audio_folder.glob("*.WAV")):
         avg_conf = sum(last_confidences) / len(last_confidences)
         combined_detections.append([audio_file.name, last_start, last_end, last_species, last_scientific, avg_conf])
 
+       # Check if there are any valid detections after filtering out "NO WA FROG"
+    if not combined_detections:
+        print(f"No valid species detected in {audio_file.name} after filtering, skipping file creation.")
+        continue
+
+    
     # Define output files
     csv_output_file = output_folder / f"frognet_{audio_file.stem}_species.csv"
     raven_output_file = output_folder / f"frognet_{audio_file.stem}_selection.txt"
