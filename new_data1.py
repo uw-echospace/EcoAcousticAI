@@ -13,8 +13,7 @@ If there are files in the OSN_bucket that are not present in the metadata file, 
 the bucket. The absolute path of the directory containing the new data is written to new_directories.txt.
 Each directory in new_directories.txt is later used as input for the models.
 The newly detected files are updated in the metadata files as they have now been seen and 
-no longer new. 
-If no new data isdetected, the model errors out sys.exit(1).
+no longer new. If no new data is detected, the model errors out sys.exit(1).
 '''
 
 # Define the directory containing the filelist files and rclone mount directory
