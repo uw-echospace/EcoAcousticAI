@@ -3,7 +3,7 @@
 - This folder contains scripts to run the [BirdNET-Analyzer model](https://github.com/birdnet-team/BirdNET-Analyzer.git) and a re-trained FrogNET model. FrogNET utilizes the BirdNET framework to create a custom neural network model designed to classify different species of Washington frogs based on audio inputs. In order to run these scripts you don't need to clone the BirdNET-Analyzer repository. Rather they have made a python library called birdnetlib. These scripts use this method to analyze preditions for birds, frogs, rodents, and more in King County. 
 
 
-- Below describes the data collection, preprocessing, and retraining of the [BirdNET-Analyzer model](https://github.com/birdnet-team/BirdNET-Analyzer.git).
+- *Below documents the data collection, preprocessing, and retraining of the [BirdNET-Analyzer model](https://github.com/birdnet-team/BirdNET-Analyzer.git) to create FrogNET*.
 
 ## Table of Contents
 
