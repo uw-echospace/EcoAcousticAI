@@ -180,8 +180,8 @@ This keeps the same public IP address when unshelving. If this box is not unchec
         - Individual result files
 - Displays downloadable selected file
 
-![Dashboard on Webpage](assets/Dashboard.png)
-![Heapmap on Webpage](assets/Heatmap.png)
+![Dashboard on Webpage](assets/Dashboard.png "Dashboard on Webpage")
+![Heapmap on Webpage](assets/Heatmap.png "Heatmap on Webpage")
 
 ### Cumulative Activity Heatmap
 
