@@ -9,6 +9,7 @@ on:
 jobs:
   unshelve-and-ready-instance:
     runs-on: ubuntu-latest
+    # runs by manual dispatch or midnight Sunday UTC
     if: github.event.schedule == '0 0 * * 0' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Install OpenStack CLI
