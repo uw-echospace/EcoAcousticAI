@@ -3,14 +3,14 @@ import sys
 import json
 
 '''
-Methodology:
-The osn_bucket_metadata directory contains files with the relative file paths
-for each directory in each SD card (ubna01, ubna02...). These file paths are the files
-that have already been 'seen' and represent the current state of the data.
-For each SD card, this script compares the files in the metadata with those 
-currently existing in the OSN bucket which have been mounted to /tmp/osn_bucket.
-If there are files in the OSN_bucket that are not present in the metadata file,
-the absolute path of directory containing the new data is written to new_directories.txt.
+Implementation:
+Each file in the osn_bucket_metadata directory contains the relative paths for all files in that directory. 
+The files are split up my SD card, so ubna01_wav_files.txt contains all the relative filepaths for files within 
+the ubna01 folder. These file paths are the files that have already been "seen" and represent the current state 
+of the data. For each SD card, this script compares the files in the metadata with those 
+currently existing in the OSN bucket which have been mounted to /tmp/osn_bucket/<SD card #>.
+If there are files in the OSN_bucket that are not present in the metadata file, we know new data has been added to 
+the bucket. The absolute path of the directory containing the new data is written to new_directories.txt.
 Each directory in new_directories.txt is later used as input for the models.
 The newly detected files are updated in the metadata files as they have now been seen and 
 no longer new. 

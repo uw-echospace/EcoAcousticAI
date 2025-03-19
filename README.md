@@ -75,7 +75,7 @@ EcoAcousticAI/
 
 2. Link OSN data bucket to GitHub workflow
     - OSN Bucket is linked to Github repository 
-    - Run Script to check for new data in OSN bucket
+    - Run `new_data1.py` script to check for new data in OSN bucket (implementation detailed in the script)
 
 3. Run model inference in Docker containers across the integrated models  
     - Docker containers provide separate environments for each model
