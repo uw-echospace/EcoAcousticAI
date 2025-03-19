@@ -87,6 +87,3 @@ Instructions to run
 For more detailed examples and advanced configurations working with birdnet-analyzer, refer to the [github repository]() or the [documentation](link_to_documentation).
 
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
