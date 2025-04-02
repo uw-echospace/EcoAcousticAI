@@ -157,7 +157,7 @@ http://149.165.174.37:8501/
 or while the domain remains registered, the web app will be accessible via:
 
 ```
-https://ecoacousticai.com
+https://ecoacousticai.org
 ```
 
 
