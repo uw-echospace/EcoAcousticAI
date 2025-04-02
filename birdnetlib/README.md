@@ -72,7 +72,7 @@ To train your own BirdNET model, follow these steps:
 
 2. **Navigate to the train tab**
 
-3. **Load your prepard 3-second audio files**
+3. **Load prepared 3-second audio files**
 
 4. **Set desired parameters like**:
 
